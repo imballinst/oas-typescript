@@ -47,6 +47,36 @@ async function main() {
     await fs.readFile(input, 'utf-8')
   );
   console.info(document);
+
+  // Generate the definitions only.
+  const paths = document.paths || {};
+  const pathsByTag: any = {};
+  const methods = ['get', 'post', 'put', 'delete', 'patch'] as const;
+
+  for (const key in paths) {
+    const path = paths[key];
+    if (!path) continue;
+
+    for (const methodKey of methods) {
+      const pathMethod = path[methodKey];
+      if (!pathMethod) continue;
+
+      const { tags } = pathMethod;
+      if (!tags) continue;
+
+      if (!pathsByTag[tags[0]]) {
+        pathsByTag[tags[0]] = [];
+      }
+
+      const pathByTag = {
+        method: methodKey,
+        path: key,
+        operationId: pathMethod.operationId || '',
+        parameters: pathMethod.parameters || [],
+        responses: pathMethod.responses
+      };
+    }
+  }
 }
 
 main();
