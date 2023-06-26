@@ -1,0 +1,21 @@
+{
+  "name": "@oast/koa",
+  "version": "0.0.1",
+  "type": "module",
+  "bin": "bin/cli.js",
+  "module": "bin/cli.js",
+  "scripts": {
+    "gen": "ts-node --esm src/index.ts ../shared/src/openapi/api.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "meow": "12.0.1",
+    "zod": "3.21.4"
+  },
+  "devDependencies": {
+    "@swc/core": "1.3.66",
+    "@swc/helpers": "0.5.1",
+    "regenerator-runtime": "0.13.11",
+    "ts-node": "10.9.1"
+  }
+}
