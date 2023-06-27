@@ -8,10 +8,26 @@ interface OasParameter {
   type: 'Path' | 'Query' | 'Body' | 'Header';
   schema: z.ZodObject<any>;
 }
-type OasParameterWithValue = OasParameter & { value: any };
+type OasParameterWithValue<TValue = any> = OasParameter & { value: TValue };
+
+type FilterArrayElementsByType<
+  T extends readonly any[],
+  TF extends T[number]['type']
+> = Array<Extract<T[number], { type: TF }>>;
+
+type FilterByParameterType<T extends readonly { type: string }[]> = {
+  body: FilterArrayElementsByType<T, 'Body'>;
+  queryParams: FilterArrayElementsByType<T, 'Query'>;
+  pathParams: FilterArrayElementsByType<T, 'Path'>;
+};
 
 export class KoaGeneratedUtils {
-  static parseRequestInfo({
+  static parseRequestInfo<
+    TPathParamsType,
+    TQueryParamsType,
+    THeaderParamsType,
+    TBodyParamsType
+  >({
     ctx,
     oasParameters
   }: {
@@ -96,11 +112,21 @@ export class KoaGeneratedUtils {
       }
     }
 
+    // TPathParamsType, TQueryParamsType, THeaderParamsType, TBodyParamsType
     return {
-      pathParams,
-      queryParams,
-      headerParams,
-      bodyParams
+      pathParams: pathParams as Record<
+        keyof TPathParamsType,
+        OasParameterWithValue
+      >,
+      queryParams: queryParams as Record<
+        keyof TQueryParamsType,
+        OasParameterWithValue
+      >,
+      headerParams: headerParams as Record<
+        keyof THeaderParamsType,
+        OasParameterWithValue
+      >,
+      bodyParams: bodyParams as OasParameterWithValue<TBodyParamsType>
     };
   }
 }

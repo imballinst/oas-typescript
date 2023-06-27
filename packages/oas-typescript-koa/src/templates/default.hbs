@@ -25,9 +25,9 @@ export const schemas = {
 };
 {{/ifNotEmptyObj}}
 
-export const endpoints = [
+export const endpoints = {
 {{#each endpoints}}
-	{
+	{{{operationId}}}: {
 		method: "{{method}}",
 		path: "{{path}}",
 		{{#if @root.options.withAlias}}
@@ -55,7 +55,7 @@ export const endpoints = [
 				schema: {{{schema}}}
 			},
 			{{/each}}
-		],
+		] as const,
 		{{/if}}
 		operationId: "{{{operationId}}}",
 		{{#if security}}
@@ -81,4 +81,4 @@ export const endpoints = [
 		{{/if}}
 	},
 {{/each}}
-]
+}

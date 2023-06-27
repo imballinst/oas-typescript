@@ -29,16 +29,6 @@ const cli = meow(
   }
 );
 
-interface PathByTag {
-  method: string;
-  path: string;
-  operationId: string;
-  parameters: Array<OpenAPIV3.ParameterObject | OpenAPIV3.ReferenceObject>;
-  responses: OpenAPIV3.ResponsesObject;
-  requestBody?: OpenAPIV3.RequestBodyObject | OpenAPIV3.ReferenceObject;
-  security?: OpenAPIV3.SecurityRequirementObject[];
-}
-
 async function main() {
   const cliInput = cli.input[0];
   const input = path.isAbsolute(cliInput)
@@ -157,6 +147,10 @@ app
     template,
     'utf-8'
   );
+
+  if (hasSecurity) {
+    // Create the middleware-helpers.ts.
+  }
 }
 
 main();
