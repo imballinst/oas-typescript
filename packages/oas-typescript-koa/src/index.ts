@@ -75,8 +75,12 @@ async function main() {
         parameters: pathMethod.parameters || [],
         responses: pathMethod.responses
       };
+
+      pathsByTag.push(pathByTag);
     }
   }
+
+  console.info(pathsByTag);
 }
 
 main();
