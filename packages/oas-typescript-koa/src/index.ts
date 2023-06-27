@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { OpenAPIV3 } from 'openapi-types';
+import { generateZodClientFromOpenAPI } from 'openapi-zod-client';
+import { titleCase } from 'title-case';
 import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
@@ -27,6 +29,16 @@ const cli = meow(
   }
 );
 
+interface PathByTag {
+  method: string;
+  path: string;
+  operationId: string;
+  parameters: Array<OpenAPIV3.ParameterObject | OpenAPIV3.ReferenceObject>;
+  responses: OpenAPIV3.ResponsesObject;
+  requestBody?: OpenAPIV3.RequestBodyObject | OpenAPIV3.ReferenceObject;
+  security?: OpenAPIV3.SecurityRequirementObject[];
+}
+
 async function main() {
   const cliInput = cli.input[0];
   const input = path.isAbsolute(cliInput)
@@ -46,41 +58,105 @@ async function main() {
   const document: OpenAPIV3.Document = JSON.parse(
     await fs.readFile(input, 'utf-8')
   );
-  console.info(document);
+
+  await generateZodClientFromOpenAPI({
+    openApiDoc: document as any,
+    distPath: path.join(process.cwd(), 'src/client.ts'),
+    templatePath: path.join(process.cwd(), 'src/templates/default.hbs')
+  });
 
   // Generate the definitions only.
-  const paths = document.paths || {};
-  const pathsByTag: any = {};
-  const methods = ['get', 'post', 'put', 'delete', 'patch'] as const;
+  const routers: string[] = [];
+  const controllers: {
+    name: string;
+    fnParameterName: string;
+  }[] = [];
 
-  for (const key in paths) {
-    const path = paths[key];
-    if (!path) continue;
+  const methods = ['get', 'post', 'put', 'delete', 'patch'] as const;
+  let hasSecurity = false;
+
+  for (const pathKey in document.paths) {
+    const pathItem = document.paths[pathKey];
+    if (!pathItem) continue;
 
     for (const methodKey of methods) {
-      const pathMethod = path[methodKey];
-      if (!pathMethod) continue;
+      const operation = pathItem[methodKey];
+      if (!operation) continue;
 
-      const { tags } = pathMethod;
-      if (!tags) continue;
+      const { tags = [], operationId, security } = operation;
+      const [tag] = tags;
+      const controllerName = `${titleCase(tag)}Controller`;
+      const controllerObject = {
+        name: controllerName,
+        fnParameterName: `${operationId}Parameter`
+      };
+      controllers.push(controllerObject);
 
-      if (!pathsByTag[tags[0]]) {
-        pathsByTag[tags[0]] = [];
+      const middlewares: string[] = [
+        `
+(ctx, next) => {
+  const { } = ${controllerName}.${operationId}()
+  ctx.status = 200
+}
+      `.trim()
+      ];
+
+      if (security) {
+        hasSecurity = true;
+
+        middlewares.unshift(
+          `
+async (ctx, next) => {
+  const { status } = await MiddlewareHelpers.doAdditionalSecurityValidation(ctx)
+  
+  if (status !== 200) {
+    ctx.status = status
+    return  
+  }
+
+  next()
+}
+        `.trim()
+        );
       }
 
-      const pathByTag = {
-        method: methodKey,
-        path: key,
-        operationId: pathMethod.operationId || '',
-        parameters: pathMethod.parameters || [],
-        responses: pathMethod.responses
-      };
-
-      pathsByTag.push(pathByTag);
+      routers.push(
+        `
+router.${methodKey}('${pathKey}', ${middlewares.join(', ')})
+      `.trim()
+      );
     }
   }
 
-  console.info(pathsByTag);
+  const uniqueControllers = Array.from(new Set(controllers.map((c) => c.name)));
+  const template = `
+import Koa from 'koa'
+import Router from '@koa/router'
+import bodyParser from '@koa/bodyparser';
+import { schemas } from './client'
+import { MiddlewareHelpers } from './middleware-helpers'
+
+${uniqueControllers
+  .map((c) => `import ${c} from './controllers/${c}'`)
+  .join('\n')}
+
+const app = new Koa()
+const router = new Router()
+
+app.use(bodyParser());
+
+${routers.join('\n\n')}
+
+app
+  .use(router.routes())
+  .use(router.allowedMethods());
+  `;
+
+  await fs.writeFile(
+    path.join(process.cwd(), 'src/server.ts'),
+    template,
+    'utf-8'
+  );
 }
 
 main();
