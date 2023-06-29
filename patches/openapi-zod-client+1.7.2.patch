@@ -1,0 +1,39 @@
+diff --git a/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-3ae6d9dd.cjs.prod.js b/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-3ae6d9dd.cjs.prod.js
+index a87c93c..3aceb2c 100644
+--- a/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-3ae6d9dd.cjs.prod.js
++++ b/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-3ae6d9dd.cjs.prod.js
+@@ -1618,6 +1618,8 @@ var getZodiosEndpointDefinitionList = function getZodiosEndpointDefinitionList(d
+         path: replaceHyphenatedPath(path),
+         alias: operationName,
+         description: operation.description,
++        operationId: operation.operationId,
++        security: JSON.stringify(operation.security),
+         requestFormat: "json",
+         parameters: [],
+         errors: [],
+diff --git a/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-702d661d.cjs.dev.js b/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-702d661d.cjs.dev.js
+index a87c93c..3aceb2c 100644
+--- a/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-702d661d.cjs.dev.js
++++ b/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-702d661d.cjs.dev.js
+@@ -1618,6 +1618,8 @@ var getZodiosEndpointDefinitionList = function getZodiosEndpointDefinitionList(d
+         path: replaceHyphenatedPath(path),
+         alias: operationName,
+         description: operation.description,
++        operationId: operation.operationId,
++        security: JSON.stringify(operation.security),
+         requestFormat: "json",
+         parameters: [],
+         errors: [],
+diff --git a/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-8fd9f4ff.esm.js b/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-8fd9f4ff.esm.js
+index 04ce9c5..a08b9b7 100644
+--- a/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-8fd9f4ff.esm.js
++++ b/node_modules/openapi-zod-client/dist/generateZodClientFromOpenAPI-8fd9f4ff.esm.js
+@@ -1592,6 +1592,8 @@ var getZodiosEndpointDefinitionList = function getZodiosEndpointDefinitionList(d
+         path: replaceHyphenatedPath(path),
+         alias: operationName,
+         description: operation.description,
++        operationId: operation.operationId,
++        security: JSON.stringify(operation.security),
+         requestFormat: "json",
+         parameters: [],
+         errors: [],

@@ -24,3 +24,47 @@ export const schemas = {
 {{/each}}
 };
 {{/ifNotEmptyObj}}
+
+export const endpointParameters = {
+{{#each endpoints}}
+	"{{operationId}}": {
+		parameters: [
+			{{#if parameters}}
+			{{#each parameters}}
+			{
+				name: "{{name}}",
+				{{#if description}}
+				description: `{{description}}`,
+				{{/if}}
+				{{#if type}}
+				type: "{{type}}",
+				{{/if}}
+				schema: {{{schema}}}
+			},
+			{{/each}}
+			{{/if}}
+		],
+		{{#if security}}
+		security: {{{security}}},
+		{{/if}}
+		response: {{{response}}},
+		{{#if errors.length}}
+		errors: {
+			{{#each errors}}
+			"{{status}}": {
+				{{#ifeq status "default" }}
+				status: "default",
+				{{else}}
+				status: {{status}},
+				{{/ifeq}}
+				{{#if description}}
+				description: `{{description}}`,
+				{{/if}}
+				schema: {{{schema}}}
+			},
+			{{/each}}
+		}
+		{{/if}}
+	},
+{{/each}}
+} as const

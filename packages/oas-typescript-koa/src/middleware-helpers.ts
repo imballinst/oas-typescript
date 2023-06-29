@@ -1,6 +1,11 @@
 import Koa from 'koa';
 import Router from '@koa/router';
 
+import { endpointParameters } from './client';
+import { securitySchemes } from './security-schemes';
+import { OpenAPIV3 } from 'openapi-types';
+import { OasSecurity } from './utils';
+
 type KoaCtx = Koa.ParameterizedContext<
   Koa.DefaultState,
   Koa.DefaultContext &
@@ -8,23 +13,57 @@ type KoaCtx = Koa.ParameterizedContext<
   unknown
 >;
 
+const securitySchemeWithOauthScope =
+  findSecuritySchemeWithOauthScope(securitySchemes);
+
 export class MiddlewareHelpers {
-  static async doAdditionalSecurityValidation(ctx: KoaCtx) {
+  static async doAdditionalSecurityValidation(
+    ctx: KoaCtx,
+    scopes: string[] | undefined
+  ) {
     return {
       status: 200
     };
   }
 
-  static async createSecurityMiddleware(ctx: KoaCtx, next: Koa.Next) {
-    const { status } = await MiddlewareHelpers.doAdditionalSecurityValidation(
-      ctx
-    );
+  static createSecurityMiddleware<
+    EndpointParameter extends { security?: OasSecurity[] }
+  >(endpointParameter: EndpointParameter) {
+    const scopes = endpointParameter.security?.find(
+      (item) => Object.keys(item)[0] === securitySchemeWithOauthScope
+    )?.[securitySchemeWithOauthScope];
 
-    if (status !== 200) {
-      ctx.status = status;
-      return;
-    }
+    return async (ctx: KoaCtx, next: Koa.Next) => {
+      const { status } = await MiddlewareHelpers.doAdditionalSecurityValidation(
+        ctx,
+        scopes
+      );
 
-    next();
+      if (status !== 200) {
+        ctx.status = status;
+        return;
+      }
+
+      next();
+    };
   }
+}
+
+// Helper functions.
+function findSecuritySchemeWithOauthScope(
+  securitySchemes: OpenAPIV3.ComponentsObject['securitySchemes']
+) {
+  if (!securitySchemes) return '';
+
+  for (const key in securitySchemes) {
+    const securityScheme = securitySchemes[
+      key
+    ] as OpenAPIV3.SecuritySchemeObject;
+
+    if (securityScheme.type === 'oauth2') {
+      return key;
+    }
+  }
+
+  return '';
 }

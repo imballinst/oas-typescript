@@ -103,7 +103,9 @@ async function main() {
 
       if (security) {
         hasSecurity = true;
-        middlewares.unshift('MiddlewareHelpers.createSecurityMiddleware');
+        middlewares.unshift(
+          `MiddlewareHelpers.createSecurityMiddleware(endpointParameters.${operationId})`
+        );
       }
 
       routers.push(
@@ -118,7 +120,7 @@ router.${methodKey}('${pathKey}', ${middlewares.join(', ')})
 import Koa from 'koa'
 import Router from '@koa/router'
 import bodyParser from '@koa/bodyparser';
-import { schemas } from './client'
+import { schemas, endpointParameters } from './client'
 import { MiddlewareHelpers } from './middleware-helpers'
 
 ${Object.keys(controllersInformation)
@@ -184,6 +186,7 @@ ${controller.map((c) => renderControllerMethod(c)).join('\n  ')}
     );
   }
 
+  // Output parameters.
   await fs.writeFile(
     path.join(process.cwd(), 'src/parameters.ts'),
     `
@@ -191,6 +194,19 @@ ${allParameters.map((p) => `export interface ${p} {}`).join('\n\n')}
   `.trim(),
     'utf-8'
   );
+
+  // Output security schemes.
+  if (document.components?.securitySchemes) {
+    await fs.writeFile(
+      path.join(process.cwd(), 'src/security-schemes.ts'),
+      `export const securitySchemes = ${JSON.stringify(
+        document.components?.securitySchemes,
+        null,
+        2
+      )} as const`,
+      'utf-8'
+    );
+  }
 }
 
 main();

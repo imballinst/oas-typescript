@@ -2,6 +2,10 @@ import Koa from 'koa';
 import Router from '@koa/router';
 import { z } from 'zod';
 
+export interface OasSecurity {
+  [name: string]: string[] | undefined;
+}
+
 interface OasParameter {
   name: string;
   description?: string;
@@ -25,14 +29,7 @@ type FilterByParameterType<
 };
 
 export class KoaGeneratedUtils {
-  static parseRequestInfo<
-    OasParametersType extends Array<{
-      name: string;
-      description?: string;
-      type: 'Path' | 'Query' | 'Body' | 'Header';
-      schema: z.ZodObject<any>;
-    }>
-  >({
+  static parseRequestInfo<OasParametersType extends Array<OasParameter>>({
     ctx,
     oasParameters
   }: {
