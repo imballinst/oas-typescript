@@ -15,14 +15,17 @@ interface OasParameter {
 type OasParameterWithValue<TValue = any> = OasParameter & { value: TValue };
 
 type FilterArrayElementsByType<
-  T extends readonly any[],
+  T extends readonly { name: string; type: string }[],
   TF extends T[number]['type']
-> = Record<T[number]['name'], Extract<T[number], { type: TF }>>;
+> = Record<
+  Extract<T[number], { type: TF }>['name'],
+  Extract<T[number], { type: TF }>
+>;
 
 export type FilterByParameterType<
   T extends readonly { type: string; name: string }[]
 > = {
-  body: FilterArrayElementsByType<T, 'Body'> | undefined;
+  body: Extract<T[number], { type: 'Body' }>;
   queryParams: FilterArrayElementsByType<T, 'Query'> | undefined;
   pathParams: FilterArrayElementsByType<T, 'Path'> | undefined;
   headerParams: FilterArrayElementsByType<T, 'Header'> | undefined;
