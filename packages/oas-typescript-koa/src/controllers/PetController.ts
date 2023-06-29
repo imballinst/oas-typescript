@@ -1,37 +1,48 @@
 import { 
-  AddPetParameter,
-  UpdatePetParameter,
-  FindPetsByStatusParameter,
-  FindPetsByTagsParameter,
-  GetPetByIdParameter,
-  UpdatePetWithFormParameter,
-  DeletePetParameter,
-  UploadFileParameter
+  AddPetParameters,
+  UpdatePetParameters,
+  FindPetsByStatusParameters,
+  FindPetsByTagsParameters,
+  GetPetByIdParameters,
+  UpdatePetWithFormParameters,
+  DeletePetParameters,
+  UploadFileParameters,
+  GetInventoryParameters,
+  PlaceOrderParameters,
+  GetOrderByIdParameters,
+  DeleteOrderParameters,
+  CreateUserParameters,
+  CreateUsersWithListInputParameters,
+  LoginUserParameters,
+  LogoutUserParameters,
+  GetUserByNameParameters,
+  UpdateUserParameters,
+  DeleteUserParameters
 } from '../parameters'
 
 export class PetController {
-static async addPet(params: AddPetParameter) {
+static async addPet(params: AddPetParameters) {
 
 }
-  static async updatePet(params: UpdatePetParameter) {
+  static async updatePet(params: UpdatePetParameters) {
 
 }
-  static async findPetsByStatus(params: FindPetsByStatusParameter) {
+  static async findPetsByStatus(params: FindPetsByStatusParameters) {
 
 }
-  static async findPetsByTags(params: FindPetsByTagsParameter) {
+  static async findPetsByTags(params: FindPetsByTagsParameters) {
 
 }
-  static async getPetById(params: GetPetByIdParameter) {
+  static async getPetById(params: GetPetByIdParameters) {
 
 }
-  static async updatePetWithForm(params: UpdatePetWithFormParameter) {
+  static async updatePetWithForm(params: UpdatePetWithFormParameters) {
 
 }
-  static async deletePet(params: DeletePetParameter) {
+  static async deletePet(params: DeletePetParameters) {
 
 }
-  static async uploadFile(params: UploadFileParameter) {
+  static async uploadFile(params: UploadFileParameters) {
 
 }
 }

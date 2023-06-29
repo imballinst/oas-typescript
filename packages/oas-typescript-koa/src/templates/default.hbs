@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 {{#if imports}}
 {{#each imports}}
-import { {{{@key}}} } from "./{{{this}}}"
+import { {{{@key}}} } from './{{{this}}}'
 {{/each}}
 {{/if}}
 
@@ -14,57 +14,28 @@ import { {{{@key}}} } from "./{{{this}}}"
 {{/if}}
 
 {{#each schemas}}
-const {{@key}}{{#if (lookup ../circularTypeByName @key)}}: z.ZodType<{{@key}}>{{/if}} = {{{this}}};
+export const {{@key}}{{#if (lookup ../circularTypeByName @key)}}: z.ZodType<{{@key}}>{{/if}} = {{{this}}};
 {{/each}}
 
-{{#ifNotEmptyObj schemas}}
-export const schemas = {
-{{#each schemas}}
-	{{@key}},
-{{/each}}
-};
-{{/ifNotEmptyObj}}
-
-export const endpointParameters = {
 {{#each endpoints}}
-	"{{operationId}}": {
-		parameters: [
-			{{#if parameters}}
-			{{#each parameters}}
-			{
-				name: "{{name}}",
-				{{#if description}}
-				description: `{{description}}`,
-				{{/if}}
-				{{#if type}}
-				type: "{{type}}",
-				{{/if}}
-				schema: {{{schema}}}
-			},
-			{{/each}}
-			{{/if}}
-		],
-		{{#if security}}
-		security: {{{security}}},
-		{{/if}}
-		response: {{{response}}},
-		{{#if errors.length}}
-		errors: {
-			{{#each errors}}
-			"{{status}}": {
-				{{#ifeq status "default" }}
-				status: "default",
-				{{else}}
-				status: {{status}},
-				{{/ifeq}}
-				{{#if description}}
-				description: `{{description}}`,
-				{{/if}}
-				schema: {{{schema}}}
-			},
-			{{/each}}
-		}
-		{{/if}}
-	},
+export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Parameters = [
+  {{#if parameters}}
+  {{#each parameters}}
+  { 
+    name: '{{name}}',
+    {{#if description}}
+    description: `{{description}}`,
+    {{/if}}
+    {{#if type}}
+    type: '{{type}}',
+    {{/if}}
+    schema: {{{schema}}}
+  },
+  {{/each}}
+  {{/if}}
+] as const
+{{#if security}}
+export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Security = {{{security}}}
+{{/if}}
+
 {{/each}}
-} as const

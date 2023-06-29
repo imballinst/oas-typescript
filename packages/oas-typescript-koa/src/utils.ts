@@ -19,13 +19,13 @@ type FilterArrayElementsByType<
   TF extends T[number]['type']
 > = Record<T[number]['name'], Extract<T[number], { type: TF }>>;
 
-type FilterByParameterType<
+export type FilterByParameterType<
   T extends readonly { type: string; name: string }[]
 > = {
-  body: FilterArrayElementsByType<T, 'Body'>;
-  queryParams: FilterArrayElementsByType<T, 'Query'>;
-  pathParams: FilterArrayElementsByType<T, 'Path'>;
-  headerParams: FilterArrayElementsByType<T, 'Header'>;
+  body: FilterArrayElementsByType<T, 'Body'> | undefined;
+  queryParams: FilterArrayElementsByType<T, 'Query'> | undefined;
+  pathParams: FilterArrayElementsByType<T, 'Path'> | undefined;
+  headerParams: FilterArrayElementsByType<T, 'Header'> | undefined;
 };
 
 export class KoaGeneratedUtils {

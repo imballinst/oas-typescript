@@ -2,7 +2,17 @@
 import Koa from 'koa'
 import Router from '@koa/router'
 import bodyParser from '@koa/bodyparser';
-import { schemas, endpointParameters } from './client'
+import { 
+  AddPetSecurity,
+  UpdatePetSecurity,
+  FindPetsByStatusSecurity,
+  FindPetsByTagsSecurity,
+  GetPetByIdSecurity,
+  UpdatePetWithFormSecurity,
+  DeletePetSecurity,
+  UploadFileSecurity,
+  GetInventorySecurity
+} from './client'
 import { MiddlewareHelpers } from './middleware-helpers'
 
 import { PetController } from './controllers/PetController'
@@ -14,47 +24,47 @@ const router = new Router()
 
 app.use(bodyParser());
 
-router.post('/pet', MiddlewareHelpers.createSecurityMiddleware(endpointParameters.addPet), (ctx, next) => {
+router.post('/pet', MiddlewareHelpers.createSecurityMiddleware(AddPetSecurity), (ctx, next) => {
   const { } = PetController.addPet({})
   ctx.status = 200
 })
 
-router.put('/pet', MiddlewareHelpers.createSecurityMiddleware(endpointParameters.updatePet), (ctx, next) => {
+router.put('/pet', MiddlewareHelpers.createSecurityMiddleware(UpdatePetSecurity), (ctx, next) => {
   const { } = PetController.updatePet({})
   ctx.status = 200
 })
 
-router.get('/pet/findByStatus', MiddlewareHelpers.createSecurityMiddleware(endpointParameters.findPetsByStatus), (ctx, next) => {
+router.get('/pet/findByStatus', MiddlewareHelpers.createSecurityMiddleware(FindPetsByStatusSecurity), (ctx, next) => {
   const { } = PetController.findPetsByStatus({})
   ctx.status = 200
 })
 
-router.get('/pet/findByTags', MiddlewareHelpers.createSecurityMiddleware(endpointParameters.findPetsByTags), (ctx, next) => {
+router.get('/pet/findByTags', MiddlewareHelpers.createSecurityMiddleware(FindPetsByTagsSecurity), (ctx, next) => {
   const { } = PetController.findPetsByTags({})
   ctx.status = 200
 })
 
-router.get('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(endpointParameters.getPetById), (ctx, next) => {
+router.get('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(GetPetByIdSecurity), (ctx, next) => {
   const { } = PetController.getPetById({})
   ctx.status = 200
 })
 
-router.post('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(endpointParameters.updatePetWithForm), (ctx, next) => {
+router.post('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(UpdatePetWithFormSecurity), (ctx, next) => {
   const { } = PetController.updatePetWithForm({})
   ctx.status = 200
 })
 
-router.delete('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(endpointParameters.deletePet), (ctx, next) => {
+router.delete('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(DeletePetSecurity), (ctx, next) => {
   const { } = PetController.deletePet({})
   ctx.status = 200
 })
 
-router.post('/pet/{petId}/uploadImage', MiddlewareHelpers.createSecurityMiddleware(endpointParameters.uploadFile), (ctx, next) => {
+router.post('/pet/{petId}/uploadImage', MiddlewareHelpers.createSecurityMiddleware(UploadFileSecurity), (ctx, next) => {
   const { } = PetController.uploadFile({})
   ctx.status = 200
 })
 
-router.get('/store/inventory', MiddlewareHelpers.createSecurityMiddleware(endpointParameters.getInventory), (ctx, next) => {
+router.get('/store/inventory', MiddlewareHelpers.createSecurityMiddleware(GetInventorySecurity), (ctx, next) => {
   const { } = StoreController.getInventory({})
   ctx.status = 200
 })

@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 import { OpenAPIV3 } from 'openapi-types';
-import { generateZodClientFromOpenAPI } from 'openapi-zod-client';
+import {
+  generateZodClientFromOpenAPI,
+  getHandlebars
+} from 'openapi-zod-client';
 import { titleCase } from 'title-case';
 import meow from 'meow';
 import fs from 'fs/promises';
@@ -49,10 +52,22 @@ async function main() {
     await fs.readFile(input, 'utf-8')
   );
 
+  const handlebars = getHandlebars();
+  handlebars.registerHelper(
+    'ifEquals',
+    function (arg1: any, arg2: any, options: any) {
+      return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+    }
+  );
+  handlebars.registerHelper('capitalizeFirstLetter', function (options: any) {
+    return capitalizeFirstCharacter(options.fn(this));
+  });
+
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
     distPath: path.join(process.cwd(), 'src/client.ts'),
-    templatePath: path.join(process.cwd(), 'src/templates/default.hbs')
+    templatePath: path.join(process.cwd(), 'src/templates/default.hbs'),
+    handlebars
   });
 
   // Generate the definitions only.
@@ -63,6 +78,9 @@ async function main() {
     string,
     Array<{ parameterName: string; operationId: string }>
   > = {};
+  const allServerParameterImports: string[] = [];
+  const allServerSecurityImports: string[] = [];
+
   let hasSecurity = false;
 
   for (const pathKey in document.paths) {
@@ -87,10 +105,16 @@ async function main() {
         controllersInformation[controllerName] = [];
       }
 
+      const parameterName = `${capitalizeFirstCharacter(
+        operationId
+      )}Parameters`;
+
       controllersInformation[controllerName].push({
         operationId,
-        parameterName: `${capitalizeFirstCharacter(operationId)}Parameter`
+        parameterName
       });
+
+      allServerParameterImports.push(parameterName);
 
       const middlewares: string[] = [
         `
@@ -102,9 +126,12 @@ async function main() {
       ];
 
       if (security) {
+        const securityName = `${capitalizeFirstCharacter(operationId)}Security`;
+        allServerSecurityImports.push(securityName);
+
         hasSecurity = true;
         middlewares.unshift(
-          `MiddlewareHelpers.createSecurityMiddleware(endpointParameters.${operationId})`
+          `MiddlewareHelpers.createSecurityMiddleware(${securityName})`
         );
       }
 
@@ -116,11 +143,58 @@ router.${methodKey}('${pathKey}', ${middlewares.join(', ')})
     }
   }
 
+  // Create controllers.
+  for (const controllerKey in controllersInformation) {
+    const pathToController = path.join(
+      process.cwd(),
+      `src/controllers/${controllerKey}.ts`
+    );
+    const controller = controllersInformation[controllerKey];
+
+    try {
+      await fs.stat(pathToController);
+      // If it doesn't throw, then it exists.
+    } catch (err) {
+      // It doesn't exist, so we need to create it first.
+      await fs.mkdir(path.dirname(pathToController), { recursive: true });
+    }
+
+    // TODO: find some way to patch the controller if there are removed/added operations.
+    await fs.writeFile(
+      pathToController,
+      `
+import { 
+  ${allServerParameterImports.join(',\n  ')}
+} from '../parameters'
+
+export class ${controllerKey} {
+${controller.map((c) => renderControllerMethod(c)).join('\n  ')}
+}
+    `.trim(),
+      'utf-8'
+    );
+  }
+
+  // Output security schemes.
+  if (document.components?.securitySchemes) {
+    await fs.writeFile(
+      path.join(process.cwd(), 'src/security-schemes.ts'),
+      `export const securitySchemes = ${JSON.stringify(
+        document.components?.securitySchemes,
+        null,
+        2
+      )} as const`,
+      'utf-8'
+    );
+  }
+
   const template = `
 import Koa from 'koa'
 import Router from '@koa/router'
 import bodyParser from '@koa/bodyparser';
-import { schemas, endpointParameters } from './client'
+import { 
+  ${allServerSecurityImports.join(',\n  ')}
+} from './client'
 import { MiddlewareHelpers } from './middleware-helpers'
 
 ${Object.keys(controllersInformation)
@@ -147,65 +221,6 @@ app
 
   if (hasSecurity) {
     // Create the middleware-helpers.ts.
-  }
-
-  const allParameters: string[] = [];
-
-  // Create controllers.
-  for (const controllerKey in controllersInformation) {
-    const pathToController = path.join(
-      process.cwd(),
-      `src/controllers/${controllerKey}.ts`
-    );
-    const controller = controllersInformation[controllerKey];
-    const parameters = Object.values(controller).map((c) => c.parameterName);
-
-    allParameters.push(...parameters);
-
-    try {
-      await fs.stat(pathToController);
-      // If it doesn't throw, then it exists.
-    } catch (err) {
-      // It doesn't exist, so we need to create it first.
-      await fs.mkdir(path.dirname(pathToController), { recursive: true });
-    }
-
-    // TODO: find some way to patch the controller if there are removed/added operations.
-    await fs.writeFile(
-      pathToController,
-      `
-import { 
-  ${parameters.join(',\n  ')}
-} from '../parameters'
-
-export class ${controllerKey} {
-${controller.map((c) => renderControllerMethod(c)).join('\n  ')}
-}
-    `.trim(),
-      'utf-8'
-    );
-  }
-
-  // Output parameters.
-  await fs.writeFile(
-    path.join(process.cwd(), 'src/parameters.ts'),
-    `
-${allParameters.map((p) => `export interface ${p} {}`).join('\n\n')}
-  `.trim(),
-    'utf-8'
-  );
-
-  // Output security schemes.
-  if (document.components?.securitySchemes) {
-    await fs.writeFile(
-      path.join(process.cwd(), 'src/security-schemes.ts'),
-      `export const securitySchemes = ${JSON.stringify(
-        document.components?.securitySchemes,
-        null,
-        2
-      )} as const`,
-      'utf-8'
-    );
   }
 }
 

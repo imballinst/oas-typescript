@@ -1,7 +1,6 @@
 import Koa from 'koa';
 import Router from '@koa/router';
 
-import { endpointParameters } from './client';
 import { securitySchemes } from './security-schemes';
 import { OpenAPIV3 } from 'openapi-types';
 import { OasSecurity } from './utils';
@@ -26,10 +25,10 @@ export class MiddlewareHelpers {
     };
   }
 
-  static createSecurityMiddleware<
-    EndpointParameter extends { security?: OasSecurity[] }
-  >(endpointParameter: EndpointParameter) {
-    const scopes = endpointParameter.security?.find(
+  static createSecurityMiddleware<EndpointParameter extends OasSecurity[]>(
+    security: EndpointParameter | undefined
+  ) {
+    const scopes = security?.find(
       (item) => Object.keys(item)[0] === securitySchemeWithOauthScope
     )?.[securitySchemeWithOauthScope];
 
