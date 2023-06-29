@@ -187,7 +187,7 @@ ${controller.map((c) => renderControllerMethod(c)).join('\n  ')}
   await fs.writeFile(
     path.join(process.cwd(), 'src/parameters.ts'),
     `
-${allParameters.map((p) => `export interface ${p} {}`)}
+${allParameters.map((p) => `export interface ${p} {}`).join('\n\n')}
   `.trim(),
     'utf-8'
   );
