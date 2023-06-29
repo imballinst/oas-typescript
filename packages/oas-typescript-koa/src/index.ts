@@ -57,12 +57,12 @@ async function main() {
 
   // Generate the definitions only.
   const routers: string[] = [];
-  const controllers: {
-    name: string;
-    fnParameterName: string;
-  }[] = [];
 
   const methods = ['get', 'post', 'put', 'delete', 'patch'] as const;
+  const controllersInformation: Record<
+    string,
+    Array<{ parameterName: string; operationId: string }>
+  > = {};
   let hasSecurity = false;
 
   for (const pathKey in document.paths) {
@@ -75,17 +75,27 @@ async function main() {
 
       const { tags = [], operationId, security } = operation;
       const [tag] = tags;
+
+      if (!operationId) {
+        throw new Error(
+          `The operation ID for the method ${methodKey} of ${pathKey} is not defined. Define it, then try again.`
+        );
+      }
+
       const controllerName = `${titleCase(tag)}Controller`;
-      const controllerObject = {
-        name: controllerName,
-        fnParameterName: `${operationId}Parameter`
-      };
-      controllers.push(controllerObject);
+      if (!controllersInformation[controllerName]) {
+        controllersInformation[controllerName] = [];
+      }
+
+      controllersInformation[controllerName].push({
+        operationId,
+        parameterName: `${capitalizeFirstCharacter(operationId)}Parameter`
+      });
 
       const middlewares: string[] = [
         `
 (ctx, next) => {
-  const { } = ${controllerName}.${operationId}()
+  const { } = ${controllerName}.${operationId}({})
   ctx.status = 200
 }
       `.trim()
@@ -93,21 +103,7 @@ async function main() {
 
       if (security) {
         hasSecurity = true;
-
-        middlewares.unshift(
-          `
-async (ctx, next) => {
-  const { status } = await MiddlewareHelpers.doAdditionalSecurityValidation(ctx)
-  
-  if (status !== 200) {
-    ctx.status = status
-    return  
-  }
-
-  next()
-}
-        `.trim()
-        );
+        middlewares.unshift('MiddlewareHelpers.createSecurityMiddleware');
       }
 
       routers.push(
@@ -118,7 +114,6 @@ router.${methodKey}('${pathKey}', ${middlewares.join(', ')})
     }
   }
 
-  const uniqueControllers = Array.from(new Set(controllers.map((c) => c.name)));
   const template = `
 import Koa from 'koa'
 import Router from '@koa/router'
@@ -126,8 +121,8 @@ import bodyParser from '@koa/bodyparser';
 import { schemas } from './client'
 import { MiddlewareHelpers } from './middleware-helpers'
 
-${uniqueControllers
-  .map((c) => `import ${c} from './controllers/${c}'`)
+${Object.keys(controllersInformation)
+  .map((c) => `import { ${c} } from './controllers/${c}'`)
   .join('\n')}
 
 const app = new Koa()
@@ -151,6 +146,67 @@ app
   if (hasSecurity) {
     // Create the middleware-helpers.ts.
   }
+
+  const allParameters: string[] = [];
+
+  // Create controllers.
+  for (const controllerKey in controllersInformation) {
+    const pathToController = path.join(
+      process.cwd(),
+      `src/controllers/${controllerKey}.ts`
+    );
+    const controller = controllersInformation[controllerKey];
+    const parameters = Object.values(controller).map((c) => c.parameterName);
+
+    allParameters.push(...parameters);
+
+    try {
+      await fs.stat(pathToController);
+      // If it doesn't throw, then it exists.
+    } catch (err) {
+      // It doesn't exist, so we need to create it first.
+      await fs.mkdir(path.dirname(pathToController), { recursive: true });
+    }
+
+    // TODO: find some way to patch the controller if there are removed/added operations.
+    await fs.writeFile(
+      pathToController,
+      `
+import { 
+  ${parameters.join(',\n  ')}
+} from '../parameters'
+
+export class ${controllerKey} {
+${controller.map((c) => renderControllerMethod(c)).join('\n  ')}
+}
+    `.trim(),
+      'utf-8'
+    );
+  }
+
+  await fs.writeFile(
+    path.join(process.cwd(), 'src/parameters.ts'),
+    `
+${allParameters.map((p) => `export interface ${p} {}`)}
+  `.trim(),
+    'utf-8'
+  );
 }
 
 main();
+
+// Helper functions.
+function renderControllerMethod(controller: {
+  parameterName: string;
+  operationId: string;
+}) {
+  return `
+static async ${controller.operationId}(params: ${controller.parameterName}) {
+
+}
+  `.trim();
+}
+
+function capitalizeFirstCharacter(text: string) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}

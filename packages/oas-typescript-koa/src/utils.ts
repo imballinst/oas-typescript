@@ -13,20 +13,25 @@ type OasParameterWithValue<TValue = any> = OasParameter & { value: TValue };
 type FilterArrayElementsByType<
   T extends readonly any[],
   TF extends T[number]['type']
-> = Array<Extract<T[number], { type: TF }>>;
+> = Record<T[number]['name'], Extract<T[number], { type: TF }>>;
 
-type FilterByParameterType<T extends readonly { type: string }[]> = {
+type FilterByParameterType<
+  T extends readonly { type: string; name: string }[]
+> = {
   body: FilterArrayElementsByType<T, 'Body'>;
   queryParams: FilterArrayElementsByType<T, 'Query'>;
   pathParams: FilterArrayElementsByType<T, 'Path'>;
+  headerParams: FilterArrayElementsByType<T, 'Header'>;
 };
 
 export class KoaGeneratedUtils {
   static parseRequestInfo<
-    TPathParamsType,
-    TQueryParamsType,
-    THeaderParamsType,
-    TBodyParamsType
+    OasParametersType extends Array<{
+      name: string;
+      description?: string;
+      type: 'Path' | 'Query' | 'Body' | 'Header';
+      schema: z.ZodObject<any>;
+    }>
   >({
     ctx,
     oasParameters
@@ -37,13 +42,8 @@ export class KoaGeneratedUtils {
         Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>,
       unknown
     >;
-    oasParameters: Array<{
-      name: string;
-      description?: string;
-      type: 'Path' | 'Query' | 'Body' | 'Header';
-      schema: z.ZodObject<any>;
-    }>;
-  }) {
+    oasParameters: OasParametersType;
+  }): FilterByParameterType<OasParametersType> | undefined {
     const pathParams: Record<string, OasParameterWithValue> = {};
     const queryParams: Record<string, OasParameterWithValue> = {};
     const headerParams: Record<string, OasParameterWithValue> = {};
@@ -112,21 +112,14 @@ export class KoaGeneratedUtils {
       }
     }
 
-    // TPathParamsType, TQueryParamsType, THeaderParamsType, TBodyParamsType
     return {
-      pathParams: pathParams as Record<
-        keyof TPathParamsType,
-        OasParameterWithValue
-      >,
-      queryParams: queryParams as Record<
-        keyof TQueryParamsType,
-        OasParameterWithValue
-      >,
-      headerParams: headerParams as Record<
-        keyof THeaderParamsType,
-        OasParameterWithValue
-      >,
-      bodyParams: bodyParams as OasParameterWithValue<TBodyParamsType>
+      pathParams:
+        pathParams as unknown as FilterByParameterType<OasParametersType>['pathParams'],
+      queryParams:
+        queryParams as unknown as FilterByParameterType<OasParametersType>['queryParams'],
+      headerParams:
+        headerParams as unknown as FilterByParameterType<OasParametersType>['headerParams'],
+      body: bodyParams as unknown as FilterByParameterType<OasParametersType>['body']
     };
   }
 }
