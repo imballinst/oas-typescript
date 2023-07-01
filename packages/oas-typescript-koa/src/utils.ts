@@ -10,7 +10,7 @@ interface OasParameter {
   name: string;
   description?: string;
   type: 'Path' | 'Query' | 'Body' | 'Header';
-  schema: z.ZodObject<any>;
+  schema: z.ZodSchema;
 }
 type OasParameterWithValue<TValue = any> = OasParameter & { value: TValue };
 
@@ -32,7 +32,7 @@ export type FilterByParameterType<
 };
 
 export class KoaGeneratedUtils {
-  static parseRequestInfo<OasParametersType extends Array<OasParameter>>({
+  static parseRequestInfo<OasParametersType extends readonly OasParameter[]>({
     ctx,
     oasParameters
   }: {

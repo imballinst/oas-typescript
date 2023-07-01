@@ -78,7 +78,7 @@ async function main() {
     string,
     Array<{ parameterName: string; operationId: string }>
   > = {};
-  const allServerParameterImports: string[] = [];
+  const parametersImportsPerController: Record<string, string[]> = {};
   const allServerSecurityImports: string[] = [];
 
   let hasSecurity = false;
@@ -94,6 +94,12 @@ async function main() {
       const { tags = [], operationId, security } = operation;
       const [tag] = tags;
 
+      if (!tag) {
+        throw new Error(
+          `The tag for the method ${methodKey} of ${pathKey} is not defined. Define it, then try again.`
+        );
+      }
+
       if (!operationId) {
         throw new Error(
           `The operation ID for the method ${methodKey} of ${pathKey} is not defined. Define it, then try again.`
@@ -105,6 +111,10 @@ async function main() {
         controllersInformation[controllerName] = [];
       }
 
+      if (!parametersImportsPerController[controllerName]) {
+        parametersImportsPerController[controllerName] = [];
+      }
+
       const parameterName = `${capitalizeFirstCharacter(
         operationId
       )}Parameters`;
@@ -114,12 +124,21 @@ async function main() {
         parameterName
       });
 
-      allServerParameterImports.push(parameterName);
+      parametersImportsPerController[controllerName].push(parameterName);
 
       const middlewares: string[] = [
         `
 (ctx, next) => {
-  const { } = ${controllerName}.${operationId}({})
+  const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
+    ctx,
+    oasParameters: ${parameterName}
+  })
+  if (!parsedRequestInfo) {
+    ctx.status = 400
+    return
+  }
+
+  const { } = ${controllerName}.${operationId}(parsedRequestInfo)
   ctx.status = 200
 }
       `.trim()
@@ -164,8 +183,9 @@ router.${methodKey}('${pathKey}', ${middlewares.join(', ')})
       pathToController,
       `
 import { 
-  ${allServerParameterImports.join(',\n  ')}
-} from '../parameters'
+  ${parametersImportsPerController[controllerKey].join(',\n  ')}
+} from '../client'
+import { FilterByParameterType } from '../utils';
 
 export class ${controllerKey} {
 ${controller.map((c) => renderControllerMethod(c)).join('\n  ')}
@@ -193,9 +213,12 @@ import Koa from 'koa'
 import Router from '@koa/router'
 import bodyParser from '@koa/bodyparser';
 import { 
-  ${allServerSecurityImports.join(',\n  ')}
+  ${allServerSecurityImports
+    .concat(Object.values(parametersImportsPerController).flat())
+    .join(',\n  ')}
 } from './client'
 import { MiddlewareHelpers } from './middleware-helpers'
+import { KoaGeneratedUtils } from './utils'
 
 ${Object.keys(controllersInformation)
   .map((c) => `import { ${c} } from './controllers/${c}'`)
@@ -232,7 +255,7 @@ function renderControllerMethod(controller: {
   operationId: string;
 }) {
   return `
-static async ${controller.operationId}(params: ${controller.parameterName}) {
+static async ${controller.operationId}(params: FilterByParameterType<typeof ${controller.parameterName}>) {
 
 }
   `.trim();

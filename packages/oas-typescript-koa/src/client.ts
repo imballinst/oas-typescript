@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { FilterByParameterType } from './utils';
 
 export const Category = z
   .object({ id: z.number().int(), name: z.string() })

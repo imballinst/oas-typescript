@@ -1,16 +1,4 @@
 import { 
-  AddPetParameters,
-  UpdatePetParameters,
-  FindPetsByStatusParameters,
-  FindPetsByTagsParameters,
-  GetPetByIdParameters,
-  UpdatePetWithFormParameters,
-  DeletePetParameters,
-  UploadFileParameters,
-  GetInventoryParameters,
-  PlaceOrderParameters,
-  GetOrderByIdParameters,
-  DeleteOrderParameters,
   CreateUserParameters,
   CreateUsersWithListInputParameters,
   LoginUserParameters,
@@ -18,28 +6,29 @@ import {
   GetUserByNameParameters,
   UpdateUserParameters,
   DeleteUserParameters
-} from '../parameters'
+} from '../client'
+import { FilterByParameterType } from '../utils';
 
 export class UserController {
-static async createUser(params: CreateUserParameters) {
+static async createUser(params: FilterByParameterType<typeof CreateUserParameters>) {
 
 }
-  static async createUsersWithListInput(params: CreateUsersWithListInputParameters) {
+  static async createUsersWithListInput(params: FilterByParameterType<typeof CreateUsersWithListInputParameters>) {
 
 }
-  static async loginUser(params: LoginUserParameters) {
+  static async loginUser(params: FilterByParameterType<typeof LoginUserParameters>) {
 
 }
-  static async logoutUser(params: LogoutUserParameters) {
+  static async logoutUser(params: FilterByParameterType<typeof LogoutUserParameters>) {
 
 }
-  static async getUserByName(params: GetUserByNameParameters) {
+  static async getUserByName(params: FilterByParameterType<typeof GetUserByNameParameters>) {
 
 }
-  static async updateUser(params: UpdateUserParameters) {
+  static async updateUser(params: FilterByParameterType<typeof UpdateUserParameters>) {
 
 }
-  static async deleteUser(params: DeleteUserParameters) {
+  static async deleteUser(params: FilterByParameterType<typeof DeleteUserParameters>) {
 
 }
 }
