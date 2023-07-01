@@ -5,7 +5,7 @@
   "bin": "bin/cli.js",
   "module": "bin/cli.js",
   "scripts": {
-    "gen": "ts-node --esm src/index.ts ../shared/src/openapi/api.json",
+    "gen": "ts-node --esm src/index.ts ../shared/src/openapi/api.json --output generated",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

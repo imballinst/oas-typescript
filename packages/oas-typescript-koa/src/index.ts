@@ -8,6 +8,7 @@ import { titleCase } from 'title-case';
 import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 const cli = meow(
   `
@@ -32,6 +33,8 @@ const cli = meow(
   }
 );
 
+const DIRNAME = path.dirname(fileURLToPath(import.meta.url));
+
 async function main() {
   const cliInput = cli.input[0];
   const input = path.isAbsolute(cliInput)
@@ -46,6 +49,19 @@ async function main() {
       ? cliOutput
       : path.join(process.cwd(), cliOutput);
   }
+
+  // Copy the utility and the middleware helpers.
+  await fs.mkdir(output, { recursive: true });
+  await Promise.all([
+    fs.copyFile(
+      path.join(DIRNAME, 'templates/typescript/utils.ts'),
+      path.join(output, 'utils.ts')
+    ),
+    fs.copyFile(
+      path.join(DIRNAME, 'templates/typescript/middleware-helpers.ts'),
+      path.join(output, 'middleware-helpers.ts')
+    )
+  ]);
 
   // Start the process.
   const document: OpenAPIV3.Document = JSON.parse(
@@ -66,7 +82,7 @@ async function main() {
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
     distPath: path.join(output, 'client.ts'),
-    templatePath: path.join(process.cwd(), 'templates/default.hbs'),
+    templatePath: path.join(DIRNAME, 'templates/handlebars/default.hbs'),
     handlebars
   });
 
