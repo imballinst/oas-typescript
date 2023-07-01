@@ -65,8 +65,8 @@ async function main() {
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
-    distPath: path.join(process.cwd(), 'src/client.ts'),
-    templatePath: path.join(process.cwd(), 'src/templates/default.hbs'),
+    distPath: path.join(output, 'client.ts'),
+    templatePath: path.join(process.cwd(), 'templates/default.hbs'),
     handlebars
   });
 
@@ -150,7 +150,7 @@ async function main() {
 
         hasSecurity = true;
         middlewares.unshift(
-          `MiddlewareHelpers.createSecurityMiddleware(${securityName})`
+          `KoaGeneratedUtils.createSecurityMiddleware(${securityName})`
         );
       }
 
@@ -165,8 +165,8 @@ router.${methodKey}('${pathKey}', ${middlewares.join(', ')})
   // Create controllers.
   for (const controllerKey in controllersInformation) {
     const pathToController = path.join(
-      process.cwd(),
-      `src/controllers/${controllerKey}.ts`
+      output,
+      `controllers/${controllerKey}.ts`
     );
     const controller = controllersInformation[controllerKey];
 
@@ -198,7 +198,7 @@ ${controller.map((c) => renderControllerMethod(c)).join('\n  ')}
   // Output security schemes.
   if (document.components?.securitySchemes) {
     await fs.writeFile(
-      path.join(process.cwd(), 'src/security-schemes.ts'),
+      path.join(output, 'security-schemes.ts'),
       `export const securitySchemes = ${JSON.stringify(
         document.components?.securitySchemes,
         null,
@@ -217,7 +217,6 @@ import {
     .concat(Object.values(parametersImportsPerController).flat())
     .join(',\n  ')}
 } from './client'
-import { MiddlewareHelpers } from './middleware-helpers'
 import { KoaGeneratedUtils } from './utils'
 
 ${Object.keys(controllersInformation)
@@ -236,11 +235,7 @@ app
   .use(router.allowedMethods());
   `;
 
-  await fs.writeFile(
-    path.join(process.cwd(), 'src/server.ts'),
-    template,
-    'utf-8'
-  );
+  await fs.writeFile(path.join(output, 'server.ts'), template, 'utf-8');
 
   if (hasSecurity) {
     // Create the middleware-helpers.ts.

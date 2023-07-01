@@ -32,7 +32,6 @@ import {
   UpdateUserParameters,
   DeleteUserParameters
 } from './client'
-import { MiddlewareHelpers } from './middleware-helpers'
 import { KoaGeneratedUtils } from './utils'
 
 import { PetController } from './controllers/PetController'
@@ -44,7 +43,7 @@ const router = new Router()
 
 app.use(bodyParser());
 
-router.post('/pet', MiddlewareHelpers.createSecurityMiddleware(AddPetSecurity), (ctx, next) => {
+router.post('/pet', KoaGeneratedUtils.createSecurityMiddleware(AddPetSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: AddPetParameters
@@ -58,7 +57,7 @@ router.post('/pet', MiddlewareHelpers.createSecurityMiddleware(AddPetSecurity), 
   ctx.status = 200
 })
 
-router.put('/pet', MiddlewareHelpers.createSecurityMiddleware(UpdatePetSecurity), (ctx, next) => {
+router.put('/pet', KoaGeneratedUtils.createSecurityMiddleware(UpdatePetSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: UpdatePetParameters
@@ -72,7 +71,7 @@ router.put('/pet', MiddlewareHelpers.createSecurityMiddleware(UpdatePetSecurity)
   ctx.status = 200
 })
 
-router.get('/pet/findByStatus', MiddlewareHelpers.createSecurityMiddleware(FindPetsByStatusSecurity), (ctx, next) => {
+router.get('/pet/findByStatus', KoaGeneratedUtils.createSecurityMiddleware(FindPetsByStatusSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: FindPetsByStatusParameters
@@ -86,7 +85,7 @@ router.get('/pet/findByStatus', MiddlewareHelpers.createSecurityMiddleware(FindP
   ctx.status = 200
 })
 
-router.get('/pet/findByTags', MiddlewareHelpers.createSecurityMiddleware(FindPetsByTagsSecurity), (ctx, next) => {
+router.get('/pet/findByTags', KoaGeneratedUtils.createSecurityMiddleware(FindPetsByTagsSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: FindPetsByTagsParameters
@@ -100,7 +99,7 @@ router.get('/pet/findByTags', MiddlewareHelpers.createSecurityMiddleware(FindPet
   ctx.status = 200
 })
 
-router.get('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(GetPetByIdSecurity), (ctx, next) => {
+router.get('/pet/{petId}', KoaGeneratedUtils.createSecurityMiddleware(GetPetByIdSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: GetPetByIdParameters
@@ -114,7 +113,7 @@ router.get('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(GetPetById
   ctx.status = 200
 })
 
-router.post('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(UpdatePetWithFormSecurity), (ctx, next) => {
+router.post('/pet/{petId}', KoaGeneratedUtils.createSecurityMiddleware(UpdatePetWithFormSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: UpdatePetWithFormParameters
@@ -128,7 +127,7 @@ router.post('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(UpdatePet
   ctx.status = 200
 })
 
-router.delete('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(DeletePetSecurity), (ctx, next) => {
+router.delete('/pet/{petId}', KoaGeneratedUtils.createSecurityMiddleware(DeletePetSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: DeletePetParameters
@@ -142,7 +141,7 @@ router.delete('/pet/{petId}', MiddlewareHelpers.createSecurityMiddleware(DeleteP
   ctx.status = 200
 })
 
-router.post('/pet/{petId}/uploadImage', MiddlewareHelpers.createSecurityMiddleware(UploadFileSecurity), (ctx, next) => {
+router.post('/pet/{petId}/uploadImage', KoaGeneratedUtils.createSecurityMiddleware(UploadFileSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: UploadFileParameters
@@ -156,7 +155,7 @@ router.post('/pet/{petId}/uploadImage', MiddlewareHelpers.createSecurityMiddlewa
   ctx.status = 200
 })
 
-router.get('/store/inventory', MiddlewareHelpers.createSecurityMiddleware(GetInventorySecurity), (ctx, next) => {
+router.get('/store/inventory', KoaGeneratedUtils.createSecurityMiddleware(GetInventorySecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: GetInventoryParameters
