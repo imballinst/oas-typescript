@@ -12,24 +12,29 @@ interface OasParameter {
   type: 'Path' | 'Query' | 'Body' | 'Header';
   schema: z.ZodSchema;
 }
-type OasParameterWithValue<TValue = any> = OasParameter & { value: TValue };
 
-type FilterArrayElementsByType<
-  T extends readonly { name: string; type: string }[],
-  TF extends T[number]['type']
-> = Record<
-  Extract<T[number], { type: TF }>['name'],
-  Extract<T[number], { type: TF }>
->;
+type ExtractMatchingType<
+  TArray extends readonly OasParameter[],
+  Type extends TArray[number]['type']
+> = Extract<TArray[number], { type: Type }>;
 
-export type FilterByParameterType<
-  T extends readonly { type: string; name: string }[]
+type ExtractFilteredRecordFromArray<
+  TArray extends readonly OasParameter[],
+  Type extends TArray[number]['type']
 > = {
-  body: Extract<T[number], { type: 'Body' }>;
-  queryParams: FilterArrayElementsByType<T, 'Query'> | undefined;
-  pathParams: FilterArrayElementsByType<T, 'Path'> | undefined;
-  headerParams: FilterArrayElementsByType<T, 'Header'> | undefined;
+  [K in ExtractMatchingType<TArray, Type>['name']]: z.output<
+    ExtractMatchingType<TArray, Type>['schema']
+  >;
 };
+
+export interface ParsedRequestInfo<
+  OasParametersType extends readonly OasParameter[]
+> {
+  body: z.output<ExtractMatchingType<OasParametersType, 'Body'>['schema']>;
+  pathParams: ExtractFilteredRecordFromArray<OasParametersType, 'Path'>;
+  headerParams: ExtractFilteredRecordFromArray<OasParametersType, 'Header'>;
+  queryParams: ExtractFilteredRecordFromArray<OasParametersType, 'Query'>;
+}
 
 export class KoaGeneratedUtils {
   static parseRequestInfo<OasParametersType extends readonly OasParameter[]>({
@@ -43,11 +48,11 @@ export class KoaGeneratedUtils {
       unknown
     >;
     oasParameters: OasParametersType;
-  }): FilterByParameterType<OasParametersType> | undefined {
-    const pathParams: Record<string, OasParameterWithValue> = {};
-    const queryParams: Record<string, OasParameterWithValue> = {};
-    const headerParams: Record<string, OasParameterWithValue> = {};
-    let bodyParams: OasParameterWithValue | undefined = undefined;
+  }): ParsedRequestInfo<OasParametersType> | undefined {
+    const pathParams: Record<string, any> = {};
+    const queryParams: Record<string, any> = {};
+    const headerParams: Record<string, any> = {};
+    let bodyParams: any | undefined = undefined;
 
     // Validate path parameters.
     for (const oasParameter of oasParameters) {
@@ -60,10 +65,7 @@ export class KoaGeneratedUtils {
           return;
         }
 
-        pathParams[oasParameter.name] = {
-          ...oasParameter,
-          value: ctx.params[oasParameter.name]
-        };
+        pathParams[oasParameter.name] = ctx.params[oasParameter.name];
         continue;
       }
 
@@ -75,7 +77,7 @@ export class KoaGeneratedUtils {
           return;
         }
 
-        bodyParams = { ...oasParameter, value: body };
+        bodyParams = body;
         continue;
       }
 
@@ -88,10 +90,7 @@ export class KoaGeneratedUtils {
           return;
         }
 
-        queryParams[oasParameter.name] = {
-          ...oasParameter,
-          value: ctx.query[oasParameter.name]
-        };
+        queryParams[oasParameter.name] = ctx.query[oasParameter.name];
         continue;
       }
 
@@ -104,22 +103,16 @@ export class KoaGeneratedUtils {
           return;
         }
 
-        headerParams[oasParameter.name] = {
-          ...oasParameter,
-          value: ctx.headers[oasParameter.name]
-        };
+        headerParams[oasParameter.name] = ctx.headers[oasParameter.name];
         continue;
       }
     }
 
     return {
-      pathParams:
-        pathParams as unknown as FilterByParameterType<OasParametersType>['pathParams'],
-      queryParams:
-        queryParams as unknown as FilterByParameterType<OasParametersType>['queryParams'],
-      headerParams:
-        headerParams as unknown as FilterByParameterType<OasParametersType>['headerParams'],
-      body: bodyParams as unknown as FilterByParameterType<OasParametersType>['body']
-    };
+      pathParams,
+      queryParams,
+      headerParams,
+      body: bodyParams!.value
+    } as ParsedRequestInfo<OasParametersType>;
   }
 }

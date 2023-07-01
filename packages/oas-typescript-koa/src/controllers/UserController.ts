@@ -7,28 +7,28 @@ import {
   UpdateUserParameters,
   DeleteUserParameters
 } from '../client'
-import { FilterByParameterType } from '../utils';
+import { ParsedRequestInfo } from '../utils';
 
 export class UserController {
-static async createUser(params: FilterByParameterType<typeof CreateUserParameters>) {
+static async createUser(params: ParsedRequestInfo<typeof CreateUserParameters>) {
 
 }
-  static async createUsersWithListInput(params: FilterByParameterType<typeof CreateUsersWithListInputParameters>) {
+  static async createUsersWithListInput(params: ParsedRequestInfo<typeof CreateUsersWithListInputParameters>) {
 
 }
-  static async loginUser(params: FilterByParameterType<typeof LoginUserParameters>) {
+  static async loginUser(params: ParsedRequestInfo<typeof LoginUserParameters>) {
 
 }
-  static async logoutUser(params: FilterByParameterType<typeof LogoutUserParameters>) {
+  static async logoutUser(params: ParsedRequestInfo<typeof LogoutUserParameters>) {
 
 }
-  static async getUserByName(params: FilterByParameterType<typeof GetUserByNameParameters>) {
+  static async getUserByName(params: ParsedRequestInfo<typeof GetUserByNameParameters>) {
 
 }
-  static async updateUser(params: FilterByParameterType<typeof UpdateUserParameters>) {
+  static async updateUser(params: ParsedRequestInfo<typeof UpdateUserParameters>) {
 
 }
-  static async deleteUser(params: FilterByParameterType<typeof DeleteUserParameters>) {
+  static async deleteUser(params: ParsedRequestInfo<typeof DeleteUserParameters>) {
 
 }
 }

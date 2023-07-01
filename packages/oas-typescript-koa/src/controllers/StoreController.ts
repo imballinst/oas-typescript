@@ -4,19 +4,19 @@ import {
   GetOrderByIdParameters,
   DeleteOrderParameters
 } from '../client'
-import { FilterByParameterType } from '../utils';
+import { ParsedRequestInfo } from '../utils';
 
 export class StoreController {
-static async getInventory(params: FilterByParameterType<typeof GetInventoryParameters>) {
+static async getInventory(params: ParsedRequestInfo<typeof GetInventoryParameters>) {
 
 }
-  static async placeOrder(params: FilterByParameterType<typeof PlaceOrderParameters>) {
+  static async placeOrder(params: ParsedRequestInfo<typeof PlaceOrderParameters>) {
 
 }
-  static async getOrderById(params: FilterByParameterType<typeof GetOrderByIdParameters>) {
+  static async getOrderById(params: ParsedRequestInfo<typeof GetOrderByIdParameters>) {
 
 }
-  static async deleteOrder(params: FilterByParameterType<typeof DeleteOrderParameters>) {
+  static async deleteOrder(params: ParsedRequestInfo<typeof DeleteOrderParameters>) {
 
 }
 }

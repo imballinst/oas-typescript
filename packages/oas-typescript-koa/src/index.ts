@@ -185,7 +185,7 @@ router.${methodKey}('${pathKey}', ${middlewares.join(', ')})
 import { 
   ${parametersImportsPerController[controllerKey].join(',\n  ')}
 } from '../client'
-import { FilterByParameterType } from '../utils';
+import { ParsedRequestInfo } from '../utils';
 
 export class ${controllerKey} {
 ${controller.map((c) => renderControllerMethod(c)).join('\n  ')}
@@ -255,7 +255,7 @@ function renderControllerMethod(controller: {
   operationId: string;
 }) {
   return `
-static async ${controller.operationId}(params: FilterByParameterType<typeof ${controller.parameterName}>) {
+static async ${controller.operationId}(params: ParsedRequestInfo<typeof ${controller.parameterName}>) {
 
 }
   `.trim();
