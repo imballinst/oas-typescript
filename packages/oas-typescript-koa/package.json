@@ -6,7 +6,8 @@
   "module": "bin/cli.js",
   "scripts": {
     "gen": "ts-node --esm src/index.ts ../shared/src/openapi/api.json --output generated",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:run-koa": "nodemon"
   },
   "dependencies": {
     "meow": "12.0.1",
@@ -20,6 +21,8 @@
     "@types/cookie-parser": "1.4.3",
     "@types/koa__router": "12.0.0",
     "cookie-parser": "1.4.6",
+    "koa": "2.14.2",
+    "nodemon": "2.0.22",
     "openapi-zod-client": "1.7.2",
     "regenerator-runtime": "0.13.11",
     "title-case": "3.0.3",

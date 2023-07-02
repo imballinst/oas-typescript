@@ -15,8 +15,5 @@
     "paths": {
       "@oast/shared/*": ["./src/*"]
     }
-  },
-  "ts-node": {
-    "swc": true
   }
 }

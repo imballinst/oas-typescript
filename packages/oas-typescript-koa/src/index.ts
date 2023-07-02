@@ -232,11 +232,11 @@ import {
   ${allServerSecurityImports
     .concat(Object.values(parametersImportsPerController).flat())
     .join(',\n  ')}
-} from './client'
-import { KoaGeneratedUtils } from './utils'
+} from './client.js'
+import { KoaGeneratedUtils } from './utils.js'
 
 ${Object.keys(controllersInformation)
-  .map((c) => `import { ${c} } from './controllers/${c}'`)
+  .map((c) => `import { ${c} } from './controllers/${c}.js'`)
   .join('\n')}
 
 const app = new Koa()
@@ -248,7 +248,8 @@ ${routers.join('\n\n')}
 
 app
   .use(router.routes())
-  .use(router.allowedMethods());
+  .use(router.allowedMethods())
+  .listen(3000);
   `;
 
   await fs.writeFile(path.join(output, 'server.ts'), template, 'utf-8');

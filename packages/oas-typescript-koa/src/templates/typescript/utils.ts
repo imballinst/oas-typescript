@@ -1,10 +1,10 @@
 import Koa from 'koa';
 import Router from '@koa/router';
 import { z } from 'zod';
-
-import { securitySchemes } from './security-schemes';
 import { OpenAPIV3 } from 'openapi-types';
-import { MiddlewareHelpers } from './middleware-helpers';
+
+import { securitySchemes } from './security-schemes.js';
+import { MiddlewareHelpers } from './middleware-helpers.js';
 
 type KoaCtx = Koa.ParameterizedContext<
   Koa.DefaultState,

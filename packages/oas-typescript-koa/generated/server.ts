@@ -31,12 +31,12 @@ import {
   GetUserByNameParameters,
   UpdateUserParameters,
   DeleteUserParameters
-} from './client'
-import { KoaGeneratedUtils } from './utils'
+} from './client.js'
+import { KoaGeneratedUtils } from './utils.js'
 
-import { PetController } from './controllers/PetController'
-import { StoreController } from './controllers/StoreController'
-import { UserController } from './controllers/UserController'
+import { PetController } from './controllers/PetController.js'
+import { StoreController } from './controllers/StoreController.js'
+import { UserController } from './controllers/UserController.js'
 
 const app = new Koa()
 const router = new Router()
@@ -311,5 +311,6 @@ router.delete('/user/{username}', (ctx, next) => {
 
 app
   .use(router.routes())
-  .use(router.allowedMethods());
+  .use(router.allowedMethods())
+  .listen(3000);
   
