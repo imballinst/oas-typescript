@@ -99,7 +99,7 @@ router.get('/pet/findByTags', KoaGeneratedUtils.createSecurityMiddleware(FindPet
   ctx.status = 200
 })
 
-router.get('/pet/{petId}', KoaGeneratedUtils.createSecurityMiddleware(GetPetByIdSecurity), (ctx, next) => {
+router.get('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(GetPetByIdSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: GetPetByIdParameters
@@ -113,7 +113,7 @@ router.get('/pet/{petId}', KoaGeneratedUtils.createSecurityMiddleware(GetPetById
   ctx.status = 200
 })
 
-router.post('/pet/{petId}', KoaGeneratedUtils.createSecurityMiddleware(UpdatePetWithFormSecurity), (ctx, next) => {
+router.post('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(UpdatePetWithFormSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: UpdatePetWithFormParameters
@@ -127,7 +127,7 @@ router.post('/pet/{petId}', KoaGeneratedUtils.createSecurityMiddleware(UpdatePet
   ctx.status = 200
 })
 
-router.delete('/pet/{petId}', KoaGeneratedUtils.createSecurityMiddleware(DeletePetSecurity), (ctx, next) => {
+router.delete('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(DeletePetSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: DeletePetParameters
@@ -141,7 +141,7 @@ router.delete('/pet/{petId}', KoaGeneratedUtils.createSecurityMiddleware(DeleteP
   ctx.status = 200
 })
 
-router.post('/pet/{petId}/uploadImage', KoaGeneratedUtils.createSecurityMiddleware(UploadFileSecurity), (ctx, next) => {
+router.post('/pet/:petId/uploadImage', KoaGeneratedUtils.createSecurityMiddleware(UploadFileSecurity), (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: UploadFileParameters
@@ -183,7 +183,7 @@ router.post('/store/order', (ctx, next) => {
   ctx.status = 200
 })
 
-router.get('/store/order/{orderId}', (ctx, next) => {
+router.get('/store/order/:orderId', (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: GetOrderByIdParameters
@@ -197,7 +197,7 @@ router.get('/store/order/{orderId}', (ctx, next) => {
   ctx.status = 200
 })
 
-router.delete('/store/order/{orderId}', (ctx, next) => {
+router.delete('/store/order/:orderId', (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: DeleteOrderParameters
@@ -267,7 +267,7 @@ router.get('/user/logout', (ctx, next) => {
   ctx.status = 200
 })
 
-router.get('/user/{username}', (ctx, next) => {
+router.get('/user/:username', (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: GetUserByNameParameters
@@ -281,7 +281,7 @@ router.get('/user/{username}', (ctx, next) => {
   ctx.status = 200
 })
 
-router.put('/user/{username}', (ctx, next) => {
+router.put('/user/:username', (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: UpdateUserParameters
@@ -295,7 +295,7 @@ router.put('/user/{username}', (ctx, next) => {
   ctx.status = 200
 })
 
-router.delete('/user/{username}', (ctx, next) => {
+router.delete('/user/:username', (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: DeleteUserParameters

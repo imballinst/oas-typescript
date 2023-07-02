@@ -24,7 +24,7 @@ interface OasParameter {
   name: string;
   description?: string;
   type: 'Path' | 'Query' | 'Body' | 'Header';
-  schema: z.ZodSchema;
+  schema: z.ZodTypeAny;
 }
 
 type ExtractMatchingType<
@@ -71,9 +71,12 @@ export class KoaGeneratedUtils {
     // Validate path parameters.
     for (const oasParameter of oasParameters) {
       if (oasParameter.type === 'Path') {
-        const result = oasParameter.schema.safeParse(
-          ctx.params[oasParameter.name]
-        );
+        let param: string | number = ctx.params[oasParameter.name];
+        if (oasParameter.schema._def.typeName === 'ZodNumber') {
+          param = Number(param);
+        }
+
+        const result = oasParameter.schema.safeParse(param);
         if (!result.success) {
           ctx.status = 400;
           return;
@@ -126,7 +129,7 @@ export class KoaGeneratedUtils {
       pathParams,
       queryParams,
       headerParams,
-      body: bodyParams!.value
+      body: bodyParams?.value
     } as ParsedRequestInfo<OasParametersType>;
   }
 

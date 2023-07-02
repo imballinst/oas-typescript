@@ -170,9 +170,14 @@ async function main() {
         );
       }
 
+      const koaPath = pathKey
+        .split('/')
+        .map(convertOpenApiPathToKoaPath)
+        .join('/');
+
       routers.push(
         `
-router.${methodKey}('${pathKey}', ${middlewares.join(', ')})
+router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
       `.trim()
       );
     }
@@ -254,9 +259,17 @@ app
 
   await fs.writeFile(path.join(output, 'server.ts'), template, 'utf-8');
 
-  if (hasSecurity) {
-    // Create the middleware-helpers.ts.
+  // Replace z.instanceof(File) (if any).
+  const distClientPath = path.join(output, 'client.ts');
+  let distClientContent = await fs.readFile(distClientPath, 'utf-8');
+  if (distClientContent.includes('z.instanceof(File)')) {
+    // Replace with z.any().
+    distClientContent = distClientContent.replace(
+      /z\.instanceof\(File\)/g,
+      'z.any()'
+    );
   }
+  await fs.writeFile(distClientPath, distClientContent, 'utf-8');
 }
 
 main();
@@ -275,4 +288,9 @@ static async ${controller.operationId}(params: ParsedRequestInfo<typeof ${contro
 
 function capitalizeFirstCharacter(text: string) {
   return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function convertOpenApiPathToKoaPath(s: string) {
+  if (!s.startsWith('{') && !s.endsWith('}')) return s;
+  return `:${s.slice(1, -1)}`;
 }

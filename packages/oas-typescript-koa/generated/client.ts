@@ -115,7 +115,7 @@ export const UploadFileParameters = [
   {
     name: "body",
     type: "Body",
-    schema: z.instanceof(File),
+    schema: z.any(),
   },
   {
     name: "petId",

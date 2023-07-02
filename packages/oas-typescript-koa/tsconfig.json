@@ -1,4 +1,7 @@
 {
   "extends": "../shared/tsconfig.json",
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "ts-node": {
+    "swc": true
+  }
 }
