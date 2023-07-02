@@ -2,7 +2,10 @@
   "name": "examples",
   "version": "1.0.0",
   "license": "MIT",
+  "scripts": {
+    "gen": "oas-typescript-koa ../shared/src/openapi/api.json --output generated"
+  },
   "devDependencies": {
-    "@oas-typescript/koa": "0.0.1"
+    "@oas-typescript/koa": "0.0.2"
   }
 }

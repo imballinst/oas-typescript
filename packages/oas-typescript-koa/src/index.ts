@@ -58,10 +58,11 @@ async function main() {
   const tmpFolder = path.join(tmpdir(), '@oast');
   const handlebarsFilePath = path.join(tmpFolder, 'koa/default.hbs');
 
-  // Create the files in tmp folder.
+  // Create the files in these folders.
   await Promise.all([
     fs.mkdir(path.dirname(handlebarsFilePath), { recursive: true }),
-    fs.mkdir(tmpFolder, { recursive: true })
+    fs.mkdir(tmpFolder, { recursive: true }),
+    fs.mkdir(output, { recursive: true })
   ]);
   await Promise.all([
     fs.writeFile(handlebarsFilePath, defaultHandlebars, 'utf-8'),
