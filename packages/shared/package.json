@@ -5,8 +5,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:entry": "ts-node --esm scripts/build-entry.ts",
-    "build:entry2": "esbuild src/openapi-zod-client/entry.ts --packages=external --bundle --format=esm --outfile=src/openapi-zod-client/generated/entry.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

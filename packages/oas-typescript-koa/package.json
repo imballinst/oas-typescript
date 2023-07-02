@@ -2,8 +2,8 @@
   "name": "@oast/koa",
   "version": "0.0.1",
   "type": "module",
-  "bin": "bin/cli.js",
-  "module": "bin/cli.js",
+  "bin": "cli.js",
+  "module": "cli.js",
   "scripts": {
     "gen": "ts-node --esm src/index.ts ../shared/src/openapi/api.json --output generated",
     "gen:build": "node --experimental-modules cli.js ../shared/src/openapi/api.json --output generated",
