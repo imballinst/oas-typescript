@@ -144,7 +144,7 @@ async function main() {
 
       const middlewares: string[] = [
         `
-(ctx, next) => {
+async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: ${parameterName}
@@ -154,8 +154,9 @@ async function main() {
     return
   }
 
-  const { } = ${controllerName}.${operationId}(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await ${controllerName}.${operationId}(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 }
       `.trim()
       ];
@@ -281,7 +282,10 @@ function renderControllerMethod(controller: {
 }) {
   return `
 static async ${controller.operationId}(params: ParsedRequestInfo<typeof ${controller.parameterName}>) {
-
+  return {
+    body: undefined,
+    status: 200
+  }
 }
   `.trim();
 }

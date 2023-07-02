@@ -43,7 +43,7 @@ const router = new Router()
 
 app.use(bodyParser());
 
-router.post('/pet', KoaGeneratedUtils.createSecurityMiddleware(AddPetSecurity), (ctx, next) => {
+router.post('/pet', KoaGeneratedUtils.createSecurityMiddleware(AddPetSecurity), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: AddPetParameters
@@ -53,11 +53,12 @@ router.post('/pet', KoaGeneratedUtils.createSecurityMiddleware(AddPetSecurity), 
     return
   }
 
-  const { } = PetController.addPet(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await PetController.addPet(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.put('/pet', KoaGeneratedUtils.createSecurityMiddleware(UpdatePetSecurity), (ctx, next) => {
+router.put('/pet', KoaGeneratedUtils.createSecurityMiddleware(UpdatePetSecurity), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: UpdatePetParameters
@@ -67,11 +68,12 @@ router.put('/pet', KoaGeneratedUtils.createSecurityMiddleware(UpdatePetSecurity)
     return
   }
 
-  const { } = PetController.updatePet(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await PetController.updatePet(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.get('/pet/findByStatus', KoaGeneratedUtils.createSecurityMiddleware(FindPetsByStatusSecurity), (ctx, next) => {
+router.get('/pet/findByStatus', KoaGeneratedUtils.createSecurityMiddleware(FindPetsByStatusSecurity), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: FindPetsByStatusParameters
@@ -81,11 +83,12 @@ router.get('/pet/findByStatus', KoaGeneratedUtils.createSecurityMiddleware(FindP
     return
   }
 
-  const { } = PetController.findPetsByStatus(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await PetController.findPetsByStatus(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.get('/pet/findByTags', KoaGeneratedUtils.createSecurityMiddleware(FindPetsByTagsSecurity), (ctx, next) => {
+router.get('/pet/findByTags', KoaGeneratedUtils.createSecurityMiddleware(FindPetsByTagsSecurity), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: FindPetsByTagsParameters
@@ -95,11 +98,12 @@ router.get('/pet/findByTags', KoaGeneratedUtils.createSecurityMiddleware(FindPet
     return
   }
 
-  const { } = PetController.findPetsByTags(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await PetController.findPetsByTags(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.get('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(GetPetByIdSecurity), (ctx, next) => {
+router.get('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(GetPetByIdSecurity), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: GetPetByIdParameters
@@ -109,11 +113,12 @@ router.get('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(GetPetByIdS
     return
   }
 
-  const { } = PetController.getPetById(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await PetController.getPetById(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.post('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(UpdatePetWithFormSecurity), (ctx, next) => {
+router.post('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(UpdatePetWithFormSecurity), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: UpdatePetWithFormParameters
@@ -123,11 +128,12 @@ router.post('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(UpdatePetW
     return
   }
 
-  const { } = PetController.updatePetWithForm(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await PetController.updatePetWithForm(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.delete('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(DeletePetSecurity), (ctx, next) => {
+router.delete('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(DeletePetSecurity), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: DeletePetParameters
@@ -137,11 +143,12 @@ router.delete('/pet/:petId', KoaGeneratedUtils.createSecurityMiddleware(DeletePe
     return
   }
 
-  const { } = PetController.deletePet(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await PetController.deletePet(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.post('/pet/:petId/uploadImage', KoaGeneratedUtils.createSecurityMiddleware(UploadFileSecurity), (ctx, next) => {
+router.post('/pet/:petId/uploadImage', KoaGeneratedUtils.createSecurityMiddleware(UploadFileSecurity), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: UploadFileParameters
@@ -151,11 +158,12 @@ router.post('/pet/:petId/uploadImage', KoaGeneratedUtils.createSecurityMiddlewar
     return
   }
 
-  const { } = PetController.uploadFile(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await PetController.uploadFile(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.get('/store/inventory', KoaGeneratedUtils.createSecurityMiddleware(GetInventorySecurity), (ctx, next) => {
+router.get('/store/inventory', KoaGeneratedUtils.createSecurityMiddleware(GetInventorySecurity), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: GetInventoryParameters
@@ -165,11 +173,12 @@ router.get('/store/inventory', KoaGeneratedUtils.createSecurityMiddleware(GetInv
     return
   }
 
-  const { } = StoreController.getInventory(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await StoreController.getInventory(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.post('/store/order', (ctx, next) => {
+router.post('/store/order', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: PlaceOrderParameters
@@ -179,11 +188,12 @@ router.post('/store/order', (ctx, next) => {
     return
   }
 
-  const { } = StoreController.placeOrder(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await StoreController.placeOrder(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.get('/store/order/:orderId', (ctx, next) => {
+router.get('/store/order/:orderId', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: GetOrderByIdParameters
@@ -193,11 +203,12 @@ router.get('/store/order/:orderId', (ctx, next) => {
     return
   }
 
-  const { } = StoreController.getOrderById(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await StoreController.getOrderById(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.delete('/store/order/:orderId', (ctx, next) => {
+router.delete('/store/order/:orderId', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: DeleteOrderParameters
@@ -207,11 +218,12 @@ router.delete('/store/order/:orderId', (ctx, next) => {
     return
   }
 
-  const { } = StoreController.deleteOrder(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await StoreController.deleteOrder(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.post('/user', (ctx, next) => {
+router.post('/user', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: CreateUserParameters
@@ -221,11 +233,12 @@ router.post('/user', (ctx, next) => {
     return
   }
 
-  const { } = UserController.createUser(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await UserController.createUser(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.post('/user/createWithList', (ctx, next) => {
+router.post('/user/createWithList', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: CreateUsersWithListInputParameters
@@ -235,11 +248,12 @@ router.post('/user/createWithList', (ctx, next) => {
     return
   }
 
-  const { } = UserController.createUsersWithListInput(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await UserController.createUsersWithListInput(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.get('/user/login', (ctx, next) => {
+router.get('/user/login', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: LoginUserParameters
@@ -249,11 +263,12 @@ router.get('/user/login', (ctx, next) => {
     return
   }
 
-  const { } = UserController.loginUser(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await UserController.loginUser(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.get('/user/logout', (ctx, next) => {
+router.get('/user/logout', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: LogoutUserParameters
@@ -263,11 +278,12 @@ router.get('/user/logout', (ctx, next) => {
     return
   }
 
-  const { } = UserController.logoutUser(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await UserController.logoutUser(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.get('/user/:username', (ctx, next) => {
+router.get('/user/:username', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: GetUserByNameParameters
@@ -277,11 +293,12 @@ router.get('/user/:username', (ctx, next) => {
     return
   }
 
-  const { } = UserController.getUserByName(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await UserController.getUserByName(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.put('/user/:username', (ctx, next) => {
+router.put('/user/:username', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: UpdateUserParameters
@@ -291,11 +308,12 @@ router.put('/user/:username', (ctx, next) => {
     return
   }
 
-  const { } = UserController.updateUser(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await UserController.updateUser(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
-router.delete('/user/:username', (ctx, next) => {
+router.delete('/user/:username', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: DeleteUserParameters
@@ -305,8 +323,9 @@ router.delete('/user/:username', (ctx, next) => {
     return
   }
 
-  const { } = UserController.deleteUser(parsedRequestInfo)
-  ctx.status = 200
+  const { body, status } = await UserController.deleteUser(parsedRequestInfo)
+  ctx.status = status
+  if (body) ctx.body = body
 })
 
 app
