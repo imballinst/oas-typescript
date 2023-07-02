@@ -40,7 +40,7 @@ export const User = z
   })
   .partial();
 
-export const Parameters = [
+export const UpdatePetParameters = [
   {
     name: "body",
     description: `Update an existent pet in the store`,
@@ -48,8 +48,11 @@ export const Parameters = [
     schema: Pet,
   },
 ] as const;
+export const UpdatePetSecurity = [
+  { petstore_auth: ["write:pets", "read:pets"] },
+];
 
-export const Parameters = [
+export const AddPetParameters = [
   {
     name: "body",
     description: `Create a new pet in the store`,
@@ -57,16 +60,21 @@ export const Parameters = [
     schema: Pet,
   },
 ] as const;
+export const AddPetSecurity = [{ petstore_auth: ["write:pets", "read:pets"] }];
 
-export const Parameters = [
+export const GetPetByIdParameters = [
   {
     name: "petId",
     type: "Path",
     schema: z.number().int(),
   },
 ] as const;
+export const GetPetByIdSecurity = [
+  { api_key: [] },
+  { petstore_auth: ["write:pets", "read:pets"] },
+];
 
-export const Parameters = [
+export const UpdatePetWithFormParameters = [
   {
     name: "petId",
     type: "Path",
@@ -83,8 +91,11 @@ export const Parameters = [
     schema: z.string().optional(),
   },
 ] as const;
+export const UpdatePetWithFormSecurity = [
+  { petstore_auth: ["write:pets", "read:pets"] },
+];
 
-export const Parameters = [
+export const DeletePetParameters = [
   {
     name: "api_key",
     type: "Header",
@@ -96,8 +107,11 @@ export const Parameters = [
     schema: z.number().int(),
   },
 ] as const;
+export const DeletePetSecurity = [
+  { petstore_auth: ["write:pets", "read:pets"] },
+];
 
-export const Parameters = [
+export const UploadFileParameters = [
   {
     name: "body",
     type: "Body",
@@ -114,8 +128,11 @@ export const Parameters = [
     schema: z.string().optional(),
   },
 ] as const;
+export const UploadFileSecurity = [
+  { petstore_auth: ["write:pets", "read:pets"] },
+];
 
-export const Parameters = [
+export const FindPetsByStatusParameters = [
   {
     name: "status",
     type: "Query",
@@ -125,18 +142,25 @@ export const Parameters = [
       .default("available"),
   },
 ] as const;
+export const FindPetsByStatusSecurity = [
+  { petstore_auth: ["write:pets", "read:pets"] },
+];
 
-export const Parameters = [
+export const FindPetsByTagsParameters = [
   {
     name: "tags",
     type: "Query",
     schema: z.array(z.string()).optional(),
   },
 ] as const;
+export const FindPetsByTagsSecurity = [
+  { petstore_auth: ["write:pets", "read:pets"] },
+];
 
-export const Parameters = [] as const;
+export const GetInventoryParameters = [] as const;
+export const GetInventorySecurity = [{ api_key: [] }];
 
-export const Parameters = [
+export const PlaceOrderParameters = [
   {
     name: "body",
     type: "Body",
@@ -144,7 +168,7 @@ export const Parameters = [
   },
 ] as const;
 
-export const Parameters = [
+export const GetOrderByIdParameters = [
   {
     name: "orderId",
     type: "Path",
@@ -152,7 +176,7 @@ export const Parameters = [
   },
 ] as const;
 
-export const Parameters = [
+export const DeleteOrderParameters = [
   {
     name: "orderId",
     type: "Path",
@@ -160,7 +184,7 @@ export const Parameters = [
   },
 ] as const;
 
-export const Parameters = [
+export const CreateUserParameters = [
   {
     name: "body",
     description: `Created user object`,
@@ -169,7 +193,7 @@ export const Parameters = [
   },
 ] as const;
 
-export const Parameters = [
+export const GetUserByNameParameters = [
   {
     name: "username",
     type: "Path",
@@ -177,7 +201,7 @@ export const Parameters = [
   },
 ] as const;
 
-export const Parameters = [
+export const UpdateUserParameters = [
   {
     name: "body",
     description: `Update an existent user in the store`,
@@ -191,7 +215,7 @@ export const Parameters = [
   },
 ] as const;
 
-export const Parameters = [
+export const DeleteUserParameters = [
   {
     name: "username",
     type: "Path",
@@ -199,7 +223,7 @@ export const Parameters = [
   },
 ] as const;
 
-export const Parameters = [
+export const CreateUsersWithListInputParameters = [
   {
     name: "body",
     type: "Body",
@@ -207,7 +231,7 @@ export const Parameters = [
   },
 ] as const;
 
-export const Parameters = [
+export const LoginUserParameters = [
   {
     name: "username",
     type: "Query",
@@ -220,4 +244,4 @@ export const Parameters = [
   },
 ] as const;
 
-export const Parameters = [] as const;
+export const LogoutUserParameters = [] as const;
