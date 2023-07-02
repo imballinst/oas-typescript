@@ -1,0 +1,7 @@
+generated/
+scripts/
+src/
+templates/
+
+nodemon.json
+tsconfig.json

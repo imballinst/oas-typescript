@@ -12,8 +12,12 @@
     "strict": true,
     "allowJs": false,
     "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
     "paths": {
       "@oast/shared/*": ["./src/*"]
     }
+  },
+  "ts-node": {
+    "swc": true
   }
 }

@@ -4,7 +4,8 @@ import { tmpdir } from 'os';
 import {
   generateZodClientFromOpenAPI,
   getHandlebars
-} from 'openapi-zod-client';
+  // @ts-ignore
+} from './entry.js';
 import { titleCase } from 'title-case';
 import meow from 'meow';
 import fs from 'fs/promises';
@@ -106,8 +107,6 @@ async function main() {
   const parametersImportsPerController: Record<string, string[]> = {};
   const allServerSecurityImports: string[] = [];
 
-  let hasSecurity = false;
-
   for (const pathKey in document.paths) {
     const pathItem = document.paths[pathKey];
     if (!pathItem) continue;
@@ -174,7 +173,6 @@ async (ctx, next) => {
         const securityName = `${capitalizeFirstCharacter(operationId)}Security`;
         allServerSecurityImports.push(securityName);
 
-        hasSecurity = true;
         middlewares.unshift(
           `KoaGeneratedUtils.createSecurityMiddleware(${securityName})`
         );
