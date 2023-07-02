@@ -1,0 +1,8 @@
+{
+  "name": "examples",
+  "version": "1.0.0",
+  "license": "MIT",
+  "devDependencies": {
+    "@oas-typescript/koa": "0.0.1"
+  }
+}

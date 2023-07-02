@@ -1,9 +1,10 @@
 {
   "name": "@oas-typescript/koa",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
-  "bin": "cli.js",
-  "module": "cli.js",
+  "bin": {
+    "oas-typescript-koa": "cli.js"
+  },
   "scripts": {
     "gen": "ts-node --esm src/index.ts ../shared/src/openapi/api.json --output generated",
     "gen:build": "node --experimental-modules cli.js ../shared/src/openapi/api.json --output generated",
