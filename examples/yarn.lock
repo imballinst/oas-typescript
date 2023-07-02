@@ -23,10 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@oas-typescript/koa@0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@oas-typescript/koa/-/koa-0.0.2.tgz#e3de61a0b316621e04cb7955731db4f51927b27e"
-  integrity sha512-XIHwIX9WcWJIcj7K/P9ByxvAChLqaVst3Daa7hYWC9Wefebv48yBxdoWDC9K/XHScWrdNIrcjaEU08T5APpu0w==
+"@oas-typescript/koa@0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@oas-typescript/koa/-/koa-0.0.3.tgz#d3109db58db03282a0dcd354b9a4574df7176e13"
+  integrity sha512-9HRDnAoblBvGi2quUz/Zc9kv3IPi7sG4nzPMqzKAV7+JmSNyYVaSbnsK3pVGsNyu734Dq7Eo4JFLeNQi5HsSAg==
   dependencies:
     meow "12.0.1"
 

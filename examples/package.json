@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "gen": "oas-typescript-koa ../shared/src/openapi/api.json --output generated"
+    "gen": "oas-typescript-koa ./api.json --output generated"
   },
   "devDependencies": {
-    "@oas-typescript/koa": "0.0.2"
+    "@oas-typescript/koa": "0.0.3"
   }
 }
