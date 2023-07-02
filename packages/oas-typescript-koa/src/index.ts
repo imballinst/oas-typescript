@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { OpenAPIV3 } from 'openapi-types';
+import { tmpdir } from 'os';
 import {
   generateZodClientFromOpenAPI,
   getHandlebars
@@ -8,7 +9,11 @@ import { titleCase } from 'title-case';
 import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import {
+  defaultHandlebars,
+  middlewareHelpersTs,
+  utilsTs
+} from './templates.js';
 
 const cli = meow(
   `
@@ -33,8 +38,6 @@ const cli = meow(
   }
 );
 
-const DIRNAME = path.dirname(fileURLToPath(import.meta.url));
-
 async function main() {
   const cliInput = cli.input[0];
   const input = path.isAbsolute(cliInput)
@@ -51,15 +54,21 @@ async function main() {
   }
 
   // Copy the utility and the middleware helpers.
-  await fs.mkdir(output, { recursive: true });
+  const tmpFolder = path.join(tmpdir(), '@oast');
+  const handlebarsFilePath = path.join(tmpFolder, 'koa/default.hbs');
+
+  // Create the files in tmp folder.
   await Promise.all([
-    fs.copyFile(
-      path.join(DIRNAME, 'templates/typescript/utils.ts'),
-      path.join(output, 'utils.ts')
-    ),
-    fs.copyFile(
-      path.join(DIRNAME, 'templates/typescript/middleware-helpers.ts'),
-      path.join(output, 'middleware-helpers.ts')
+    fs.mkdir(path.dirname(handlebarsFilePath), { recursive: true }),
+    fs.mkdir(tmpFolder, { recursive: true })
+  ]);
+  await Promise.all([
+    fs.writeFile(handlebarsFilePath, defaultHandlebars, 'utf-8'),
+    fs.writeFile(path.join(output, 'utils.ts'), utilsTs, 'utf-8'),
+    fs.writeFile(
+      path.join(output, 'middleware-helpers.ts'),
+      middlewareHelpersTs,
+      'utf-8'
     )
   ]);
 
@@ -82,7 +91,7 @@ async function main() {
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
     distPath: path.join(output, 'client.ts'),
-    templatePath: path.join(DIRNAME, 'templates/handlebars/default.hbs'),
+    templatePath: handlebarsFilePath,
     handlebars
   });
 
@@ -271,6 +280,7 @@ app
     );
   }
   await fs.writeFile(distClientPath, distClientContent, 'utf-8');
+  await fs.rm(tmpFolder, { recursive: true, force: true });
 }
 
 main();

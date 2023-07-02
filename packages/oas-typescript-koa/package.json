@@ -6,6 +6,7 @@
   "module": "bin/cli.js",
   "scripts": {
     "gen": "ts-node --esm src/index.ts ../shared/src/openapi/api.json --output generated",
+    "gen:templates": "ts-node --esm scripts/fill-templates.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:run-koa": "nodemon"
   },
