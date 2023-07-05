@@ -35,11 +35,13 @@ type ExtractMatchingType<
 type ExtractFilteredRecordFromArray<
   TArray extends readonly OasParameter[],
   Type extends TArray[number]['type']
-> = {
-  [K in ExtractMatchingType<TArray, Type>['name']]: z.output<
-    ExtractMatchingType<TArray, Type>['schema']
-  >;
-};
+> = ExtractMatchingType<TArray, Type> extends never
+  ? never
+  : {
+      [K in ExtractMatchingType<TArray, Type>['name']]: z.output<
+        ExtractMatchingType<TArray, Type>['schema']
+      >;
+    };
 
 enum ParseRequestErrors {
   INVALID_PATH_PARAMETER = '10000',
@@ -54,14 +56,21 @@ const ParseRequestErrorsMessage: Record<ParseRequestErrors, string> = {
   [ParseRequestErrors.INVALID_HTTP_HEADER]: 'invalid http header'
 };
 
-export interface ParsedRequestInfo<
+type RemoveNeverKeys<T> = Pick<
+  T,
+  {
+    [K in keyof T]: T[K] extends never ? never : K;
+  }[keyof T]
+>;
+
+export type ParsedRequestInfo<
   OasParametersType extends readonly OasParameter[]
-> {
+> = RemoveNeverKeys<{
   body: z.output<ExtractMatchingType<OasParametersType, 'Body'>['schema']>;
   pathParams: ExtractFilteredRecordFromArray<OasParametersType, 'Path'>;
   headerParams: ExtractFilteredRecordFromArray<OasParametersType, 'Header'>;
   queryParams: ExtractFilteredRecordFromArray<OasParametersType, 'Query'>;
-}
+}>;
 
 export class KoaGeneratedUtils {
   static parseRequestInfo<OasParametersType extends readonly OasParameter[]>({
@@ -162,7 +171,7 @@ export class KoaGeneratedUtils {
       queryParams,
       headerParams,
       body: bodyParams?.value
-    } as ParsedRequestInfo<OasParametersType>;
+    } as unknown as ParsedRequestInfo<OasParametersType>;
   }
 
   static createSecurityMiddleware<EndpointParameter extends OasSecurity[]>(

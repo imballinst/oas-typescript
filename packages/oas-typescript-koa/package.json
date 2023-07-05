@@ -1,6 +1,6 @@
 {
   "name": "@oas-typescript/koa",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "type": "module",
   "bin": {
     "oas-typescript-koa": "cli.js"
@@ -9,7 +9,7 @@
     "gen": "ts-node --esm src/index.ts ../shared/src/openapi/api.json --output generated",
     "gen:build": "node --experimental-modules cli.js ../shared/src/openapi/api.json --output generated",
     "gen:templates": "ts-node --esm scripts/fill-templates.ts",
-    "build": "gen:templates && ts-node --esm scripts/build-entry.ts",
+    "build": "yarn gen:templates && ts-node --esm scripts/build-entry.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:run-koa": "nodemon"
   },
