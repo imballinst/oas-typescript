@@ -14,7 +14,9 @@
     "test:run-koa": "nodemon"
   },
   "dependencies": {
-    "meow": "12.0.1"
+    "meow": "12.0.1",
+    "openapi-zod-client": "1.7.2",
+    "title-case": "3.0.3"
   },
   "devDependencies": {
     "@koa/bodyparser": "5.0.0",
@@ -27,9 +29,7 @@
     "esbuild": "0.18.11",
     "koa": "2.14.2",
     "nodemon": "2.0.22",
-    "openapi-zod-client": "1.7.2",
     "regenerator-runtime": "0.13.11",
-    "title-case": "3.0.3",
     "ts-node": "10.9.1",
     "zod": "3.21.4"
   }
