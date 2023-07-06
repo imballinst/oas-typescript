@@ -214,8 +214,7 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
       // If it doesn't throw, then it exists.
       isControllerExist = true;
     } catch (err) {
-      // It doesn't exist, so we need to create it first.
-      await fs.mkdir(path.dirname(pathToController), { recursive: true });
+      // No-op.
     }
 
     if (isControllerExist && !cliRecreateControllers) {
@@ -229,6 +228,9 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
         pathToController,
         pathToController.replace('.ts', '.old.ts')
       );
+    } else {
+      // It doesn't exist, so we need to create it first.
+      await fs.mkdir(path.dirname(pathToController), { recursive: true });
     }
 
     await fs.writeFile(
