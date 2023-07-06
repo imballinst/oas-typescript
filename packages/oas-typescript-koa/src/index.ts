@@ -15,6 +15,10 @@ import {
   middlewareHelpersTs,
   utilsTs
 } from './templates.js';
+import { ControllerInfo } from './helpers/templates/types.js';
+import { generateRouteMiddleware } from './helpers/templates/middleware.js';
+import { generateTemplateController } from './helpers/templates/controller.js';
+import { generateTemplateRouter } from './helpers/templates/router.js';
 
 const cli = meow(
   `
@@ -36,7 +40,7 @@ const cli = meow(
         type: 'string',
         shortFlag: 'o'
       },
-      recreateControllers: {
+      regenerateTemplateControllers: {
         type: 'boolean',
         shortFlag: 'rc'
       }
@@ -52,7 +56,7 @@ async function main() {
 
   const {
     output: cliOutput,
-    recreateControllers: cliRecreateControllers = false
+    regenerateTemplateControllers: cliRegenerateTemplateControllers = false
   } = cli.flags;
   let output = path.join(process.cwd(), 'generated');
 
@@ -109,10 +113,7 @@ async function main() {
   const routers: string[] = [];
 
   const methods = ['get', 'post', 'put', 'delete', 'patch'] as const;
-  const controllersInformation: Record<
-    string,
-    Array<{ parameterName: string; operationId: string }>
-  > = {};
+  const controllerToOperationsRecord: Record<string, ControllerInfo[]> = {};
   const parametersImportsPerController: Record<string, string[]> = {};
   const allServerSecurityImports: string[] = [];
 
@@ -140,8 +141,8 @@ async function main() {
       }
 
       const controllerName = `${titleCase(tag)}Controller`;
-      if (!controllersInformation[controllerName]) {
-        controllersInformation[controllerName] = [];
+      if (!controllerToOperationsRecord[controllerName]) {
+        controllerToOperationsRecord[controllerName] = [];
       }
 
       if (!parametersImportsPerController[controllerName]) {
@@ -152,7 +153,7 @@ async function main() {
         operationId
       )}Parameters`;
 
-      controllersInformation[controllerName].push({
+      controllerToOperationsRecord[controllerName].push({
         operationId,
         parameterName
       });
@@ -160,22 +161,11 @@ async function main() {
       parametersImportsPerController[controllerName].push(parameterName);
 
       const middlewares: string[] = [
-        `
-async (ctx, next) => {
-  const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
-    ctx,
-    oasParameters: ${parameterName}
-  })
-  if (!parsedRequestInfo) {
-    ctx.status = 400
-    return
-  }
-
-  const { body, status } = await ${controllerName}.${operationId}(parsedRequestInfo)
-  ctx.status = status
-  if (body) ctx.body = body
-}
-      `.trim()
+        generateRouteMiddleware({
+          controllerName,
+          operationId,
+          parameterName
+        })
       ];
 
       if (security) {
@@ -201,12 +191,12 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
   }
 
   // Create controllers.
-  for (const controllerKey in controllersInformation) {
+  for (const controllerKey in controllerToOperationsRecord) {
     const pathToController = path.join(
       output,
       `controllers/${controllerKey}.ts`
     );
-    const controller = controllersInformation[controllerKey];
+    const controllers = controllerToOperationsRecord[controllerKey];
     let isControllerExist = false;
 
     try {
@@ -217,7 +207,7 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
       // No-op.
     }
 
-    if (isControllerExist && !cliRecreateControllers) {
+    if (isControllerExist && !cliRegenerateTemplateControllers) {
       continue;
     }
 
@@ -235,16 +225,11 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
 
     await fs.writeFile(
       pathToController,
-      `
-import { 
-  ${parametersImportsPerController[controllerKey].join(',\n  ')}
-} from '../client'
-import { ParsedRequestInfo } from '../utils';
-
-export class ${controllerKey} {
-${controller.map((c) => renderControllerMethod(c)).join('\n  ')}
-}
-    `.trim(),
+      generateTemplateController({
+        controllerKey,
+        controllers,
+        parametersImportsPerController
+      }),
       'utf-8'
     );
   }
@@ -262,33 +247,12 @@ ${controller.map((c) => renderControllerMethod(c)).join('\n  ')}
     );
   }
 
-  const template = `
-import Koa from 'koa'
-import Router from '@koa/router'
-import bodyParser from '@koa/bodyparser';
-import { 
-  ${allServerSecurityImports
-    .concat(Object.values(parametersImportsPerController).flat())
-    .join(',\n  ')}
-} from './client.js'
-import { KoaGeneratedUtils } from './utils.js'
-
-${Object.keys(controllersInformation)
-  .map((c) => `import { ${c} } from './controllers/${c}.js'`)
-  .join('\n')}
-
-const app = new Koa()
-const router = new Router()
-
-app.use(bodyParser());
-
-${routers.join('\n\n')}
-
-app
-  .use(router.routes())
-  .use(router.allowedMethods())
-  .listen(3000);
-  `;
+  const template = generateTemplateRouter({
+    allServerSecurityImports,
+    controllerToOperationsRecord,
+    parametersImportsPerController,
+    routers
+  });
 
   await fs.writeFile(path.join(output, 'server.ts'), template, 'utf-8');
 
@@ -309,20 +273,6 @@ app
 main();
 
 // Helper functions.
-function renderControllerMethod(controller: {
-  parameterName: string;
-  operationId: string;
-}) {
-  return `
-static async ${controller.operationId}(params: ParsedRequestInfo<typeof ${controller.parameterName}>) {
-  return {
-    body: undefined,
-    status: 200
-  }
-}
-  `.trim();
-}
-
 function capitalizeFirstCharacter(text: string) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

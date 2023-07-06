@@ -1,4 +1,3 @@
-
 import Koa from 'koa'
 import Router from '@koa/router'
 import bodyParser from '@koa/bodyparser';
@@ -328,8 +327,4 @@ router.delete('/user/:username', async (ctx, next) => {
   if (body) ctx.body = body
 })
 
-app
-  .use(router.routes())
-  .use(router.allowedMethods())
-  .listen(3000);
-  
+export const generatedRouter = router
