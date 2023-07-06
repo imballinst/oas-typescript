@@ -22,7 +22,8 @@ const cli = meow(
 	  $ openapi-to-koa <path-to-openapi-json>
 
 	Options
-	  --output, -o  Specify a place for output, default to (pwd)/generated
+	  --output, -o                 Specify a place for output, default to (pwd)/generated
+	  --recreate-controllers, -rc  Recreate controllers if old ones exist, default to false
 
 	Examples
 	  $ openapi-to-koa ./openapi/api.json --output src/generated
@@ -34,6 +35,10 @@ const cli = meow(
       output: {
         type: 'string',
         shortFlag: 'o'
+      },
+      recreateControllers: {
+        type: 'boolean',
+        shortFlag: 'rc'
       }
     }
   }
@@ -45,7 +50,10 @@ async function main() {
     ? cliInput
     : path.join(process.cwd(), cliInput);
 
-  const { output: cliOutput } = cli.flags;
+  const {
+    output: cliOutput,
+    recreateControllers: cliRecreateControllers = false
+  } = cli.flags;
   let output = path.join(process.cwd(), 'generated');
 
   if (cliOutput) {
@@ -199,16 +207,30 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
       `controllers/${controllerKey}.ts`
     );
     const controller = controllersInformation[controllerKey];
+    let isControllerExist = false;
 
     try {
       await fs.stat(pathToController);
       // If it doesn't throw, then it exists.
+      isControllerExist = true;
     } catch (err) {
       // It doesn't exist, so we need to create it first.
       await fs.mkdir(path.dirname(pathToController), { recursive: true });
     }
 
-    // TODO: find some way to patch the controller if there are removed/added operations.
+    if (isControllerExist && !cliRecreateControllers) {
+      continue;
+    }
+
+    // TODO: improve this so that we could append/delete as needed, instead of
+    // having to move the old one to *.old.ts.
+    if (isControllerExist) {
+      await fs.rename(
+        pathToController,
+        pathToController.replace('.ts', '.old.ts')
+      );
+    }
+
     await fs.writeFile(
       pathToController,
       `
