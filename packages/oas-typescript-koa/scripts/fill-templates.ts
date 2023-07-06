@@ -14,11 +14,11 @@ async function main() {
   ]);
 
   const templatesContent = `
-export const defaultHandlebars = \`${escapeBacktick(defaultHandlebars)}\`
+export const defaultHandlebars = \`${escapeCharacters(defaultHandlebars)}\`
 
-export const middlewareHelpersTs = \`${escapeBacktick(middlewareHelpersTs)}\`
+export const middlewareHelpersTs = \`${escapeCharacters(middlewareHelpersTs)}\`
 
-export const utilsTs = \`${escapeBacktick(utilsTs)}\`
+export const utilsTs = \`${escapeCharacters(utilsTs)}\`
   `.trimStart();
 
   await fs.writeFile(
@@ -31,6 +31,6 @@ export const utilsTs = \`${escapeBacktick(utilsTs)}\`
 main();
 
 // Helper functions.
-function escapeBacktick(str: string) {
-  return str.replace(/`/g, '\\`');
+function escapeCharacters(str: string) {
+  return str.replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
 }

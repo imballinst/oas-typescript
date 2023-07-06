@@ -291,7 +291,7 @@ function createErrorResponse({
 }) {
   let message = ParseRequestErrorsMessage[errorCode];
   if (additionalMessage) {
-    message = \`${message} ${additionalMessage}\`;
+    message = \`\${message} \${additionalMessage}\`;
   }
 
   return {
