@@ -10,6 +10,8 @@ import { titleCase } from 'title-case';
 import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
+import { execSync } from 'child_process';
+
 import {
   defaultHandlebars,
   middlewareHelpersTs,
@@ -268,6 +270,9 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
   }
   await fs.writeFile(distClientPath, distClientContent, 'utf-8');
   await fs.rm(tmpFolder, { recursive: true, force: true });
+
+  // Hijack the prettier because we want to use the prettier from the current node_modules rather than to install a new one.
+  execSync(`yarn prettier ${cliOutput} --write`);
 }
 
 main();
