@@ -10,7 +10,7 @@
     "gen": "oas-typescript-koa ./api.json --output generated"
   },
   "devDependencies": {
-    "@oas-typescript/koa": "0.3.0",
+    "@oas-typescript/koa": "0.3.1",
     "@types/node": "20.4.0",
     "axios": "1.4.0",
     "openapi-types": "12.1.3",
