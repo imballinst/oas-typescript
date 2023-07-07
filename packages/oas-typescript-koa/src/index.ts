@@ -28,8 +28,9 @@ const cli = meow(
 	  $ openapi-to-koa <path-to-openapi-json>
 
 	Options
-	  --output, -o                 Specify a place for output, default to (pwd)/generated
-	  --recreate-controllers, -rc  Recreate controllers if old ones exist, default to false
+	  --output, -o                  Specify a place for output, default to (pwd)/generated.
+	  --regenerate-non-stubs, -rns  Recreate non-stubs files if old ones exist, default to false.
+                                  Non stub files include controllers and middleware-helpers.ts
 
 	Examples
 	  $ openapi-to-koa ./openapi/api.json --output src/generated
@@ -42,9 +43,9 @@ const cli = meow(
         type: 'string',
         shortFlag: 'o'
       },
-      regenerateTemplateControllers: {
+      regenerateNonStubs: {
         type: 'boolean',
-        shortFlag: 'rc'
+        shortFlag: 'rns'
       }
     }
   }
@@ -58,15 +59,17 @@ async function main() {
 
   const {
     output: cliOutput,
-    regenerateTemplateControllers: cliRegenerateTemplateControllers = false
+    regenerateNonStubs: isRegenerateNonStubs = false
   } = cli.flags;
-  let output = path.join(process.cwd(), 'generated');
+  let rootOutputFolder = path.join(process.cwd(), 'generated');
 
   if (cliOutput) {
-    output = path.isAbsolute(cliOutput)
+    rootOutputFolder = path.isAbsolute(cliOutput)
       ? cliOutput
       : path.join(process.cwd(), cliOutput);
   }
+
+  const lockedGeneratedFilesFolder = path.join(rootOutputFolder, 'generated');
 
   // Copy the utility and the middleware helpers.
   const tmpFolder = path.join(tmpdir(), '@oast');
@@ -76,16 +79,20 @@ async function main() {
   await Promise.all([
     fs.mkdir(path.dirname(handlebarsFilePath), { recursive: true }),
     fs.mkdir(tmpFolder, { recursive: true }),
-    fs.mkdir(output, { recursive: true })
+    fs.mkdir(lockedGeneratedFilesFolder, { recursive: true })
   ]);
   await Promise.all([
     fs.writeFile(handlebarsFilePath, defaultHandlebars, 'utf-8'),
-    fs.writeFile(path.join(output, 'utils.ts'), utilsTs, 'utf-8'),
     fs.writeFile(
-      path.join(output, 'middleware-helpers.ts'),
-      middlewareHelpersTs,
+      path.join(lockedGeneratedFilesFolder, 'utils.ts'),
+      utilsTs,
       'utf-8'
-    )
+    ),
+    createOrDuplicateFile({
+      filePath: path.join(rootOutputFolder, 'middleware-helpers.ts'),
+      fileContent: middlewareHelpersTs,
+      isRegenerateNonStubs
+    })
   ]);
 
   // Start the process.
@@ -106,7 +113,7 @@ async function main() {
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
-    distPath: path.join(output, 'client.ts'),
+    distPath: path.join(lockedGeneratedFilesFolder, 'client.ts'),
     templatePath: handlebarsFilePath,
     handlebars
   });
@@ -195,51 +202,26 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
   // Create controllers.
   for (const controllerKey in controllerToOperationsRecord) {
     const pathToController = path.join(
-      output,
+      rootOutputFolder,
       `controllers/${controllerKey}.ts`
     );
     const controllers = controllerToOperationsRecord[controllerKey];
-    let isControllerExist = false;
 
-    try {
-      await fs.stat(pathToController);
-      // If it doesn't throw, then it exists.
-      isControllerExist = true;
-    } catch (err) {
-      // No-op.
-    }
-
-    if (isControllerExist && !cliRegenerateTemplateControllers) {
-      continue;
-    }
-
-    // TODO: improve this so that we could append/delete as needed, instead of
-    // having to move the old one to *.old.ts.
-    if (isControllerExist) {
-      await fs.rename(
-        pathToController,
-        pathToController.replace('.ts', '.old.ts')
-      );
-    } else {
-      // It doesn't exist, so we need to create it first.
-      await fs.mkdir(path.dirname(pathToController), { recursive: true });
-    }
-
-    await fs.writeFile(
-      pathToController,
-      generateTemplateController({
+    await createOrDuplicateFile({
+      filePath: pathToController,
+      fileContent: generateTemplateController({
         controllerKey,
         controllers,
         parametersImportsPerController
       }),
-      'utf-8'
-    );
+      isRegenerateNonStubs
+    });
   }
 
   // Output security schemes.
   if (document.components?.securitySchemes) {
     await fs.writeFile(
-      path.join(output, 'security-schemes.ts'),
+      path.join(lockedGeneratedFilesFolder, 'security-schemes.ts'),
       `export const securitySchemes = ${JSON.stringify(
         document.components?.securitySchemes,
         null,
@@ -256,10 +238,14 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
     routers
   });
 
-  await fs.writeFile(path.join(output, 'server.ts'), template, 'utf-8');
+  await fs.writeFile(
+    path.join(lockedGeneratedFilesFolder, 'server.ts'),
+    template,
+    'utf-8'
+  );
 
   // Replace z.instanceof(File) (if any).
-  const distClientPath = path.join(output, 'client.ts');
+  const distClientPath = path.join(lockedGeneratedFilesFolder, 'client.ts');
   let distClientContent = await fs.readFile(distClientPath, 'utf-8');
   if (distClientContent.includes('z.instanceof(File)')) {
     // Replace with z.any().
@@ -285,4 +271,37 @@ function capitalizeFirstCharacter(text: string) {
 function convertOpenApiPathToKoaPath(s: string) {
   if (!s.startsWith('{') && !s.endsWith('}')) return s;
   return `:${s.slice(1, -1)}`;
+}
+
+async function createOrDuplicateFile({
+  filePath,
+  isRegenerateNonStubs,
+  fileContent
+}: {
+  filePath: string;
+  isRegenerateNonStubs: boolean;
+  fileContent: string;
+}) {
+  let isControllerExist = false;
+
+  try {
+    await fs.stat(filePath);
+    // If it doesn't throw, then it exists.
+    isControllerExist = true;
+  } catch (err) {
+    // It doesn't exist, so we need to create it first.
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+  }
+
+  if (isControllerExist && !isRegenerateNonStubs) {
+    return;
+  }
+
+  // TODO: improve this so that we could append/delete as needed, instead of
+  // having to move the old one to *.old.ts.
+  if (isControllerExist) {
+    await fs.rename(filePath, filePath.replace('.ts', '.old.ts'));
+  }
+
+  return fs.writeFile(filePath, fileContent, 'utf-8');
 }

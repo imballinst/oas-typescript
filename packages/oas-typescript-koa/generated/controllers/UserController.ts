@@ -6,7 +6,7 @@ import {
   GetUserByNameParameters,
   UpdateUserParameters,
   DeleteUserParameters
-} from '../client';
+} from '../generated/client';
 import { ParsedRequestInfo } from '../utils';
 
 export class UserController {

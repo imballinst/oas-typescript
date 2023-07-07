@@ -12,7 +12,6 @@ export function generateTemplateRouter({
   routers: string[];
 }) {
   return `
-import Koa from 'koa'
 import Router from '@koa/router'
 import bodyParser from '@koa/bodyparser';
 import { 
@@ -23,13 +22,12 @@ import {
 import { KoaGeneratedUtils } from './utils.js'
 
 ${Object.keys(controllerToOperationsRecord)
-  .map((c) => `import { ${c} } from './controllers/${c}.js'`)
+  .map((c) => `import { ${c} } from '../controllers/${c}.js'`)
   .join('\n')}
 
-const app = new Koa()
 const router = new Router()
 
-app.use(bodyParser());
+router.use(bodyParser());
 
 ${routers.join('\n\n')}
 

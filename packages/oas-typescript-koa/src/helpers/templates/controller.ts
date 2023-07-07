@@ -12,8 +12,8 @@ export function generateTemplateController({
   return `
 import { 
   ${parametersImportsPerController[controllerKey].join(',\n  ')}
-} from '../client'
-import { ParsedRequestInfo } from '../utils';
+} from '../generated/client.js'
+import { ParsedRequestInfo } from '../generated/utils.js';
 
 export class ${controllerKey} {
 ${controllers.map((c) => renderControllerMethod(c)).join('\n  ')}

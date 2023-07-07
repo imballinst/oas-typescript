@@ -3,7 +3,7 @@ import {
   PlaceOrderParameters,
   GetOrderByIdParameters,
   DeleteOrderParameters
-} from '../client';
+} from '../generated/client';
 import { ParsedRequestInfo } from '../utils';
 
 export class StoreController {

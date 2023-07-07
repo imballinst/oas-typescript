@@ -7,7 +7,7 @@ import {
   UpdatePetWithFormParameters,
   DeletePetParameters,
   UploadFileParameters
-} from '../client';
+} from '../generated/client';
 import { ParsedRequestInfo } from '../utils';
 
 export class PetController {
