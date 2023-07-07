@@ -92,6 +92,7 @@ export class KoaGeneratedUtils {
 
     // Validate path parameters.
     for (const oasParameter of oasParameters) {
+      console.info(oasParameter);
       if (oasParameter.type === 'Path') {
         let param: string | number = ctx.params[oasParameter.name];
         if (oasParameter.schema._def.typeName === 'ZodNumber') {
@@ -114,7 +115,8 @@ export class KoaGeneratedUtils {
       }
 
       if (oasParameter.type === 'Body') {
-        const body = ctx.body as any;
+        const body = ctx.request.body as any;
+        console.info('body', body);
         const result = oasParameter.schema.safeParse(body);
         if (!result.success) {
           ctx.status = 400;
@@ -170,7 +172,7 @@ export class KoaGeneratedUtils {
       pathParams,
       queryParams,
       headerParams,
-      body: bodyParams?.value
+      body: bodyParams
     } as unknown as ParsedRequestInfo<OasParametersType>;
   }
 

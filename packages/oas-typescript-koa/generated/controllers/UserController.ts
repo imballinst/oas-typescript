@@ -6,8 +6,8 @@ import {
   GetUserByNameParameters,
   UpdateUserParameters,
   DeleteUserParameters
-} from '../generated/client';
-import { ParsedRequestInfo } from '../utils';
+} from '../generated/client.js';
+import { ParsedRequestInfo } from '../generated/utils.js';
 
 export class UserController {
   static async createUser(

@@ -3,8 +3,8 @@ import {
   PlaceOrderParameters,
   GetOrderByIdParameters,
   DeleteOrderParameters
-} from '../generated/client';
-import { ParsedRequestInfo } from '../utils';
+} from '../generated/client.js';
+import { ParsedRequestInfo } from '../generated/utils.js';
 
 export class StoreController {
   static async getInventory(

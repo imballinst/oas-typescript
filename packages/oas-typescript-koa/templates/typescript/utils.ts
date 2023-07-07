@@ -170,7 +170,7 @@ export class KoaGeneratedUtils {
       pathParams,
       queryParams,
       headerParams,
-      body: bodyParams?.value
+      body: bodyParams
     } as unknown as ParsedRequestInfo<OasParametersType>;
   }
 

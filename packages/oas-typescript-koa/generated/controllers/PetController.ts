@@ -1,3 +1,6 @@
+import { z } from 'zod';
+import { customAlphabet } from 'nanoid';
+
 import {
   AddPetParameters,
   UpdatePetParameters,
@@ -6,14 +9,30 @@ import {
   GetPetByIdParameters,
   UpdatePetWithFormParameters,
   DeletePetParameters,
-  UploadFileParameters
-} from '../generated/client';
-import { ParsedRequestInfo } from '../utils';
+  UploadFileParameters,
+  Pet
+} from '../generated/client.js';
+import { ParsedRequestInfo } from '../generated/utils.js';
+
+const db: Record<string, z.output<typeof Pet>> = {};
 
 export class PetController {
   static async addPet(params: ParsedRequestInfo<typeof AddPetParameters>) {
+    console.info(params);
+    if (db[params.body.name]) {
+      return {
+        body: { message: `pet with name ${params.body.name} already exists` },
+        status: 400
+      };
+    }
+
+    db[params.body.name] = {
+      ...params.body,
+      id: Number(customAlphabet('1234567890'))
+    };
+
     return {
-      body: undefined,
+      body: db[params.body.name],
       status: 200
     };
   }
