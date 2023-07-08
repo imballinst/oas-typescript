@@ -13,10 +13,13 @@ import { {{{@key}}} } from './{{{this}}}'
 {{/each}}
 {{/if}}
 
+// Schemas.
 {{#each schemas}}
 export const {{@key}}{{#if (lookup ../circularTypeByName @key)}}: z.ZodType<{{@key}}>{{/if}} = {{{this}}};
+export interface {{@key}} extends z.infer<typeof {{@key}}> {}
 {{/each}}
 
+// Endpoints.
 {{#each endpoints}}
 export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Parameters = [
   {{#if parameters}}
@@ -36,6 +39,26 @@ export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}
 ] as const
 {{#if security}}
 export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Security = {{{security}}}
+{{/if}}
+{{#if response}}
+export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response = {{{response}}}
+{{/if}}
+{{#if errors}}
+export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Errors = [
+  {{#each errors}}
+  {
+    {{#ifeq status "default" }}
+    status: "default",
+    {{else}}
+    status: {{status}},
+    {{/ifeq}}
+    {{#if description}}
+    description: \`{{description}}\`,
+    {{/if}}
+    schema: {{{schema}}}
+  },
+  {{/each}}
+] as const
 {{/if}}
 
 {{/each}}`
@@ -300,5 +323,37 @@ function createErrorResponse({
     detail: zodError.errors
   };
 }
+`
+
+export const typesTs = `import { z } from 'zod';
+
+interface OasError {
+  status: number;
+  description: string;
+  schema: z.ZodTypeAny;
+}
+
+export type ErrorStatuses<TOasError extends readonly OasError[]> = Exclude<
+  Extract<TOasError[number], { status: number }>['status'],
+  401 | 403
+>;
+
+export type ControllerReturnType<
+  TResponseType extends z.ZodTypeAny,
+  TErrorStatus extends number,
+  TSuccessStatus extends number
+> =
+  | {
+      status: TErrorStatus;
+      error: {
+        code: number;
+        message: string;
+        detail?: z.ZodIssue[];
+      };
+    }
+  | {
+      status: TSuccessStatus;
+      data: z.output<TResponseType>;
+    };
 `
   

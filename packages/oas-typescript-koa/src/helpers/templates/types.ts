@@ -1,4 +1,7 @@
 export interface ControllerInfo {
-  parameterName: string;
   operationId: string;
+  parametersName?: string;
+  response?: string;
+  responseSuccessStatus: number;
+  errors?: string;
 }

@@ -4,14 +4,15 @@ import path from 'path';
 const TEMPLATES_DIR = path.join(process.cwd(), 'templates');
 
 async function main() {
-  const [defaultHandlebars, middlewareHelpersTs, utilsTs] = await Promise.all([
-    fs.readFile(path.join(TEMPLATES_DIR, 'handlebars/default.hbs'), 'utf-8'),
-    fs.readFile(
-      path.join(TEMPLATES_DIR, 'typescript/middleware-helpers.ts'),
-      'utf-8'
-    ),
-    fs.readFile(path.join(TEMPLATES_DIR, 'typescript/utils.ts'), 'utf-8')
-  ]);
+  const [defaultHandlebars, middlewareHelpersTs, utilsTs, typesTs] =
+    await Promise.all(
+      [
+        'handlebars/default.hbs',
+        'typescript/middleware-helpers.ts',
+        'typescript/utils.ts',
+        'typescript/types.ts'
+      ].map((p) => fs.readFile(path.join(TEMPLATES_DIR, p), 'utf-8'))
+    );
 
   const templatesContent = `
 export const defaultHandlebars = \`${escapeCharacters(defaultHandlebars)}\`
@@ -19,6 +20,8 @@ export const defaultHandlebars = \`${escapeCharacters(defaultHandlebars)}\`
 export const middlewareHelpersTs = \`${escapeCharacters(middlewareHelpersTs)}\`
 
 export const utilsTs = \`${escapeCharacters(utilsTs)}\`
+
+export const typesTs = \`${escapeCharacters(typesTs)}\`
   `.trimStart();
 
   await fs.writeFile(

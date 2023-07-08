@@ -1,9 +1,9 @@
 export function generateRouteMiddleware({
-  parameterName,
+  parametersName,
   controllerName,
   operationId
 }: {
-  parameterName: string;
+  parametersName?: string;
   controllerName: string;
   operationId: string;
 }) {
@@ -11,16 +11,21 @@ export function generateRouteMiddleware({
 async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
-    oasParameters: ${parameterName}
+    oasParameters: ${parametersName}
   })
   if (!parsedRequestInfo) {
     ctx.status = 400
     return
   }
 
-  const { body, status } = await ${controllerName}.${operationId}(parsedRequestInfo)
-  ctx.status = status
-  if (body) ctx.body = body
+  const result = await ${controllerName}.${operationId}(parsedRequestInfo)
+  ctx.status = result.status
+
+  if (result.status > 400) {
+    ctx.body = result.error
+  } else {
+    ctx.body = result.data
+  }
 }
   `.trim();
 }

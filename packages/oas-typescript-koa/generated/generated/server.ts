@@ -18,7 +18,6 @@ import {
   UpdatePetWithFormParameters,
   DeletePetParameters,
   UploadFileParameters,
-  GetInventoryParameters,
   PlaceOrderParameters,
   GetOrderByIdParameters,
   DeleteOrderParameters,
@@ -53,9 +52,14 @@ router.post(
       return;
     }
 
-    const { body, status } = await PetController.addPet(parsedRequestInfo);
-    ctx.status = status;
-    if (body) ctx.body = body;
+    const result = await PetController.addPet(parsedRequestInfo);
+    ctx.status = result.status;
+
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
   }
 );
 
@@ -72,9 +76,14 @@ router.put(
       return;
     }
 
-    const { body, status } = await PetController.updatePet(parsedRequestInfo);
-    ctx.status = status;
-    if (body) ctx.body = body;
+    const result = await PetController.updatePet(parsedRequestInfo);
+    ctx.status = result.status;
+
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
   }
 );
 
@@ -91,11 +100,14 @@ router.get(
       return;
     }
 
-    const { body, status } = await PetController.findPetsByStatus(
-      parsedRequestInfo
-    );
-    ctx.status = status;
-    if (body) ctx.body = body;
+    const result = await PetController.findPetsByStatus(parsedRequestInfo);
+    ctx.status = result.status;
+
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
   }
 );
 
@@ -112,11 +124,14 @@ router.get(
       return;
     }
 
-    const { body, status } = await PetController.findPetsByTags(
-      parsedRequestInfo
-    );
-    ctx.status = status;
-    if (body) ctx.body = body;
+    const result = await PetController.findPetsByTags(parsedRequestInfo);
+    ctx.status = result.status;
+
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
   }
 );
 
@@ -133,9 +148,14 @@ router.get(
       return;
     }
 
-    const { body, status } = await PetController.getPetById(parsedRequestInfo);
-    ctx.status = status;
-    if (body) ctx.body = body;
+    const result = await PetController.getPetById(parsedRequestInfo);
+    ctx.status = result.status;
+
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
   }
 );
 
@@ -152,11 +172,14 @@ router.post(
       return;
     }
 
-    const { body, status } = await PetController.updatePetWithForm(
-      parsedRequestInfo
-    );
-    ctx.status = status;
-    if (body) ctx.body = body;
+    const result = await PetController.updatePetWithForm(parsedRequestInfo);
+    ctx.status = result.status;
+
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
   }
 );
 
@@ -173,9 +196,14 @@ router.delete(
       return;
     }
 
-    const { body, status } = await PetController.deletePet(parsedRequestInfo);
-    ctx.status = status;
-    if (body) ctx.body = body;
+    const result = await PetController.deletePet(parsedRequestInfo);
+    ctx.status = result.status;
+
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
   }
 );
 
@@ -192,9 +220,14 @@ router.post(
       return;
     }
 
-    const { body, status } = await PetController.uploadFile(parsedRequestInfo);
-    ctx.status = status;
-    if (body) ctx.body = body;
+    const result = await PetController.uploadFile(parsedRequestInfo);
+    ctx.status = result.status;
+
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
   }
 );
 
@@ -204,18 +237,21 @@ router.get(
   async (ctx, next) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
-      oasParameters: GetInventoryParameters
+      oasParameters: undefined
     });
     if (!parsedRequestInfo) {
       ctx.status = 400;
       return;
     }
 
-    const { body, status } = await StoreController.getInventory(
-      parsedRequestInfo
-    );
-    ctx.status = status;
-    if (body) ctx.body = body;
+    const result = await StoreController.getInventory(parsedRequestInfo);
+    ctx.status = result.status;
+
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
   }
 );
 
@@ -229,9 +265,14 @@ router.post('/store/order', async (ctx, next) => {
     return;
   }
 
-  const { body, status } = await StoreController.placeOrder(parsedRequestInfo);
-  ctx.status = status;
-  if (body) ctx.body = body;
+  const result = await StoreController.placeOrder(parsedRequestInfo);
+  ctx.status = result.status;
+
+  if (result.status > 400) {
+    ctx.body = result.error;
+  } else {
+    ctx.body = result.data;
+  }
 });
 
 router.get('/store/order/:orderId', async (ctx, next) => {
@@ -244,11 +285,14 @@ router.get('/store/order/:orderId', async (ctx, next) => {
     return;
   }
 
-  const { body, status } = await StoreController.getOrderById(
-    parsedRequestInfo
-  );
-  ctx.status = status;
-  if (body) ctx.body = body;
+  const result = await StoreController.getOrderById(parsedRequestInfo);
+  ctx.status = result.status;
+
+  if (result.status > 400) {
+    ctx.body = result.error;
+  } else {
+    ctx.body = result.data;
+  }
 });
 
 router.delete('/store/order/:orderId', async (ctx, next) => {
@@ -261,9 +305,14 @@ router.delete('/store/order/:orderId', async (ctx, next) => {
     return;
   }
 
-  const { body, status } = await StoreController.deleteOrder(parsedRequestInfo);
-  ctx.status = status;
-  if (body) ctx.body = body;
+  const result = await StoreController.deleteOrder(parsedRequestInfo);
+  ctx.status = result.status;
+
+  if (result.status > 400) {
+    ctx.body = result.error;
+  } else {
+    ctx.body = result.data;
+  }
 });
 
 router.post('/user', async (ctx, next) => {
@@ -276,9 +325,14 @@ router.post('/user', async (ctx, next) => {
     return;
   }
 
-  const { body, status } = await UserController.createUser(parsedRequestInfo);
-  ctx.status = status;
-  if (body) ctx.body = body;
+  const result = await UserController.createUser(parsedRequestInfo);
+  ctx.status = result.status;
+
+  if (result.status > 400) {
+    ctx.body = result.error;
+  } else {
+    ctx.body = result.data;
+  }
 });
 
 router.post('/user/createWithList', async (ctx, next) => {
@@ -291,11 +345,16 @@ router.post('/user/createWithList', async (ctx, next) => {
     return;
   }
 
-  const { body, status } = await UserController.createUsersWithListInput(
+  const result = await UserController.createUsersWithListInput(
     parsedRequestInfo
   );
-  ctx.status = status;
-  if (body) ctx.body = body;
+  ctx.status = result.status;
+
+  if (result.status > 400) {
+    ctx.body = result.error;
+  } else {
+    ctx.body = result.data;
+  }
 });
 
 router.get('/user/login', async (ctx, next) => {
@@ -308,9 +367,14 @@ router.get('/user/login', async (ctx, next) => {
     return;
   }
 
-  const { body, status } = await UserController.loginUser(parsedRequestInfo);
-  ctx.status = status;
-  if (body) ctx.body = body;
+  const result = await UserController.loginUser(parsedRequestInfo);
+  ctx.status = result.status;
+
+  if (result.status > 400) {
+    ctx.body = result.error;
+  } else {
+    ctx.body = result.data;
+  }
 });
 
 router.get('/user/logout', async (ctx, next) => {
@@ -323,9 +387,14 @@ router.get('/user/logout', async (ctx, next) => {
     return;
   }
 
-  const { body, status } = await UserController.logoutUser(parsedRequestInfo);
-  ctx.status = status;
-  if (body) ctx.body = body;
+  const result = await UserController.logoutUser(parsedRequestInfo);
+  ctx.status = result.status;
+
+  if (result.status > 400) {
+    ctx.body = result.error;
+  } else {
+    ctx.body = result.data;
+  }
 });
 
 router.get('/user/:username', async (ctx, next) => {
@@ -338,11 +407,14 @@ router.get('/user/:username', async (ctx, next) => {
     return;
   }
 
-  const { body, status } = await UserController.getUserByName(
-    parsedRequestInfo
-  );
-  ctx.status = status;
-  if (body) ctx.body = body;
+  const result = await UserController.getUserByName(parsedRequestInfo);
+  ctx.status = result.status;
+
+  if (result.status > 400) {
+    ctx.body = result.error;
+  } else {
+    ctx.body = result.data;
+  }
 });
 
 router.put('/user/:username', async (ctx, next) => {
@@ -355,9 +427,14 @@ router.put('/user/:username', async (ctx, next) => {
     return;
   }
 
-  const { body, status } = await UserController.updateUser(parsedRequestInfo);
-  ctx.status = status;
-  if (body) ctx.body = body;
+  const result = await UserController.updateUser(parsedRequestInfo);
+  ctx.status = result.status;
+
+  if (result.status > 400) {
+    ctx.body = result.error;
+  } else {
+    ctx.body = result.data;
+  }
 });
 
 router.delete('/user/:username', async (ctx, next) => {
@@ -370,9 +447,14 @@ router.delete('/user/:username', async (ctx, next) => {
     return;
   }
 
-  const { body, status } = await UserController.deleteUser(parsedRequestInfo);
-  ctx.status = status;
-  if (body) ctx.body = body;
+  const result = await UserController.deleteUser(parsedRequestInfo);
+  ctx.status = result.status;
+
+  if (result.status > 400) {
+    ctx.body = result.error;
+  } else {
+    ctx.body = result.data;
+  }
 });
 
 export const generatedRouter = router;

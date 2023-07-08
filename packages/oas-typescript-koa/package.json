@@ -2,6 +2,12 @@
   "name": "@oas-typescript/koa",
   "version": "0.3.2",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imballinst/oas-typescript.git",
+    "directory": "packages/oas-typescript-koa"
+  },
+  "homepage": "https://github.com/imballinst/oas-typescript#readme",
   "bin": {
     "oas-typescript-koa": "cli.js"
   },

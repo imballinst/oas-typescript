@@ -15,7 +15,8 @@ import { execSync } from 'child_process';
 import {
   defaultHandlebars,
   middlewareHelpersTs,
-  utilsTs
+  utilsTs,
+  typesTs
 } from './templates.js';
 import { ControllerInfo } from './helpers/templates/types.js';
 import { generateRouteMiddleware } from './helpers/templates/middleware.js';
@@ -29,7 +30,7 @@ const cli = meow(
 
 	Options
 	  --output, -o                  Specify a place for output, default to (pwd)/generated.
-	  --regenerate-non-stubs, -rns  Recreate non-stubs files if old ones exist, default to false.
+	  --regenerate-non-stubs, -r  Recreate non-stubs files if old ones exist, default to false.
                                   Non stub files include controllers and middleware-helpers.ts
 
 	Examples
@@ -45,7 +46,7 @@ const cli = meow(
       },
       regenerateNonStubs: {
         type: 'boolean',
-        shortFlag: 'rns'
+        shortFlag: 'r'
       }
     }
   }
@@ -88,6 +89,11 @@ async function main() {
       utilsTs,
       'utf-8'
     ),
+    fs.writeFile(
+      path.join(lockedGeneratedFilesFolder, 'types.ts'),
+      typesTs,
+      'utf-8'
+    ),
     createOrDuplicateFile({
       filePath: path.join(rootOutputFolder, 'middleware-helpers.ts'),
       fileContent: middlewareHelpersTs,
@@ -124,6 +130,7 @@ async function main() {
   const methods = ['get', 'post', 'put', 'delete', 'patch'] as const;
   const controllerToOperationsRecord: Record<string, ControllerInfo[]> = {};
   const parametersImportsPerController: Record<string, string[]> = {};
+  const controllerImportsPerController: Record<string, string[]> = {};
   const allServerSecurityImports: string[] = [];
 
   for (const pathKey in document.paths) {
@@ -134,7 +141,14 @@ async function main() {
       const operation = pathItem[methodKey];
       if (!operation) continue;
 
-      const { tags = [], operationId, security } = operation;
+      const {
+        tags = [],
+        operationId,
+        security,
+        responses,
+        parameters,
+        requestBody
+      } = operation;
       const [tag] = tags;
 
       if (!tag) {
@@ -158,22 +172,59 @@ async function main() {
         parametersImportsPerController[controllerName] = [];
       }
 
-      const parameterName = `${capitalizeFirstCharacter(
-        operationId
-      )}Parameters`;
+      if (!controllerImportsPerController[controllerName]) {
+        controllerImportsPerController[controllerName] = [];
+      }
+
+      const capitalizedOperationId = capitalizeFirstCharacter(operationId);
+      let parametersName: string | undefined;
+      let errorsName: string | undefined;
+      let responseName: string | undefined;
+
+      if (parameters || requestBody) {
+        parametersName = `${capitalizedOperationId}Parameters`;
+      }
+
+      if (responses) {
+        const keys = Object.keys(responses);
+        const errorStatuses = keys.map(Number).filter((num) => num >= 400);
+
+        if (errorStatuses.length > 0) {
+          errorsName = `${capitalizedOperationId}Errors`;
+        }
+
+        if (keys.length > errorStatuses.length) {
+          responseName = `${capitalizedOperationId}Response`;
+        }
+      }
 
       controllerToOperationsRecord[controllerName].push({
         operationId,
-        parameterName
+        parametersName,
+        errors: errorsName,
+        response: responseName,
+        responseSuccessStatus: Number(
+          Object.keys(responses).find(
+            (status) => Number(status) >= 200 && Number(status) < 300
+          )
+        )
       });
 
-      parametersImportsPerController[controllerName].push(parameterName);
+      if (parametersName) {
+        parametersImportsPerController[controllerName].push(parametersName);
+        controllerImportsPerController[controllerName].push(parametersName);
+      }
+
+      if (errorsName)
+        controllerImportsPerController[controllerName].push(errorsName);
+      if (responseName)
+        controllerImportsPerController[controllerName].push(responseName);
 
       const middlewares: string[] = [
         generateRouteMiddleware({
           controllerName,
           operationId,
-          parameterName
+          parametersName
         })
       ];
 
@@ -210,9 +261,9 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
     await createOrDuplicateFile({
       filePath: pathToController,
       fileContent: generateTemplateController({
-        controllerKey,
+        controllerName: controllerKey,
         controllers,
-        parametersImportsPerController
+        imports: controllerImportsPerController[controllerKey]
       }),
       isRegenerateNonStubs
     });

@@ -1,11 +1,14 @@
 import { z } from 'zod';
 
+// Schemas.
 export const Category = z
   .object({ id: z.number().int(), name: z.string() })
   .partial();
+export interface Category extends z.infer<typeof Category> {}
 export const Tag = z
   .object({ id: z.number().int(), name: z.string() })
   .partial();
+export interface Tag extends z.infer<typeof Tag> {}
 export const Pet = z.object({
   id: z.number().int().optional(),
   name: z.string(),
@@ -14,9 +17,11 @@ export const Pet = z.object({
   tags: z.array(Tag).optional(),
   status: z.enum(['available', 'pending', 'sold']).optional()
 });
+export interface Pet extends z.infer<typeof Pet> {}
 export const ApiResponse = z
   .object({ code: z.number().int(), type: z.string(), message: z.string() })
   .partial();
+export interface ApiResponse extends z.infer<typeof ApiResponse> {}
 export const Order = z
   .object({
     id: z.number().int(),
@@ -27,6 +32,7 @@ export const Order = z
     complete: z.boolean()
   })
   .partial();
+export interface Order extends z.infer<typeof Order> {}
 export const User = z
   .object({
     id: z.number().int(),
@@ -39,7 +45,9 @@ export const User = z
     userStatus: z.number().int()
   })
   .partial();
+export interface User extends z.infer<typeof User> {}
 
+// Endpoints.
 export const UpdatePetParameters = [
   {
     name: 'body',
@@ -51,6 +59,24 @@ export const UpdatePetParameters = [
 export const UpdatePetSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
+export const UpdatePetResponse = Pet;
+export const UpdatePetErrors = [
+  {
+    status: 400,
+    description: `Invalid ID supplied`,
+    schema: z.void()
+  },
+  {
+    status: 404,
+    description: `Pet not found`,
+    schema: z.void()
+  },
+  {
+    status: 405,
+    description: `Validation exception`,
+    schema: z.void()
+  }
+] as const;
 
 export const AddPetParameters = [
   {
@@ -61,6 +87,14 @@ export const AddPetParameters = [
   }
 ] as const;
 export const AddPetSecurity = [{ petstore_auth: ['write:pets', 'read:pets'] }];
+export const AddPetResponse = Pet;
+export const AddPetErrors = [
+  {
+    status: 405,
+    description: `Invalid input`,
+    schema: z.void()
+  }
+] as const;
 
 export const GetPetByIdParameters = [
   {
@@ -73,6 +107,19 @@ export const GetPetByIdSecurity = [
   { api_key: [] },
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
+export const GetPetByIdResponse = Pet;
+export const GetPetByIdErrors = [
+  {
+    status: 400,
+    description: `Invalid ID supplied`,
+    schema: z.void()
+  },
+  {
+    status: 404,
+    description: `Pet not found`,
+    schema: z.void()
+  }
+] as const;
 
 export const UpdatePetWithFormParameters = [
   {
@@ -94,6 +141,14 @@ export const UpdatePetWithFormParameters = [
 export const UpdatePetWithFormSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
+export const UpdatePetWithFormResponse = z.void();
+export const UpdatePetWithFormErrors = [
+  {
+    status: 405,
+    description: `Invalid input`,
+    schema: z.void()
+  }
+] as const;
 
 export const DeletePetParameters = [
   {
@@ -110,6 +165,14 @@ export const DeletePetParameters = [
 export const DeletePetSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
+export const DeletePetResponse = z.void();
+export const DeletePetErrors = [
+  {
+    status: 400,
+    description: `Invalid pet value`,
+    schema: z.void()
+  }
+] as const;
 
 export const UploadFileParameters = [
   {
@@ -131,6 +194,7 @@ export const UploadFileParameters = [
 export const UploadFileSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
+export const UploadFileResponse = ApiResponse;
 
 export const FindPetsByStatusParameters = [
   {
@@ -145,6 +209,14 @@ export const FindPetsByStatusParameters = [
 export const FindPetsByStatusSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
+export const FindPetsByStatusResponse = z.array(Pet);
+export const FindPetsByStatusErrors = [
+  {
+    status: 400,
+    description: `Invalid status value`,
+    schema: z.void()
+  }
+] as const;
 
 export const FindPetsByTagsParameters = [
   {
@@ -156,15 +228,32 @@ export const FindPetsByTagsParameters = [
 export const FindPetsByTagsSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
+export const FindPetsByTagsResponse = z.array(Pet);
+export const FindPetsByTagsErrors = [
+  {
+    status: 400,
+    description: `Invalid tag value`,
+    schema: z.void()
+  }
+] as const;
 
 export const GetInventoryParameters = [] as const;
 export const GetInventorySecurity = [{ api_key: [] }];
+export const GetInventoryResponse = z.record(z.number());
 
 export const PlaceOrderParameters = [
   {
     name: 'body',
     type: 'Body',
     schema: Order
+  }
+] as const;
+export const PlaceOrderResponse = Order;
+export const PlaceOrderErrors = [
+  {
+    status: 405,
+    description: `Invalid input`,
+    schema: z.void()
   }
 ] as const;
 
@@ -175,12 +264,38 @@ export const GetOrderByIdParameters = [
     schema: z.number().int()
   }
 ] as const;
+export const GetOrderByIdResponse = Order;
+export const GetOrderByIdErrors = [
+  {
+    status: 400,
+    description: `Invalid ID supplied`,
+    schema: z.void()
+  },
+  {
+    status: 404,
+    description: `Order not found`,
+    schema: z.void()
+  }
+] as const;
 
 export const DeleteOrderParameters = [
   {
     name: 'orderId',
     type: 'Path',
     schema: z.number().int()
+  }
+] as const;
+export const DeleteOrderResponse = z.void();
+export const DeleteOrderErrors = [
+  {
+    status: 400,
+    description: `Invalid ID supplied`,
+    schema: z.void()
+  },
+  {
+    status: 404,
+    description: `Order not found`,
+    schema: z.void()
   }
 ] as const;
 
@@ -192,12 +307,26 @@ export const CreateUserParameters = [
     schema: User
   }
 ] as const;
+export const CreateUserResponse = z.void();
 
 export const GetUserByNameParameters = [
   {
     name: 'username',
     type: 'Path',
     schema: z.string()
+  }
+] as const;
+export const GetUserByNameResponse = User;
+export const GetUserByNameErrors = [
+  {
+    status: 400,
+    description: `Invalid username supplied`,
+    schema: z.void()
+  },
+  {
+    status: 404,
+    description: `User not found`,
+    schema: z.void()
   }
 ] as const;
 
@@ -214,12 +343,26 @@ export const UpdateUserParameters = [
     schema: z.string()
   }
 ] as const;
+export const UpdateUserResponse = z.void();
 
 export const DeleteUserParameters = [
   {
     name: 'username',
     type: 'Path',
     schema: z.string()
+  }
+] as const;
+export const DeleteUserResponse = z.void();
+export const DeleteUserErrors = [
+  {
+    status: 400,
+    description: `Invalid username supplied`,
+    schema: z.void()
+  },
+  {
+    status: 404,
+    description: `User not found`,
+    schema: z.void()
   }
 ] as const;
 
@@ -230,6 +373,7 @@ export const CreateUsersWithListInputParameters = [
     schema: z.array(User)
   }
 ] as const;
+export const CreateUsersWithListInputResponse = User;
 
 export const LoginUserParameters = [
   {
@@ -243,5 +387,14 @@ export const LoginUserParameters = [
     schema: z.string().optional()
   }
 ] as const;
+export const LoginUserResponse = z.string();
+export const LoginUserErrors = [
+  {
+    status: 400,
+    description: `Invalid username/password supplied`,
+    schema: z.void()
+  }
+] as const;
 
 export const LogoutUserParameters = [] as const;
+export const LogoutUserResponse = z.void();

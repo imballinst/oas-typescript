@@ -13,10 +13,13 @@ import { {{{@key}}} } from './{{{this}}}'
 {{/each}}
 {{/if}}
 
+// Schemas.
 {{#each schemas}}
 export const {{@key}}{{#if (lookup ../circularTypeByName @key)}}: z.ZodType<{{@key}}>{{/if}} = {{{this}}};
+export interface {{@key}} extends z.infer<typeof {{@key}}> {}
 {{/each}}
 
+// Endpoints.
 {{#each endpoints}}
 export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Parameters = [
   {{#if parameters}}
@@ -36,6 +39,26 @@ export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}
 ] as const
 {{#if security}}
 export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Security = {{{security}}}
+{{/if}}
+{{#if response}}
+export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response = {{{response}}}
+{{/if}}
+{{#if errors}}
+export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Errors = [
+  {{#each errors}}
+  {
+    {{#ifeq status "default" }}
+    status: "default",
+    {{else}}
+    status: {{status}},
+    {{/ifeq}}
+    {{#if description}}
+    description: `{{description}}`,
+    {{/if}}
+    schema: {{{schema}}}
+  },
+  {{/each}}
+] as const
 {{/if}}
 
 {{/each}}
