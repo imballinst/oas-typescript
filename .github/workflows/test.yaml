@@ -29,5 +29,4 @@ jobs:
           yarn
           yarn gen
           yarn build
-          yarn start
           yarn test
