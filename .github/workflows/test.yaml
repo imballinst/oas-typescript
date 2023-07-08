@@ -23,8 +23,10 @@ jobs:
         with:
           node-version: 16.x
           cache: yarn
-      - run: cd examples
-      - run: yarn
-      - run: yarn build
-      - run: yarn start
-      - run: yarn gen
+      - name: setup and run tests
+        working-directory: ./examples
+        run: |
+          yarn
+          yarn build
+          yarn start
+          yarn gen
