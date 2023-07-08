@@ -27,6 +27,7 @@ jobs:
         working-directory: ./examples
         run: |
           yarn
+          yarn gen
           yarn build
           yarn start
-          yarn gen
+          yarn test
