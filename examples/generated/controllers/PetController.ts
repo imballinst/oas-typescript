@@ -18,7 +18,6 @@ const db: Record<string, z.output<typeof Pet>> = {};
 
 export class PetController {
   static async addPet(params: ParsedRequestInfo<typeof AddPetParameters>) {
-    console.info(params);
     if (db[params.body.name]) {
       return {
         body: { message: `pet with name ${params.body.name} already exists` },

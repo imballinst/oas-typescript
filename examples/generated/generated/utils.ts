@@ -114,7 +114,6 @@ export class KoaGeneratedUtils {
       }
 
       if (oasParameter.type === 'Body') {
-        console.info(ctx.request.body);
         const body = ctx.request.body as any;
         const result = oasParameter.schema.safeParse(body);
         if (!result.success) {
@@ -171,7 +170,7 @@ export class KoaGeneratedUtils {
       pathParams,
       queryParams,
       headerParams,
-      body: bodyParams?.value
+      body: bodyParams
     } as unknown as ParsedRequestInfo<OasParametersType>;
   }
 
