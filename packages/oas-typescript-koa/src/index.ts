@@ -11,6 +11,7 @@ import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
 import { execSync } from 'child_process';
+import { createHash } from 'crypto';
 
 import {
   defaultHandlebars,
@@ -31,8 +32,6 @@ const cli = meow(
 
 	Options
 	  --output, -o                  Specify a place for output, default to (pwd)/generated.
-	  --regenerate-non-stubs, -r  Recreate non-stubs files if old ones exist, default to false.
-                                  Non stub files include controllers and middleware-helpers.ts
 
 	Examples
 	  $ openapi-to-koa ./openapi/api.json --output src/generated
@@ -44,10 +43,6 @@ const cli = meow(
       output: {
         type: 'string',
         shortFlag: 'o'
-      },
-      regenerateNonStubs: {
-        type: 'boolean',
-        shortFlag: 'r'
       }
     }
   }
@@ -59,10 +54,7 @@ async function main() {
     ? cliInput
     : path.join(process.cwd(), cliInput);
 
-  const {
-    output: cliOutput,
-    regenerateNonStubs: isRegenerateNonStubs = false
-  } = cli.flags;
+  const { output: cliOutput } = cli.flags;
   let rootOutputFolder = path.join(process.cwd(), 'generated');
 
   if (cliOutput) {
@@ -77,13 +69,29 @@ async function main() {
   const tmpFolder = path.join(tmpdir(), '@oast');
   const handlebarsFilePath = path.join(tmpFolder, 'koa/default.hbs');
 
+  const checksumFilePath = path.join(
+    lockedGeneratedFilesFolder,
+    'checksum.json'
+  );
+  let previousChecksum: Record<string, string> = {};
+  let nextChecksum: Record<string, string> = {};
+  try {
+    const content = await fs.readFile(
+      path.join(lockedGeneratedFilesFolder, 'checksum.json'),
+      'utf-8'
+    );
+    previousChecksum = JSON.parse(content);
+  } catch (err) {
+    // No-op.
+  }
+
   // Create the files in these folders.
   await Promise.all([
     fs.mkdir(path.dirname(handlebarsFilePath), { recursive: true }),
     fs.mkdir(tmpFolder, { recursive: true }),
     fs.mkdir(lockedGeneratedFilesFolder, { recursive: true })
   ]);
-  await Promise.all([
+  const [, , , middlewareHelpersChecksum] = await Promise.all([
     fs.writeFile(handlebarsFilePath, defaultHandlebars, 'utf-8'),
     fs.writeFile(
       path.join(lockedGeneratedFilesFolder, 'utils.ts'),
@@ -98,9 +106,11 @@ async function main() {
     createOrDuplicateFile({
       filePath: path.join(rootOutputFolder, 'middleware-helpers.ts'),
       fileContent: middlewareHelpersTs,
-      isRegenerateNonStubs
+      previousChecksum: previousChecksum['middleware-helpers.ts']
     })
   ]);
+
+  nextChecksum['middleware-helpers.ts'] = middlewareHelpersChecksum;
 
   // Start the process.
   const document: OpenAPIV3.Document = JSON.parse(
@@ -142,14 +152,7 @@ async function main() {
       const operation = pathItem[methodKey];
       if (!operation) continue;
 
-      const {
-        tags = [],
-        operationId,
-        security,
-        responses,
-        parameters,
-        requestBody
-      } = operation;
+      const { tags = [], operationId, security, responses } = operation;
       const [tag] = tags;
 
       if (!tag) {
@@ -246,14 +249,16 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
     );
     const operations = controllerToOperationsRecord[controllerKey];
 
-    await createOrDuplicateFile({
+    const checksumKey = `controllers/${path.basename(controllerKey)}`;
+    const fileChecksum = await createOrDuplicateFile({
       filePath: pathToController,
       fileContent: generateTemplateController({
         controllerName: controllerKey,
         operations
       }),
-      isRegenerateNonStubs
+      previousChecksum: previousChecksum[checksumKey]
     });
+    nextChecksum[checksumKey] = fileChecksum;
   }
 
   // Output security schemes.
@@ -296,8 +301,8 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
   await fs.mkdir(path.join(lockedGeneratedFilesFolder, 'controller-types'), {
     recursive: true
   });
-  await Promise.all(
-    Object.keys(controllerImportsPerController).map((key) =>
+  await Promise.all([
+    ...Object.keys(controllerImportsPerController).map((key) =>
       fs.writeFile(
         path.join(
           lockedGeneratedFilesFolder,
@@ -310,11 +315,15 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
         }),
         'utf-8'
       )
-    )
-  );
-
-  await fs.writeFile(distClientPath, distClientContent, 'utf-8');
-  await fs.rm(tmpFolder, { recursive: true, force: true });
+    ),
+    fs.writeFile(
+      checksumFilePath,
+      JSON.stringify(nextChecksum, null, 2),
+      'utf-8'
+    ),
+    fs.writeFile(distClientPath, distClientContent, 'utf-8'),
+    fs.rm(tmpFolder, { recursive: true, force: true })
+  ]);
 
   // Hijack the prettier because we want to use the prettier from the current node_modules rather than to install a new one.
   execSync(`yarn prettier ${cliOutput} --write`);
@@ -333,27 +342,30 @@ function convertOpenApiPathToKoaPath(s: string) {
 }
 
 async function createOrDuplicateFile({
+  previousChecksum,
   filePath,
-  isRegenerateNonStubs,
   fileContent
 }: {
   filePath: string;
-  isRegenerateNonStubs: boolean;
+  previousChecksum: string;
   fileContent: string;
 }) {
+  const currentChecksum = getChecksum(fileContent);
   let isControllerExist = false;
+  let isChecksumSame = false;
 
   try {
     await fs.stat(filePath);
     // If it doesn't throw, then it exists.
     isControllerExist = true;
+    isChecksumSame = previousChecksum === currentChecksum;
   } catch (err) {
     // It doesn't exist, so we need to create it first.
     await fs.mkdir(path.dirname(filePath), { recursive: true });
   }
 
-  if (isControllerExist && !isRegenerateNonStubs) {
-    return;
+  if (isControllerExist && isChecksumSame) {
+    return currentChecksum;
   }
 
   // TODO: improve this so that we could append/delete as needed, instead of
@@ -362,5 +374,10 @@ async function createOrDuplicateFile({
     await fs.rename(filePath, filePath.replace('.ts', '.old.ts'));
   }
 
-  return fs.writeFile(filePath, fileContent, 'utf-8');
+  await fs.writeFile(filePath, fileContent, 'utf-8');
+  return currentChecksum;
+}
+
+function getChecksum(str: string) {
+  return createHash('md5').update(str).digest('hex');
 }
