@@ -195,6 +195,7 @@ export const UploadFileSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
 export const UploadFileResponse = ApiResponse;
+export const UploadFileErrors = [] as const;
 
 export const FindPetsByStatusParameters = [
   {
@@ -240,6 +241,7 @@ export const FindPetsByTagsErrors = [
 export const GetInventoryParameters = [] as const;
 export const GetInventorySecurity = [{ api_key: [] }];
 export const GetInventoryResponse = z.record(z.number());
+export const GetInventoryErrors = [] as const;
 
 export const PlaceOrderParameters = [
   {
@@ -308,6 +310,7 @@ export const CreateUserParameters = [
   }
 ] as const;
 export const CreateUserResponse = z.void();
+export const CreateUserErrors = [] as const;
 
 export const GetUserByNameParameters = [
   {
@@ -344,6 +347,7 @@ export const UpdateUserParameters = [
   }
 ] as const;
 export const UpdateUserResponse = z.void();
+export const UpdateUserErrors = [] as const;
 
 export const DeleteUserParameters = [
   {
@@ -374,6 +378,7 @@ export const CreateUsersWithListInputParameters = [
   }
 ] as const;
 export const CreateUsersWithListInputResponse = User;
+export const CreateUsersWithListInputErrors = [] as const;
 
 export const LoginUserParameters = [
   {
@@ -398,3 +403,4 @@ export const LoginUserErrors = [
 
 export const LogoutUserParameters = [] as const;
 export const LogoutUserResponse = z.void();
+export const LogoutUserErrors = [] as const;

@@ -1,37 +1,27 @@
-import { ControllerInfo } from './types';
+import { OperationInfo } from './types';
 
 export function generateTemplateController({
-  imports,
   controllerName,
-  controllers
+  operations
 }: {
-  imports: string[];
   controllerName: string;
-  controllers: ControllerInfo[];
+  operations: OperationInfo[];
 }) {
   return `
-import { 
-  ${imports.join(',\n  ')}
-} from '../generated/client.js'
-import { ParsedRequestInfo } from '../generated/utils.js';
-import { ControllerReturnType, ErrorStatuses } from '../generated/types.js';
+import {
+  ${operations.map((op) => op.functionType).join(',\n  ')}
+} from '../generated/controller-types/${controllerName}Types.js'
 
 export class ${controllerName} {
-${controllers.map((c) => renderControllerMethod(c)).join('\n  ')}
+${operations.map((op) => renderControllerMethod(op)).join('\n  ')}
 }  
   `.trim();
 }
 
 // Local helper functions.
-function renderControllerMethod(controller: ControllerInfo) {
+function renderControllerMethod(controller: OperationInfo) {
   return `
-static async ${controller.operationId}(params: ParsedRequestInfo<typeof ${controller.parametersName}>): Promise<
-  ControllerReturnType<
-    typeof ${controller.response},
-    ErrorStatuses<typeof ${controller.errors}>,
-    ${controller.responseSuccessStatus}
-  >
-> {
+static ${controller.operationId}: ${controller.functionType} = (params) => {
   return {
     data: undefined,
     status: ${controller.responseSuccessStatus}

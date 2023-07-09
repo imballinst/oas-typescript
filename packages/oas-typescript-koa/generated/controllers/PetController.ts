@@ -1,43 +1,21 @@
+import { Pet } from '../generated/client.js';
 import {
-  AddPetParameters,
-  AddPetErrors,
-  AddPetResponse,
-  UpdatePetParameters,
-  UpdatePetErrors,
-  UpdatePetResponse,
-  FindPetsByStatusParameters,
-  FindPetsByStatusErrors,
-  FindPetsByStatusResponse,
-  FindPetsByTagsParameters,
-  FindPetsByTagsErrors,
-  FindPetsByTagsResponse,
-  GetPetByIdParameters,
-  GetPetByIdErrors,
-  GetPetByIdResponse,
-  UpdatePetWithFormParameters,
-  UpdatePetWithFormErrors,
-  DeletePetParameters,
-  DeletePetErrors,
-  UploadFileParameters,
-  UploadFileResponse,
-  Pet
-} from '../generated/client.js';
-import { ParsedRequestInfo } from '../generated/utils.js';
-import { ControllerReturnType, ErrorStatuses } from '../generated/types.js';
+  AddPetControllerFunction,
+  UpdatePetControllerFunction,
+  FindPetsByStatusControllerFunction,
+  FindPetsByTagsControllerFunction,
+  GetPetByIdControllerFunction,
+  UpdatePetWithFormControllerFunction,
+  DeletePetControllerFunction,
+  UploadFileControllerFunction
+} from '../generated/controller-types/PetControllerTypes.js';
+
 import { customAlphabet } from 'nanoid';
 
 const db: Record<string, Pet> = {};
 
 export class PetController {
-  static async addPet(
-    params: ParsedRequestInfo<typeof AddPetParameters>
-  ): Promise<
-    ControllerReturnType<
-      typeof AddPetResponse,
-      ErrorStatuses<typeof AddPetErrors>,
-      200
-    >
-  > {
+  static addPet: AddPetControllerFunction = (params) => {
     if (db[params.body.name]) {
       return {
         error: {
@@ -57,103 +35,47 @@ export class PetController {
       data: db[params.body.name],
       status: 200
     };
-  }
-  static async updatePet(
-    params: ParsedRequestInfo<typeof UpdatePetParameters>
-  ): Promise<
-    ControllerReturnType<
-      typeof UpdatePetResponse,
-      ErrorStatuses<typeof UpdatePetErrors>,
-      200
-    >
-  > {
+  };
+  static updatePet: UpdatePetControllerFunction = (params) => {
     return {
       data: undefined,
       status: 200
     };
-  }
-  static async findPetsByStatus(
-    params: ParsedRequestInfo<typeof FindPetsByStatusParameters>
-  ): Promise<
-    ControllerReturnType<
-      typeof FindPetsByStatusResponse,
-      ErrorStatuses<typeof FindPetsByStatusErrors>,
-      200
-    >
-  > {
+  };
+  static findPetsByStatus: FindPetsByStatusControllerFunction = (params) => {
     return {
       data: undefined,
       status: 200
     };
-  }
-  static async findPetsByTags(
-    params: ParsedRequestInfo<typeof FindPetsByTagsParameters>
-  ): Promise<
-    ControllerReturnType<
-      typeof FindPetsByTagsResponse,
-      ErrorStatuses<typeof FindPetsByTagsErrors>,
-      200
-    >
-  > {
+  };
+  static findPetsByTags: FindPetsByTagsControllerFunction = (params) => {
     return {
       data: undefined,
       status: 200
     };
-  }
-  static async getPetById(
-    params: ParsedRequestInfo<typeof GetPetByIdParameters>
-  ): Promise<
-    ControllerReturnType<
-      typeof GetPetByIdResponse,
-      ErrorStatuses<typeof GetPetByIdErrors>,
-      200
-    >
-  > {
+  };
+  static getPetById: GetPetByIdControllerFunction = (params) => {
     return {
       data: undefined,
       status: 200
     };
-  }
-  static async updatePetWithForm(
-    params: ParsedRequestInfo<typeof UpdatePetWithFormParameters>
-  ): Promise<
-    ControllerReturnType<
-      typeof undefined,
-      ErrorStatuses<typeof UpdatePetWithFormErrors>,
-      NaN
-    >
-  > {
+  };
+  static updatePetWithForm: UpdatePetWithFormControllerFunction = (params) => {
     return {
       data: undefined,
-      status: NaN
+      status: 204
     };
-  }
-  static async deletePet(
-    params: ParsedRequestInfo<typeof DeletePetParameters>
-  ): Promise<
-    ControllerReturnType<
-      typeof undefined,
-      ErrorStatuses<typeof DeletePetErrors>,
-      NaN
-    >
-  > {
+  };
+  static deletePet: DeletePetControllerFunction = (params) => {
     return {
       data: undefined,
-      status: NaN
+      status: 204
     };
-  }
-  static async uploadFile(
-    params: ParsedRequestInfo<typeof UploadFileParameters>
-  ): Promise<
-    ControllerReturnType<
-      typeof UploadFileResponse,
-      ErrorStatuses<typeof undefined>,
-      200
-    >
-  > {
+  };
+  static uploadFile: UploadFileControllerFunction = (params) => {
     return {
       data: undefined,
       status: 200
     };
-  }
+  };
 }

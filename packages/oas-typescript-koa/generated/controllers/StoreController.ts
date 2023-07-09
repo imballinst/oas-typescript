@@ -1,72 +1,33 @@
 import {
-  GetInventoryResponse,
-  PlaceOrderParameters,
-  PlaceOrderErrors,
-  PlaceOrderResponse,
-  GetOrderByIdParameters,
-  GetOrderByIdErrors,
-  GetOrderByIdResponse,
-  DeleteOrderParameters,
-  DeleteOrderErrors
-} from '../generated/client.js';
-import { ParsedRequestInfo } from '../generated/utils.js';
-import { ControllerReturnType, ErrorStatuses } from '../generated/types.js';
+  GetInventoryControllerFunction,
+  PlaceOrderControllerFunction,
+  GetOrderByIdControllerFunction,
+  DeleteOrderControllerFunction
+} from '../generated/controller-types/StoreControllerTypes.js';
 
 export class StoreController {
-  static async getInventory(
-    params: ParsedRequestInfo<typeof undefined>
-  ): Promise<
-    ControllerReturnType<
-      typeof GetInventoryResponse,
-      ErrorStatuses<typeof undefined>,
-      200
-    >
-  > {
+  static getInventory: GetInventoryControllerFunction = (params) => {
     return {
       data: undefined,
       status: 200
     };
-  }
-  static async placeOrder(
-    params: ParsedRequestInfo<typeof PlaceOrderParameters>
-  ): Promise<
-    ControllerReturnType<
-      typeof PlaceOrderResponse,
-      ErrorStatuses<typeof PlaceOrderErrors>,
-      200
-    >
-  > {
+  };
+  static placeOrder: PlaceOrderControllerFunction = (params) => {
     return {
       data: undefined,
       status: 200
     };
-  }
-  static async getOrderById(
-    params: ParsedRequestInfo<typeof GetOrderByIdParameters>
-  ): Promise<
-    ControllerReturnType<
-      typeof GetOrderByIdResponse,
-      ErrorStatuses<typeof GetOrderByIdErrors>,
-      200
-    >
-  > {
+  };
+  static getOrderById: GetOrderByIdControllerFunction = (params) => {
     return {
       data: undefined,
       status: 200
     };
-  }
-  static async deleteOrder(
-    params: ParsedRequestInfo<typeof DeleteOrderParameters>
-  ): Promise<
-    ControllerReturnType<
-      typeof undefined,
-      ErrorStatuses<typeof DeleteOrderErrors>,
-      NaN
-    >
-  > {
+  };
+  static deleteOrder: DeleteOrderControllerFunction = (params) => {
     return {
       data: undefined,
-      status: NaN
+      status: 204
     };
-  }
+  };
 }

@@ -1,4 +1,4 @@
-import { ControllerInfo } from './types';
+import { OperationInfo } from './types';
 
 export function generateTemplateRouter({
   allServerSecurityImports,
@@ -8,7 +8,7 @@ export function generateTemplateRouter({
 }: {
   allServerSecurityImports: string[];
   parametersImportsPerController: Record<string, string[]>;
-  controllerToOperationsRecord: Record<string, ControllerInfo[]>;
+  controllerToOperationsRecord: Record<string, OperationInfo[]>;
   routers: string[];
 }) {
   return `

@@ -18,6 +18,7 @@ import {
   UpdatePetWithFormParameters,
   DeletePetParameters,
   UploadFileParameters,
+  GetInventoryParameters,
   PlaceOrderParameters,
   GetOrderByIdParameters,
   DeleteOrderParameters,
@@ -237,7 +238,7 @@ router.get(
   async (ctx, next) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
-      oasParameters: undefined
+      oasParameters: GetInventoryParameters
     });
     if (!parsedRequestInfo) {
       ctx.status = 400;

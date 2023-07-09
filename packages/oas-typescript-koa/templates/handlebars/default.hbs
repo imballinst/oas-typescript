@@ -43,8 +43,8 @@ export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}
 {{#if response}}
 export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response = {{{response}}}
 {{/if}}
-{{#if errors}}
 export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Errors = [
+{{#if errors}}  
   {{#each errors}}
   {
     {{#ifeq status "default" }}
@@ -58,7 +58,7 @@ export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}
     schema: {{{schema}}}
   },
   {{/each}}
-] as const
 {{/if}}
+] as const
 
 {{/each}}

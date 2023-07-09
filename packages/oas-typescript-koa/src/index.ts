@@ -18,10 +18,11 @@ import {
   utilsTs,
   typesTs
 } from './templates.js';
-import { ControllerInfo } from './helpers/templates/types.js';
+import { OperationInfo } from './helpers/templates/types.js';
 import { generateRouteMiddleware } from './helpers/templates/middleware.js';
 import { generateTemplateController } from './helpers/templates/controller.js';
 import { generateTemplateRouter } from './helpers/templates/router.js';
+import { generateTemplateControllerTypes } from './helpers/templates/controller-types.js';
 
 const cli = meow(
   `
@@ -128,7 +129,7 @@ async function main() {
   const routers: string[] = [];
 
   const methods = ['get', 'post', 'put', 'delete', 'patch'] as const;
-  const controllerToOperationsRecord: Record<string, ControllerInfo[]> = {};
+  const controllerToOperationsRecord: Record<string, OperationInfo[]> = {};
   const parametersImportsPerController: Record<string, string[]> = {};
   const controllerImportsPerController: Record<string, string[]> = {};
   const allServerSecurityImports: string[] = [];
@@ -177,37 +178,26 @@ async function main() {
       }
 
       const capitalizedOperationId = capitalizeFirstCharacter(operationId);
-      let parametersName: string | undefined;
-      let errorsName: string | undefined;
-      let responseName: string | undefined;
+      let parametersName = `${capitalizedOperationId}Parameters`;
+      let errorsName = `${capitalizedOperationId}Errors`;
+      let responseName = `${capitalizedOperationId}Response`;
 
-      if (parameters || requestBody) {
-        parametersName = `${capitalizedOperationId}Parameters`;
-      }
-
-      if (responses) {
-        const keys = Object.keys(responses);
-        const errorStatuses = keys.map(Number).filter((num) => num >= 400);
-
-        if (errorStatuses.length > 0) {
-          errorsName = `${capitalizedOperationId}Errors`;
-        }
-
-        if (keys.length > errorStatuses.length) {
-          responseName = `${capitalizedOperationId}Response`;
-        }
+      let responseSuccessStatus = Number(
+        Object.keys(responses).find(
+          (status) => Number(status) >= 200 && Number(status) < 300
+        )
+      );
+      if (isNaN(responseSuccessStatus)) {
+        responseSuccessStatus = 204;
       }
 
       controllerToOperationsRecord[controllerName].push({
         operationId,
+        functionType: `${capitalizedOperationId}ControllerFunction`,
         parametersName,
         errors: errorsName,
         response: responseName,
-        responseSuccessStatus: Number(
-          Object.keys(responses).find(
-            (status) => Number(status) >= 200 && Number(status) < 300
-          )
-        )
+        responseSuccessStatus
       });
 
       if (parametersName) {
@@ -215,10 +205,8 @@ async function main() {
         controllerImportsPerController[controllerName].push(parametersName);
       }
 
-      if (errorsName)
-        controllerImportsPerController[controllerName].push(errorsName);
-      if (responseName)
-        controllerImportsPerController[controllerName].push(responseName);
+      controllerImportsPerController[controllerName].push(errorsName);
+      controllerImportsPerController[controllerName].push(responseName);
 
       const middlewares: string[] = [
         generateRouteMiddleware({
@@ -256,14 +244,13 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
       rootOutputFolder,
       `controllers/${controllerKey}.ts`
     );
-    const controllers = controllerToOperationsRecord[controllerKey];
+    const operations = controllerToOperationsRecord[controllerKey];
 
     await createOrDuplicateFile({
       filePath: pathToController,
       fileContent: generateTemplateController({
         controllerName: controllerKey,
-        controllers,
-        imports: controllerImportsPerController[controllerKey]
+        operations
       }),
       isRegenerateNonStubs
     });
@@ -305,6 +292,27 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
       'z.any()'
     );
   }
+
+  await fs.mkdir(path.join(lockedGeneratedFilesFolder, 'controller-types'), {
+    recursive: true
+  });
+  await Promise.all(
+    Object.keys(controllerImportsPerController).map((key) =>
+      fs.writeFile(
+        path.join(
+          lockedGeneratedFilesFolder,
+          'controller-types',
+          `${key}Types.ts`
+        ),
+        generateTemplateControllerTypes({
+          imports: controllerImportsPerController[key],
+          operations: controllerToOperationsRecord[key]
+        }),
+        'utf-8'
+      )
+    )
+  );
+
   await fs.writeFile(distClientPath, distClientContent, 'utf-8');
   await fs.rm(tmpFolder, { recursive: true, force: true });
 
