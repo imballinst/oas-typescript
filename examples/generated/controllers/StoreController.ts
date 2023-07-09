@@ -1,42 +1,33 @@
 import {
-  GetInventoryParameters,
-  PlaceOrderParameters,
-  GetOrderByIdParameters,
-  DeleteOrderParameters
-} from '../generated/client.js';
-import { ParsedRequestInfo } from '../generated/utils.js';
+  GetInventoryControllerFunction,
+  PlaceOrderControllerFunction,
+  GetOrderByIdControllerFunction,
+  DeleteOrderControllerFunction
+} from '../generated/controller-types/StoreControllerTypes.js';
 
 export class StoreController {
-  static async getInventory(
-    params: ParsedRequestInfo<typeof GetInventoryParameters>
-  ) {
+  static getInventory: GetInventoryControllerFunction = (params) => {
     return {
-      body: undefined,
+      data: undefined,
       status: 200
     };
-  }
-  static async placeOrder(
-    params: ParsedRequestInfo<typeof PlaceOrderParameters>
-  ) {
+  };
+  static placeOrder: PlaceOrderControllerFunction = (params) => {
     return {
-      body: undefined,
+      data: undefined,
       status: 200
     };
-  }
-  static async getOrderById(
-    params: ParsedRequestInfo<typeof GetOrderByIdParameters>
-  ) {
+  };
+  static getOrderById: GetOrderByIdControllerFunction = (params) => {
     return {
-      body: undefined,
+      data: undefined,
       status: 200
     };
-  }
-  static async deleteOrder(
-    params: ParsedRequestInfo<typeof DeleteOrderParameters>
-  ) {
+  };
+  static deleteOrder: DeleteOrderControllerFunction = (params) => {
     return {
-      body: undefined,
-      status: 200
+      data: undefined,
+      status: 204
     };
-  }
+  };
 }

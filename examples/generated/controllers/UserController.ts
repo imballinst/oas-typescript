@@ -1,69 +1,55 @@
 import {
-  CreateUserParameters,
-  CreateUsersWithListInputParameters,
-  LoginUserParameters,
-  LogoutUserParameters,
-  GetUserByNameParameters,
-  UpdateUserParameters,
-  DeleteUserParameters
-} from '../generated/client.js';
-import { ParsedRequestInfo } from '../generated/utils.js';
+  CreateUserControllerFunction,
+  CreateUsersWithListInputControllerFunction,
+  LoginUserControllerFunction,
+  LogoutUserControllerFunction,
+  GetUserByNameControllerFunction,
+  UpdateUserControllerFunction,
+  DeleteUserControllerFunction
+} from '../generated/controller-types/UserControllerTypes.js';
 
 export class UserController {
-  static async createUser(
-    params: ParsedRequestInfo<typeof CreateUserParameters>
-  ) {
+  static createUser: CreateUserControllerFunction = (params) => {
     return {
-      body: undefined,
+      data: undefined,
+      status: 204
+    };
+  };
+  static createUsersWithListInput: CreateUsersWithListInputControllerFunction =
+    (params) => {
+      return {
+        data: undefined,
+        status: 200
+      };
+    };
+  static loginUser: LoginUserControllerFunction = (params) => {
+    return {
+      data: undefined,
       status: 200
     };
-  }
-  static async createUsersWithListInput(
-    params: ParsedRequestInfo<typeof CreateUsersWithListInputParameters>
-  ) {
+  };
+  static logoutUser: LogoutUserControllerFunction = (params) => {
     return {
-      body: undefined,
+      data: undefined,
+      status: 204
+    };
+  };
+  static getUserByName: GetUserByNameControllerFunction = (params) => {
+    return {
+      data: undefined,
       status: 200
     };
-  }
-  static async loginUser(
-    params: ParsedRequestInfo<typeof LoginUserParameters>
-  ) {
+  };
+  static updateUser: UpdateUserControllerFunction = (params) => {
     return {
-      body: undefined,
-      status: 200
+      data: undefined,
+      status: 204
     };
-  }
-  static async logoutUser(
-    params: ParsedRequestInfo<typeof LogoutUserParameters>
-  ) {
+  };
+  static deleteUser: DeleteUserControllerFunction = (params) => {
     return {
-      body: undefined,
-      status: 200
+      data: undefined,
+      status: 204
     };
-  }
-  static async getUserByName(
-    params: ParsedRequestInfo<typeof GetUserByNameParameters>
-  ) {
-    return {
-      body: undefined,
-      status: 200
-    };
-  }
-  static async updateUser(
-    params: ParsedRequestInfo<typeof UpdateUserParameters>
-  ) {
-    return {
-      body: undefined,
-      status: 200
-    };
-  }
-  static async deleteUser(
-    params: ParsedRequestInfo<typeof DeleteUserParameters>
-  ) {
-    return {
-      body: undefined,
-      status: 200
-    };
-  }
+  };
 }

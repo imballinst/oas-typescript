@@ -1,27 +1,28 @@
-import { z } from 'zod';
+import { Pet } from '../generated/client.js';
+import {
+  AddPetControllerFunction,
+  UpdatePetControllerFunction,
+  FindPetsByStatusControllerFunction,
+  FindPetsByTagsControllerFunction,
+  GetPetByIdControllerFunction,
+  UpdatePetWithFormControllerFunction,
+  DeletePetControllerFunction,
+  UploadFileControllerFunction
+} from '../generated/controller-types/PetControllerTypes.js';
+
 import { customAlphabet } from 'nanoid';
 
-import {
-  AddPetParameters,
-  UpdatePetParameters,
-  FindPetsByStatusParameters,
-  FindPetsByTagsParameters,
-  GetPetByIdParameters,
-  UpdatePetWithFormParameters,
-  DeletePetParameters,
-  UploadFileParameters,
-  Pet
-} from '../generated/client.js';
-import { ParsedRequestInfo } from '../generated/utils.js';
-
-const db: Record<string, z.output<typeof Pet>> = {};
+const db: Record<string, Pet> = {};
 
 export class PetController {
-  static async addPet(params: ParsedRequestInfo<typeof AddPetParameters>) {
+  static addPet: AddPetControllerFunction = (params) => {
     if (db[params.body.name]) {
       return {
-        body: { message: `pet with name ${params.body.name} already exists` },
-        status: 400
+        error: {
+          code: 10000,
+          message: `pet with name ${params.body.name} already exists`
+        },
+        status: 405
       };
     }
 
@@ -31,64 +32,50 @@ export class PetController {
     };
 
     return {
-      body: db[params.body.name],
+      data: db[params.body.name],
       status: 200
     };
-  }
-  static async updatePet(
-    params: ParsedRequestInfo<typeof UpdatePetParameters>
-  ) {
+  };
+  static updatePet: UpdatePetControllerFunction = (params) => {
     return {
-      body: undefined,
+      data: undefined,
       status: 200
     };
-  }
-  static async findPetsByStatus(
-    params: ParsedRequestInfo<typeof FindPetsByStatusParameters>
-  ) {
+  };
+  static findPetsByStatus: FindPetsByStatusControllerFunction = (params) => {
     return {
-      body: undefined,
+      data: undefined,
       status: 200
     };
-  }
-  static async findPetsByTags(
-    params: ParsedRequestInfo<typeof FindPetsByTagsParameters>
-  ) {
+  };
+  static findPetsByTags: FindPetsByTagsControllerFunction = (params) => {
     return {
-      body: undefined,
+      data: undefined,
       status: 200
     };
-  }
-  static async getPetById(
-    params: ParsedRequestInfo<typeof GetPetByIdParameters>
-  ) {
+  };
+  static getPetById: GetPetByIdControllerFunction = (params) => {
     return {
-      body: undefined,
+      data: undefined,
       status: 200
     };
-  }
-  static async updatePetWithForm(
-    params: ParsedRequestInfo<typeof UpdatePetWithFormParameters>
-  ) {
+  };
+  static updatePetWithForm: UpdatePetWithFormControllerFunction = (params) => {
     return {
-      body: undefined,
-      status: 200
+      data: undefined,
+      status: 204
     };
-  }
-  static async deletePet(
-    params: ParsedRequestInfo<typeof DeletePetParameters>
-  ) {
+  };
+  static deletePet: DeletePetControllerFunction = (params) => {
     return {
-      body: undefined,
-      status: 200
+      data: undefined,
+      status: 204
     };
-  }
-  static async uploadFile(
-    params: ParsedRequestInfo<typeof UploadFileParameters>
-  ) {
+  };
+  static uploadFile: UploadFileControllerFunction = (params) => {
     return {
-      body: undefined,
+      data: undefined,
       status: 200
     };
-  }
+  };
 }
