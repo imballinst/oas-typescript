@@ -31,7 +31,7 @@ export type CreateUserControllerFunction = (
 ) => ControllerReturnType<
   typeof CreateUserResponse,
   ErrorStatuses<typeof CreateUserErrors>,
-  204
+  200
 >;
 
 export type CreateUsersWithListInputControllerFunction = (
@@ -71,7 +71,7 @@ export type UpdateUserControllerFunction = (
 ) => ControllerReturnType<
   typeof UpdateUserResponse,
   ErrorStatuses<typeof UpdateUserErrors>,
-  204
+  200
 >;
 
 export type DeleteUserControllerFunction = (

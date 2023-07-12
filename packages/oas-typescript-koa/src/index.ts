@@ -191,7 +191,9 @@ async function main() {
         )
       );
       if (isNaN(responseSuccessStatus)) {
-        responseSuccessStatus = 204;
+        throw new Error(
+          `Invalid response of ${operationId}: should have 2xx response defined`
+        );
       }
 
       controllerToOperationsRecord[controllerName].push({

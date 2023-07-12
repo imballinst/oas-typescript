@@ -146,7 +146,7 @@ export const UpdatePetWithFormErrors = [
   {
     status: 405,
     description: `Invalid input`,
-    schema: z.void()
+    schema: ApiResponse
   }
 ] as const;
 
@@ -309,7 +309,7 @@ export const CreateUserParameters = [
     schema: User
   }
 ] as const;
-export const CreateUserResponse = z.void();
+export const CreateUserResponse = User;
 export const CreateUserErrors = [] as const;
 
 export const GetUserByNameParameters = [
@@ -346,7 +346,7 @@ export const UpdateUserParameters = [
     schema: z.string()
   }
 ] as const;
-export const UpdateUserResponse = z.void();
+export const UpdateUserResponse = User;
 export const UpdateUserErrors = [] as const;
 
 export const DeleteUserParameters = [
