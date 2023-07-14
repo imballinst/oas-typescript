@@ -15,8 +15,9 @@
     "gen": "ts-node --esm src/index.ts ../shared/src/openapi/api.json --output generated",
     "gen:build": "node --experimental-modules cli.js ../shared/src/openapi/api.json --output generated",
     "gen:templates": "ts-node --esm scripts/fill-templates.ts",
-    "build": "yarn gen:templates && ts-node --esm scripts/build-entry.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "yarn test:run && yarn gen:templates && ts-node --esm scripts/build-entry.ts",
+    "test": "vitest",
+    "test:run": "vitest run",
     "test:run-koa": "nodemon"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
     "nodemon": "2.0.22",
     "regenerator-runtime": "0.13.11",
     "ts-node": "10.9.1",
+    "vitest": "0.33.0",
     "zod": "3.21.4"
   }
 }

@@ -4,5 +4,5 @@ export interface OperationInfo {
   parametersName?: string;
   response?: string;
   responseSuccessStatus: number;
-  errors?: string;
+  errorType?: string;
 }

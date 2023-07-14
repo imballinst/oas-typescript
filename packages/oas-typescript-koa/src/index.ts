@@ -24,6 +24,8 @@ import { generateRouteMiddleware } from './helpers/templates/middleware.js';
 import { generateTemplateController } from './helpers/templates/controller.js';
 import { generateTemplateRouter } from './helpers/templates/router.js';
 import { generateTemplateControllerTypes } from './helpers/templates/controller-types.js';
+import { capitalizeFirstCharacter } from './helpers/change-case.js';
+import { parsePaths } from './core/paths-parser.js';
 
 const cli = meow(
   `
@@ -136,112 +138,13 @@ async function main() {
   });
 
   // Generate the definitions only.
-  const routers: string[] = [];
-
-  const methods = ['get', 'post', 'put', 'delete', 'patch'] as const;
-  const controllerToOperationsRecord: Record<string, OperationInfo[]> = {};
-  const parametersImportsPerController: Record<string, string[]> = {};
-  const controllerImportsPerController: Record<string, string[]> = {};
-  const allServerSecurityImports: string[] = [];
-
-  for (const pathKey in document.paths) {
-    const pathItem = document.paths[pathKey];
-    if (!pathItem) continue;
-
-    for (const methodKey of methods) {
-      const operation = pathItem[methodKey];
-      if (!operation) continue;
-
-      const { tags = [], operationId, security, responses } = operation;
-      const [tag] = tags;
-
-      if (!tag) {
-        throw new Error(
-          `The tag for the method ${methodKey} of ${pathKey} is not defined. Define it, then try again.`
-        );
-      }
-
-      if (!operationId) {
-        throw new Error(
-          `The operation ID for the method ${methodKey} of ${pathKey} is not defined. Define it, then try again.`
-        );
-      }
-
-      const controllerName = `${titleCase(tag)}Controller`;
-      if (!controllerToOperationsRecord[controllerName]) {
-        controllerToOperationsRecord[controllerName] = [];
-      }
-
-      if (!parametersImportsPerController[controllerName]) {
-        parametersImportsPerController[controllerName] = [];
-      }
-
-      if (!controllerImportsPerController[controllerName]) {
-        controllerImportsPerController[controllerName] = [];
-      }
-
-      const capitalizedOperationId = capitalizeFirstCharacter(operationId);
-      let parametersName = `${capitalizedOperationId}Parameters`;
-      let errorsName = `${capitalizedOperationId}Errors`;
-      let responseName = `${capitalizedOperationId}Response`;
-
-      let responseSuccessStatus = Number(
-        Object.keys(responses).find(
-          (status) => Number(status) >= 200 && Number(status) < 300
-        )
-      );
-      if (isNaN(responseSuccessStatus)) {
-        throw new Error(
-          `Invalid response of ${operationId}: should have 2xx response defined`
-        );
-      }
-
-      controllerToOperationsRecord[controllerName].push({
-        operationId,
-        functionType: `${capitalizedOperationId}ControllerFunction`,
-        parametersName,
-        errors: errorsName,
-        response: responseName,
-        responseSuccessStatus
-      });
-
-      if (parametersName) {
-        parametersImportsPerController[controllerName].push(parametersName);
-        controllerImportsPerController[controllerName].push(parametersName);
-      }
-
-      controllerImportsPerController[controllerName].push(errorsName);
-      controllerImportsPerController[controllerName].push(responseName);
-
-      const middlewares: string[] = [
-        generateRouteMiddleware({
-          controllerName,
-          operationId,
-          parametersName
-        })
-      ];
-
-      if (security) {
-        const securityName = `${capitalizeFirstCharacter(operationId)}Security`;
-        allServerSecurityImports.push(securityName);
-
-        middlewares.unshift(
-          `KoaGeneratedUtils.createSecurityMiddleware(${securityName})`
-        );
-      }
-
-      const koaPath = pathKey
-        .split('/')
-        .map(convertOpenApiPathToKoaPath)
-        .join('/');
-
-      routers.push(
-        `
-router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
-      `.trim()
-      );
-    }
-  }
+  const {
+    routers,
+    controllerToOperationsRecord,
+    parametersImportsPerController,
+    controllerImportsPerController,
+    allServerSecurityImports
+  } = parsePaths({ paths: document.paths });
 
   // Create controllers.
   for (const controllerKey in controllerToOperationsRecord) {
@@ -334,15 +237,6 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
 main();
 
 // Helper functions.
-function capitalizeFirstCharacter(text: string) {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-function convertOpenApiPathToKoaPath(s: string) {
-  if (!s.startsWith('{') && !s.endsWith('}')) return s;
-  return `:${s.slice(1, -1)}`;
-}
-
 async function createOrDuplicateFile({
   previousChecksum,
   filePath,

@@ -23,7 +23,7 @@ export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
       operation.parametersName
     }>) => ControllerReturnType<
   typeof ${operation.response || 'z.void()'},
-  ErrorStatuses<typeof ${operation.errors}>,
+  ErrorStatuses<typeof ${operation.errorType}>,
   ${operation.responseSuccessStatus}
 > 
   `.trim()

@@ -9,9 +9,10 @@
     ]
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "patch-package",
-    "gen:koa": "yarn workspace @oast/koa gen"
+    "wkoa": "yarn workspace @oas-typescript/koa",
+    "test:koa": "yarn wkoa test",
+    "gen:koa": "yarn wkoa gen",
+    "postinstall": "patch-package"
   },
   "repository": {
     "type": "git",
