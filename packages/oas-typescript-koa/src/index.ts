@@ -2,11 +2,10 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { tmpdir } from 'os';
 import {
+  EndpointDefinitionWithRefs,
   generateZodClientFromOpenAPI,
   getHandlebars
-  // @ts-ignore
-} from './entry.js';
-import { titleCase } from 'title-case';
+} from 'openapi-zod-client';
 import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
@@ -134,6 +133,14 @@ async function main() {
     openApiDoc: document as any,
     distPath: path.join(lockedGeneratedFilesFolder, 'client.ts'),
     templatePath: handlebarsFilePath,
+    options: {
+      endpointDefinitionRefiner: (defaultDefinition, operation) => {
+        const newDefinition = defaultDefinition as any;
+        newDefinition.operationId = operation.operationId;
+        newDefinition.security = JSON.stringify(operation.security);
+        return newDefinition;
+      }
+    },
     handlebars
   });
 

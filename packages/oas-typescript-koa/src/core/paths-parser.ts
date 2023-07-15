@@ -1,9 +1,9 @@
 import { titleCase } from 'title-case';
 import { OpenAPIV3 } from 'openapi-types';
 
-import { capitalizeFirstCharacter } from '../helpers/change-case';
-import { generateRouteMiddleware } from '../helpers/templates/middleware';
-import { OperationInfo } from '../helpers/templates/types';
+import { capitalizeFirstCharacter } from '../helpers/change-case.js';
+import { generateRouteMiddleware } from '../helpers/templates/middleware.js';
+import { OperationInfo } from '../helpers/templates/types.js';
 
 const PARSED_METHODS = ['get', 'post', 'put', 'delete', 'patch'] as const;
 
