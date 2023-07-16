@@ -7,8 +7,34 @@ export function generateTemplateControllerTypes({
   imports: string[];
   operations: OperationInfo[];
 }) {
+  const renderedOperations: string[] = [];
+  let isRequireZodImport = false;
+
+  for (const operation of operations) {
+    let errorStatuses = `ErrorStatuses<typeof ${operation.errorType}>`;
+    if (operation.hasDefaultResponseStatus) {
+      errorStatuses += ` | number`;
+    }
+
+    renderedOperations.push(
+      `
+export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
+        operation.parametersName
+      }>) => ControllerReturnType<
+  typeof ${operation.response || 'z.void()'},
+  ${errorStatuses},
+  ${operation.responseSuccessStatus}
+> 
+      `.trim()
+    );
+
+    if (operation.response === undefined) {
+      isRequireZodImport = true;
+    }
+  }
+
   return `
-import { z } from 'zod'
+${isRequireZodImport ? `import { z } from 'zod'` : ''}
 
 import {
   ${imports.join(',\t')}
@@ -16,17 +42,5 @@ import {
 import { ParsedRequestInfo } from '../utils.js'
 import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
-${operations
-  .map((operation) =>
-    `
-export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
-      operation.parametersName
-    }>) => ControllerReturnType<
-  typeof ${operation.response || 'z.void()'},
-  ErrorStatuses<typeof ${operation.errorType}>,
-  ${operation.responseSuccessStatus}
-> 
-  `.trim()
-  )
-  .join('\n\n')}`;
+${renderedOperations.join('\n\n')}`;
 }

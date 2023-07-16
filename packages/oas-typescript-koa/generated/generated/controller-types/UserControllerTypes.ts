@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 import {
   CreateUserParameters,
   CreateUserErrors,
@@ -38,7 +36,7 @@ export type CreateUsersWithListInputControllerFunction = (
   params: ParsedRequestInfo<typeof CreateUsersWithListInputParameters>
 ) => ControllerReturnType<
   typeof CreateUsersWithListInputResponse,
-  ErrorStatuses<typeof CreateUsersWithListInputErrors>,
+  ErrorStatuses<typeof CreateUsersWithListInputErrors> | number,
   200
 >;
 

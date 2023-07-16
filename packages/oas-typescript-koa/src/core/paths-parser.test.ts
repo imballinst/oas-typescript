@@ -33,7 +33,8 @@ test('parsePaths with all requirements fulfilled', () => {
           errorType: 'GetUserErrors',
           responseSuccessStatus: 200,
           parametersName: 'GetUserParameters',
-          response: 'GetUserResponse'
+          response: 'GetUserResponse',
+          hasDefaultResponseStatus: false
         }
       ]
     },
@@ -99,6 +100,7 @@ test('parsePaths with 2xx and default should result in 2xx and all errors', () =
           functionType: 'GetUserControllerFunction',
           errorType: 'GetUserErrors',
           responseSuccessStatus: 200,
+          hasDefaultResponseStatus: true,
           parametersName: 'GetUserParameters',
           response: 'GetUserResponse'
         }
@@ -167,7 +169,7 @@ test('parsePaths throws when there are no operationId', () => {
   );
 });
 
-test('parsePaths throws when there is no 2xx response', () => {
+test('parsePaths throws when there is no 2xx or 3xx response', () => {
   expect(() =>
     parsePaths({
       paths: {
@@ -181,6 +183,6 @@ test('parsePaths throws when there is no 2xx response', () => {
       }
     })
   ).toThrowError(
-    `Invalid response of getUser: should have 2xx response defined`
+    `Invalid response of getUser: should have 2xx or 3xx response defined`
   );
 });

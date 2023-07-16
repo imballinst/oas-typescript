@@ -58,14 +58,17 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
 
       let responseSuccessStatus = Number(
         Object.keys(responses).find(
-          (status) => Number(status) >= 200 && Number(status) < 300
+          // Assume that 3xx redirections are also possible, e.g. OAuth endpoint.
+          (status) => Number(status) >= 200 && Number(status) < 400
         )
       );
       if (isNaN(responseSuccessStatus)) {
         throw new Error(
-          `Invalid response of ${operationId}: should have 2xx response defined`
+          `Invalid response of ${operationId}: should have 2xx or 3xx response defined`
         );
       }
+
+      const hasDefaultResponseStatus = responses.default !== undefined;
 
       controllerToOperationsRecord[controllerName].push({
         operationId,
@@ -73,7 +76,8 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
         parametersName,
         errorType,
         response: responseName,
-        responseSuccessStatus
+        responseSuccessStatus,
+        hasDefaultResponseStatus
       });
 
       if (parametersName) {
