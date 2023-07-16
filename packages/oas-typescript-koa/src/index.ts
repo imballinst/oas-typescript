@@ -119,12 +119,6 @@ async function main() {
   );
 
   const handlebars = getHandlebars();
-  handlebars.registerHelper(
-    'ifEquals',
-    function (arg1: any, arg2: any, options: any) {
-      return arg1 == arg2 ? options.fn(this) : options.inverse(this);
-    }
-  );
   handlebars.registerHelper('capitalizeFirstLetter', function (options: any) {
     return capitalizeFirstCharacter(options.fn(this));
   });
