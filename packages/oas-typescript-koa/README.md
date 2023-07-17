@@ -14,6 +14,25 @@ npm install --save-dev @oas-typescript/koa
 yarn add -D @oas-typescript/koa
 ```
 
+## CLI guide
+
+```
+Usage
+  $ openapi-to-koa generate <path-to-openapi-json>
+
+Options
+  --output, -o                  Specify a place for output, defaults to (pwd)/generated.
+  --app-security-field, -a      Specify the custom security field used in the backend application.
+                                Mostly useful when you have role names in the application, in which
+                                these roles are required to do the operation. You might not need this
+                                parameter if you are using OpenAPI Specification v3.1.0. Reference:
+                                https://spec.openapis.org/oas/v3.1.0#patterned-fields-2.
+
+Examples
+  $ openapi-to-koa generate ./openapi/api.json --output src/generated
+  $ openapi-to-koa generate ./openapi/api.json --output src/generated --app-security-field x-security
+```
+
 ## Generating server stubs
 
 To generate the server stubs, do this command:

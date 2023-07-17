@@ -12,8 +12,8 @@
     "oas-typescript-koa": "cli.js"
   },
   "scripts": {
-    "gen": "ts-node --esm src/index.ts ../shared/src/openapi/api.json --output generated",
-    "gen:build": "node --experimental-modules cli.js ../shared/src/openapi/api.json --output generated",
+    "gen": "ts-node --esm src/index.ts generate ../shared/src/openapi/api.json --output generated",
+    "gen:build": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated",
     "gen:templates": "ts-node --esm scripts/fill-templates.ts",
     "build": "yarn test:run && yarn gen:templates && ts-node --esm scripts/build-entry.ts",
     "test": "vitest",

@@ -26,7 +26,7 @@ import { parsePaths } from './core/paths-parser.js';
 const cli = meow(
   `
 	Usage
-	  $ openapi-to-koa <path-to-openapi-json>
+	  $ openapi-to-koa generate <path-to-openapi-json>
 
 	Options
 	  --output, -o                  Specify a place for output, defaults to (pwd)/generated.
@@ -37,10 +37,12 @@ const cli = meow(
                                   https://spec.openapis.org/oas/v3.1.0#patterned-fields-2.
 
 	Examples
-	  $ openapi-to-koa ./openapi/api.json --output src/generated
+	  $ openapi-to-koa generate ./openapi/api.json --output src/generated
+	  $ openapi-to-koa generate ./openapi/api.json --output src/generated --app-security-field x-security
 `,
   {
     importMeta: import.meta,
+
     flags: {
       output: {
         type: 'string',
@@ -55,9 +57,15 @@ const cli = meow(
 );
 const DEFAULT_OUTPUT = path.join(process.cwd(), 'generated');
 const DEFAULT_SECURITY_FIELD = 'security';
+const VALID_COMMANDS = ['generate'];
 
 async function main() {
-  const cliInput = cli.input[0];
+  const [command, cliInput] = cli.input;
+  if (!cliInput || !VALID_COMMANDS.includes(command)) {
+    cli.showHelp();
+    return;
+  }
+
   const input = path.isAbsolute(cliInput)
     ? cliInput
     : path.join(process.cwd(), cliInput);
