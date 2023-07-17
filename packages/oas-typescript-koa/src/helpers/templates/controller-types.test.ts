@@ -20,8 +20,6 @@ test('generateTemplateControllerTypes, without default response', () => {
     })
   ).toEqual(
     `
-import { z } from 'zod'
-
 import {
   SayHelloParameters,
   Message
@@ -38,6 +36,40 @@ export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParamet
   );
 });
 
+test('generateTemplateControllerTypes, with undefined response', () => {
+  expect(
+    generateTemplateControllerTypes({
+      imports: ['SayHelloParameters', 'Message'],
+      operations: [
+        {
+          functionType: 'SayHelloFunction',
+          hasDefaultResponseStatus: true,
+          operationId: 'SayHello',
+          responseSuccessStatus: 200,
+          errorType: 'SayHelloErrors',
+          parametersName: 'SayHelloParameters'
+        }
+      ]
+    })
+  ).toEqual(
+    `
+import { z } from 'zod'
+
+import {
+  SayHelloParameters,
+  Message
+} from '../client.js'
+import { ParsedRequestInfo } from '../utils.js'
+import { ControllerReturnType, ErrorStatuses } from '../types.js'
+
+export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<
+  typeof z.void(),
+  ErrorStatuses<typeof SayHelloErrors> | number,
+  200
+>
+  `.trim()
+  );
+});
 test('generateTemplateControllerTypes, with default response', () => {
   expect(
     generateTemplateControllerTypes({
@@ -56,8 +88,6 @@ test('generateTemplateControllerTypes, with default response', () => {
     })
   ).toEqual(
     `
-import { z } from 'zod'
-
 import {
   SayHelloParameters,
   Message

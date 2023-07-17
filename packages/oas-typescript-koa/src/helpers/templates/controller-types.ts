@@ -28,7 +28,7 @@ export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
       `.trim()
     );
 
-    if (operation.response !== undefined) {
+    if (operation.response === undefined) {
       isRequireZodImport = true;
     }
   }

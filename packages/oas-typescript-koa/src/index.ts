@@ -2,7 +2,6 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { tmpdir } from 'os';
 import {
-  EndpointDefinitionWithRefs,
   generateZodClientFromOpenAPI,
   getHandlebars
 } from 'openapi-zod-client';
@@ -18,8 +17,6 @@ import {
   utilsTs,
   typesTs
 } from './templates.js';
-import { OperationInfo } from './helpers/templates/types.js';
-import { generateRouteMiddleware } from './helpers/templates/middleware.js';
 import { generateTemplateController } from './helpers/templates/controller.js';
 import { generateTemplateRouter } from './helpers/templates/router.js';
 import { generateTemplateControllerTypes } from './helpers/templates/controller-types.js';
@@ -32,11 +29,15 @@ const cli = meow(
 	  $ openapi-to-koa <path-to-openapi-json>
 
 	Options
-	  --output, -o                  Specify a place for output, default to (pwd)/generated.
+	  --output, -o                  Specify a place for output, defaults to (pwd)/generated.
+	  --app-security-field, -a      Specify the custom security field used in the backend application.
+                                  Mostly useful when you have role names in the application, in which
+                                  these roles are required to do the operation. You might not need this
+                                  parameter if you are using OpenAPI Specification v3.1.0. Reference:
+                                  https://spec.openapis.org/oas/v3.1.0#patterned-fields-2.
 
 	Examples
 	  $ openapi-to-koa ./openapi/api.json --output src/generated
-	  🌈 unicorns 🌈
 `,
   {
     importMeta: import.meta,
@@ -44,10 +45,16 @@ const cli = meow(
       output: {
         type: 'string',
         shortFlag: 'o'
+      },
+      appSecurityField: {
+        type: 'string',
+        shortFlag: 'a'
       }
     }
   }
 );
+const DEFAULT_OUTPUT = path.join(process.cwd(), 'generated');
+const DEFAULT_SECURITY_FIELD = 'security';
 
 async function main() {
   const cliInput = cli.input[0];
@@ -55,15 +62,15 @@ async function main() {
     ? cliInput
     : path.join(process.cwd(), cliInput);
 
-  const { output: cliOutput } = cli.flags;
-  let rootOutputFolder = path.join(process.cwd(), 'generated');
+  const {
+    output: cliOutput,
+    appSecurityField: cliAppSecurityField = DEFAULT_SECURITY_FIELD
+  } = cli.flags;
 
-  if (cliOutput) {
-    rootOutputFolder = path.isAbsolute(cliOutput)
+  const rootOutputFolder =
+    cliOutput && path.isAbsolute(cliOutput)
       ? cliOutput
-      : path.join(process.cwd(), cliOutput);
-  }
-
+      : path.join(process.cwd(), cliOutput || DEFAULT_OUTPUT);
   const lockedGeneratedFilesFolder = path.join(rootOutputFolder, 'generated');
 
   // Copy the utility and the middleware helpers.
@@ -123,6 +130,7 @@ async function main() {
     return capitalizeFirstCharacter(options.fn(this));
   });
 
+  console.info(cliAppSecurityField, DEFAULT_SECURITY_FIELD);
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
     distPath: path.join(lockedGeneratedFilesFolder, 'client.ts'),
@@ -130,6 +138,12 @@ async function main() {
     options: {
       endpointDefinitionRefiner: (defaultDefinition, operation) => {
         const newDefinition = defaultDefinition as any;
+
+        if (cliAppSecurityField !== DEFAULT_SECURITY_FIELD) {
+          // Force inject the security of the custom field.
+          operation.security = operation[cliAppSecurityField as any];
+        }
+
         newDefinition.operationId = operation.operationId;
         newDefinition.security = JSON.stringify(operation.security);
         return newDefinition;
