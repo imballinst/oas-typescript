@@ -3,24 +3,29 @@ import { z } from 'zod';
 // Schemas.
 export const Category = z
   .object({ id: z.number().int(), name: z.string() })
-  .partial();
+  .partial()
+  .passthrough();
 export interface Category extends z.infer<typeof Category> {}
 export const Tag = z
   .object({ id: z.number().int(), name: z.string() })
-  .partial();
+  .partial()
+  .passthrough();
 export interface Tag extends z.infer<typeof Tag> {}
-export const Pet = z.object({
-  id: z.number().int().optional(),
-  name: z.string(),
-  category: Category.optional(),
-  photoUrls: z.array(z.string()),
-  tags: z.array(Tag).optional(),
-  status: z.enum(['available', 'pending', 'sold']).optional()
-});
+export const Pet = z
+  .object({
+    id: z.number().int().optional(),
+    name: z.string(),
+    category: Category.optional(),
+    photoUrls: z.array(z.string()),
+    tags: z.array(Tag).optional(),
+    status: z.enum(['available', 'pending', 'sold']).optional()
+  })
+  .passthrough();
 export interface Pet extends z.infer<typeof Pet> {}
 export const ApiResponse = z
   .object({ code: z.number().int(), type: z.string(), message: z.string() })
-  .partial();
+  .partial()
+  .passthrough();
 export interface ApiResponse extends z.infer<typeof ApiResponse> {}
 export const Order = z
   .object({
@@ -31,7 +36,8 @@ export const Order = z
     status: z.enum(['placed', 'approved', 'delivered']),
     complete: z.boolean()
   })
-  .partial();
+  .partial()
+  .passthrough();
 export interface Order extends z.infer<typeof Order> {}
 export const User = z
   .object({
@@ -44,7 +50,8 @@ export const User = z
     phone: z.string(),
     userStatus: z.number().int()
   })
-  .partial();
+  .partial()
+  .passthrough();
 export interface User extends z.infer<typeof User> {}
 
 // Endpoints.
@@ -146,7 +153,7 @@ export const UpdatePetWithFormErrors = [
   {
     status: 405,
     description: `Invalid input`,
-    schema: z.void()
+    schema: ApiResponse
   }
 ] as const;
 
@@ -309,7 +316,7 @@ export const CreateUserParameters = [
     schema: User
   }
 ] as const;
-export const CreateUserResponse = z.void();
+export const CreateUserResponse = User;
 export const CreateUserErrors = [] as const;
 
 export const GetUserByNameParameters = [
@@ -346,7 +353,7 @@ export const UpdateUserParameters = [
     schema: z.string()
   }
 ] as const;
-export const UpdateUserResponse = z.void();
+export const UpdateUserResponse = User;
 export const UpdateUserErrors = [] as const;
 
 export const DeleteUserParameters = [

@@ -12,7 +12,7 @@ export class UserController {
   static createUser: CreateUserControllerFunction = (params) => {
     return {
       data: undefined,
-      status: 204
+      status: 200
     };
   };
   static createUsersWithListInput: CreateUsersWithListInputControllerFunction =
@@ -43,7 +43,7 @@ export class UserController {
   static updateUser: UpdateUserControllerFunction = (params) => {
     return {
       data: undefined,
-      status: 204
+      status: 200
     };
   };
   static deleteUser: DeleteUserControllerFunction = (params) => {

@@ -378,7 +378,7 @@ router.get('/user/login', async (ctx, next) => {
   }
 });
 
-router.get('/user/logout', async (ctx, next) => {
+router.post('/user/logout', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: LogoutUserParameters
