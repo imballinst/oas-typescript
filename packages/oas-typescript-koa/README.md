@@ -39,22 +39,30 @@ To generate the server stubs, do this command:
 
 ```bash
 # Do this using the "scripts" in package.json.
-openapi-typescript-koa ./api.json --output generated
+openapi-typescript-koa generate ./api.json --output generated
 ```
 
 The command above will read the Open API Specification `api.json` and output them to the `generated` folder. The result will be as the following.
 
 ```
 generated
-├── client.ts
 ├── controllers
 │   ├── PetController.ts
 │   ├── StoreController.ts
 │   └── UserController.ts
+├── generated
+│   ├── checksum.json
+│   ├── client.ts
+│   ├── controller-types
+│   │   ├── PetControllerTypes.ts
+│   │   ├── StoreControllerTypes.ts
+│   │   └── UserControllerTypes.ts
+│   ├── security-schemes.ts
+│   ├── server.ts
+│   ├── types.ts
+│   └── utils.ts
 ├── middleware-helpers.ts
-├── security-schemes.ts
-├── server.ts
-└── utils.ts
+└── server.ts
 ```
 
 All files are stubs, except the ones in `controllers` folder and `middleware-helpers.ts`, where you will need to insert your own logic. The latter is mostly used for validating authorization from the incoming request.
