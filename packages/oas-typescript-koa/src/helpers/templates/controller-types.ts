@@ -28,7 +28,7 @@ export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
       `.trim()
     );
 
-    if (operation.response === undefined) {
+    if (operation.response !== undefined) {
       isRequireZodImport = true;
     }
   }
@@ -37,10 +37,10 @@ export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
 ${isRequireZodImport ? `import { z } from 'zod'` : ''}
 
 import {
-  ${imports.join(',\t')}
+  ${imports.join(',\n  ')}
 } from '../client.js'
 import { ParsedRequestInfo } from '../utils.js'
 import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
-${renderedOperations.join('\n\n')}`;
+${renderedOperations.join('\n\n')}`.trim();
 }
