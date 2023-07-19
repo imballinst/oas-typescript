@@ -1,0 +1,25 @@
+.description-badge-wrapper {
+  display: flex;
+}
+
+.description-badge {
+  display: inline-flex;
+  padding: 4px 8px;
+  background: orange;
+  font-size: 13px;
+  border-radius: 4px;
+  min-height: 31px;
+  align-items: center;
+}
+
+.description-badge code {
+  display: inline-flex;
+  background: lightgray;
+  padding: 4px;
+  margin-left: 4px;
+  font-weight: bold;
+}
+
+.description-badge + .description-badge {
+  margin-left: 4px;
+}
