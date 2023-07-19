@@ -308,7 +308,9 @@ function SecurityBadges({
   if (!SECURITY_BADGES_FIELD || !securityBadgesProcessFn) return null;
 
   const securityBadges: Array<{ label: string; value: string }> =
-    window.securityBadgesDefaultValue || [];
+    window.securityBadgesDefaultValue
+      ? [...window.securityBadgesDefaultValue]
+      : [];
   const securityArray: any = SECURITY_BADGES_FIELD.startsWith('x-')
     ? extensions.get(SECURITY_BADGES_FIELD)
     : security;
