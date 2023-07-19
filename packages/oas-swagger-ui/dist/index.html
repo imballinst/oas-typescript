@@ -1,11 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script>
+      const AUTH_MAP_TO_STRING = {
+        petstore_auth: 'Required pet store scope: '
+      };
+
+      window.securityBadgesField = 'x-security';
+      window.securityBadgesDefaultValue = [{ label: 'Authorization required' }];
+      window.securityBadgesProcessFn = (securityKey, security) => {
+        if (!security) return [];
+
+        const badges = [];
+        for (const key in security) {
+          const val = security[key];
+          badges.push({
+            label: AUTH_MAP_TO_STRING[securityKey],
+            value: val
+          });
+        }
+
+        return badges;
+      };
+    </script>
+
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="./vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
-    <script type="module" crossorigin src="./assets/index-7058979c.js"></script>
+    <title>Swagger UI (Enhanced)</title>
+    <script type="module" crossorigin src="./assets/index-4d233e10.js"></script>
     <link rel="stylesheet" href="./assets/index-17f026eb.css">
   </head>
   <body>

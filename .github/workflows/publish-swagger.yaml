@@ -18,13 +18,18 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v3
+      - name: prepare publish
+        working-directory: .
+        run: |
+          mkdir -p output/oas-swagger-ui
+          cp GH_PAGES_ENTRY.md output/README.md
+          cp -r packages/oas-swagger-ui/dist/* output/output/oas-swagger-ui
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./packages/oas-swagger-ui/dist
-          destination_dir: ./oas-swagger-ui
+          publish_dir: ./output
           # Publish only with the latest commit.
           # Source: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-force-orphan-force_orphan.
           force_orphan: true

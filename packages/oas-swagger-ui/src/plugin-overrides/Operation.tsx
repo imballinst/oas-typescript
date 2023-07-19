@@ -307,7 +307,8 @@ function SecurityBadges({
   if (!extensions.size) return null;
   if (!SECURITY_BADGES_FIELD || !securityBadgesProcessFn) return null;
 
-  const securityBadges: React.ReactNode[] = [];
+  const securityBadges: Array<{ label: string; value: string }> =
+    window.securityBadgesDefaultValue || [];
   const securityArray: any = SECURITY_BADGES_FIELD.startsWith('x-')
     ? extensions.get(SECURITY_BADGES_FIELD)
     : security;
@@ -331,8 +332,13 @@ function SecurityBadges({
 
   return (
     <div className="description-badge-wrapper">
-      {securityBadges.map((value: any) => {
-        return <div className="description-badge">{value}</div>;
+      {securityBadges.map((item: any) => {
+        return (
+          <div className="description-badge">
+            {item.label}
+            {item.value && <code>{item.value}</code>}
+          </div>
+        );
       })}
     </div>
   );
