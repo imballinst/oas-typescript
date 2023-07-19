@@ -12,6 +12,34 @@ Since the original purpose of this package is to customize the Swagger UI distri
 
 ## Available customizations
 
+```ts
+declare global {
+  interface Window {
+    oasSwaggerUiConfig?: {
+      specUrl?: string;
+      security?: {
+        badgesField?: string;
+        badgesDefaultValue?: Array<{ label: string; value: string }>;
+        badgesProcessFn?: (
+          securityKey: string,
+          value?: string[]
+        ) => Array<{ label: string; value: string }>;
+      };
+    };
+  }
+}
+```
+
+### Swagger URL
+
+To set the Swagger URL, set the value of `window.oasSwaggerUiConfig.url` to the URL of the OpenAPI Specification file (can be either YAML or JSON).
+
+```ts
+window.oasSwaggerUiConfig = {
+  specUrl: './api.json'
+};
+```
+
 ### Showing authorizations and permissions
 
 [Before OAS 3.1.0](https://spec.openapis.org/oas/v3.1.0#patterned-fields-2), we are not allowed to define permissions in the security endpoint object. To help with that, we can define a field called `x-security` (for example), with the exact same form as `security`. This field is following the specification of `security` object in OAS 3.1.0.
@@ -38,29 +66,33 @@ To re-iterate, if you are already using OAS 3.1.0, you won't need to use specifi
     petstore_auth: 'Required pet store scope: '
   };
 
-  window.securityBadgesField = 'x-security';
-  window.securityBadgesDefaultValue = [{ label: 'Authorization required' }];
-  window.securityBadgesProcessFn = (securityKey, security) => {
-    if (!security) return [];
+  window.oasSwaggerUiConfig = {
+    security: {
+      badgesField: 'x-security',
+      badgesDefaultValue: [{ label: 'Authorization required' }],
+      badgesProcessFn: (securityKey, security) => {
+        if (!security) return [];
 
-    const badges = [];
-    for (const key in security) {
-      const val = security[key];
-      badges.push({
-        label: AUTH_MAP_TO_STRING[securityKey],
-        value: val
-      });
+        const badges = [];
+        for (const key in security) {
+          const val = security[key];
+          badges.push({
+            label: AUTH_MAP_TO_STRING[securityKey],
+            value: val
+          });
+        }
+
+        return badges;
+      }
     }
-
-    return badges;
   };
 </script>
 ```
 
-For `oas-swagger-ui` to work with the enhanced view for the security stuff, it needs 3 variables in the `window` scope:
+For `oas-swagger-ui` to work with the enhanced view for the security stuff, it needs 3 variables in the `window.oasSwaggerUiConfig.security` field:
 
-1. `securityBadgesField`: this is to define which field we're going to use.
-2. `securityBadgesDefaultValue`: this is to define the initial value of the badges, without the scopes/permissions stuff. This defaults to `[]` when not defined.
-3. `securityBadgesProcessFn`: this is the function to process the security field.
+1. `badgesField`: this is to define which field we're going to use.
+2. `badgesDefaultValue`: this is to define the initial value of the badges, without the scopes/permissions stuff. This defaults to `[]` when not defined.
+3. `badgesProcessFn`: this is the function to process the security field.
 
 Then, run the UI and see that there will be badges above each of the endpoint description!
