@@ -6,21 +6,26 @@
         petstore_auth: 'Required pet store scope: '
       };
 
-      window.securityBadgesField = 'x-security';
-      window.securityBadgesDefaultValue = [{ label: 'Authorization required' }];
-      window.securityBadgesProcessFn = (securityKey, security) => {
-        if (!security) return [];
+      window.oasSwaggerUiConfig = {
+        url: './api.json',
+        security: {
+          badgesField: 'x-security',
+          badgesDefaultValue: [{ label: 'Authorization required' }],
+          badgesProcessFn: (securityKey, security) => {
+            if (!security) return [];
 
-        const badges = [];
-        for (const key in security) {
-          const val = security[key];
-          badges.push({
-            label: AUTH_MAP_TO_STRING[securityKey],
-            value: val
-          });
+            const badges = [];
+            for (const key in security) {
+              const val = security[key];
+              badges.push({
+                label: AUTH_MAP_TO_STRING[securityKey],
+                value: val
+              });
+            }
+
+            return badges;
+          }
         }
-
-        return badges;
       };
     </script>
 

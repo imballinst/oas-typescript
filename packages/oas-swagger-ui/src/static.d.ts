@@ -2,12 +2,17 @@ import React from 'react';
 
 declare global {
   interface Window {
-    securityBadgesField?: string;
-    securityBadgesDefaultValue?: Array<{ label: string; value: string }>;
-    securityBadgesProcessFn?: (
-      securityKey: string,
-      value?: string[]
-    ) => Array<{ label: string; value: string }>;
+    oasSwaggerUiConfig?: {
+      url?: string;
+      security?: {
+        badgesField?: string;
+        badgesDefaultValue?: Array<{ label: string; value: string }>;
+        badgesProcessFn?: (
+          securityKey: string,
+          value?: string[]
+        ) => Array<{ label: string; value: string }>;
+      };
+    };
   }
 }
 

@@ -301,18 +301,16 @@ function SecurityBadges({
   extensions: any;
   security: any;
 }) {
-  const SECURITY_BADGES_FIELD = window.securityBadgesField;
-  const securityBadgesProcessFn = window.securityBadgesProcessFn;
+  const { badgesField, badgesDefaultValue, badgesProcessFn } =
+    window.oasSwaggerUiConfig?.security || {};
 
   if (!extensions.size) return null;
-  if (!SECURITY_BADGES_FIELD || !securityBadgesProcessFn) return null;
+  if (!badgesField || !badgesProcessFn) return null;
 
   const securityBadges: Array<{ label: string; value: string }> =
-    window.securityBadgesDefaultValue
-      ? [...window.securityBadgesDefaultValue]
-      : [];
-  const securityArray: any = SECURITY_BADGES_FIELD.startsWith('x-')
-    ? extensions.get(SECURITY_BADGES_FIELD)
+    badgesDefaultValue ? [...badgesDefaultValue] : [];
+  const securityArray: any = badgesField.startsWith('x-')
+    ? extensions.get(badgesField)
     : security;
 
   // So the form is like this:
@@ -327,7 +325,7 @@ function SecurityBadges({
 
       // Then, we iterate the array.
       securityBadges.push(
-        ...securityBadgesProcessFn(securityKey, imSecurityValue.toJS())
+        ...badgesProcessFn(securityKey, imSecurityValue.toJS())
       );
     });
   });
