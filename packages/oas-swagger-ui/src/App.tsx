@@ -32,7 +32,7 @@ window.securityBadgesProcessFn = (securityKey, security) => {
 };
 
 function App() {
-  return <SwaggerUI url="/api.json" plugins={PLUGINS} />;
+  return <SwaggerUI url={`./api.json`} plugins={PLUGINS} />;
 }
 
 export default App;
