@@ -1,0 +1,6 @@
+dist/
+src/
+public/
+tsconfig.*
+vite.config.*
+index.html

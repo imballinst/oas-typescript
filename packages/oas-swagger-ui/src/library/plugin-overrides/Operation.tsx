@@ -315,7 +315,7 @@ function SecurityBadges({
   if (!extensions.size) return null;
   if (!badgesField || !badgesProcessFn) return null;
 
-  const securityBadges: Array<{ label: string; value: string }> =
+  const securityBadges: Array<{ label: string; value?: string }> =
     badgesDefaultValue ? [...badgesDefaultValue] : [];
   const securityArray: any = badgesField.startsWith('x-')
     ? extensions.get(badgesField)

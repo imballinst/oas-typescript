@@ -24,7 +24,7 @@ jobs:
           node-version: 16.x
           cache: yarn
       - name: setup and run tests
-        working-directory: ./examples
+        working-directory: ./examples/koa
         run: |
           yarn
           yarn gen
