@@ -6,8 +6,12 @@
         petstore_auth: 'Required pet store scope: '
       };
 
+      window.swaggerUiConfig = {
+        url: './api.json',
+        deepLinking: true
+      };
+
       window.oasSwaggerUiConfig = {
-        specUrl: './api.json',
         security: {
           badgesField: 'x-security',
           badgesDefaultValue: [{ label: 'Authorization required' }],
@@ -33,7 +37,7 @@
     <link rel="icon" type="image/svg+xml" href="./vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Swagger UI (Enhanced)</title>
-    <script type="module" crossorigin src="./assets/index-6ae7db6c.js"></script>
+    <script type="module" crossorigin src="./assets/index-012cf9d0.js"></script>
     <link rel="stylesheet" href="./assets/index-17f026eb.css">
   </head>
   <body>

@@ -6,8 +6,12 @@
         petstore_auth: 'Required pet store scope: '
       };
 
+      window.swaggerUiConfig = {
+        url: './api.json',
+        deepLinking: true
+      };
+
       window.oasSwaggerUiConfig = {
-        specUrl: './api.json',
         security: {
           badgesField: 'x-security',
           badgesDefaultValue: [{ label: 'Authorization required' }],

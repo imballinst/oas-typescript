@@ -10,12 +10,9 @@ const PLUGINS = {
 };
 
 function App() {
-  return (
-    <SwaggerUI
-      url={window.oasSwaggerUiConfig?.specUrl || `./api.json`}
-      plugins={PLUGINS}
-    />
-  );
+  const swaggerUiConfig = window.swaggerUiConfig || {};
+
+  return <SwaggerUI {...swaggerUiConfig} plugins={PLUGINS} />;
 }
 
 export default App;

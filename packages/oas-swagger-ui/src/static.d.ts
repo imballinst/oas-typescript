@@ -2,8 +2,10 @@ import React from 'react';
 
 declare global {
   interface Window {
+    swaggerUiConfig?: {
+      url?: string;
+    };
     oasSwaggerUiConfig?: {
-      specUrl?: string;
       security?: {
         badgesField?: string;
         badgesDefaultValue?: Array<{ label: string; value: string }>;
