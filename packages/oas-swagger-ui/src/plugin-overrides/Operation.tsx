@@ -15,6 +15,7 @@ import { List } from 'immutable';
 
 import loadingIcon from './img/rolling-load.svg';
 import './Operation.css';
+import { OasSwaggerUiSecurityConfig } from './types.ts';
 
 export class Operation extends PureComponent<any> {
   static defaultProps = {
@@ -43,7 +44,8 @@ export class Operation extends PureComponent<any> {
       authActions,
       authSelectors,
       oas3Actions,
-      oas3Selectors
+      oas3Selectors,
+      oasSwaggerUiSecurityConfig
     } = this.props;
     let operationProps = this.props.operation;
 
@@ -138,7 +140,11 @@ export class Operation extends PureComponent<any> {
             {description && (
               <div className="opblock-description-wrapper">
                 <div className="opblock-description">
-                  <SecurityBadges extensions={extensions} security={security} />
+                  <SecurityBadges
+                    extensions={extensions}
+                    security={security}
+                    oasSwaggerUiSecurityConfig={oasSwaggerUiSecurityConfig}
+                  />
 
                   <Markdown source={description} />
                 </div>
@@ -296,13 +302,15 @@ export class Operation extends PureComponent<any> {
 // Composing components.
 function SecurityBadges({
   extensions,
-  security
+  security,
+  oasSwaggerUiSecurityConfig
 }: {
   extensions: any;
   security: any;
+  oasSwaggerUiSecurityConfig: OasSwaggerUiSecurityConfig;
 }) {
   const { badgesField, badgesDefaultValue, badgesProcessFn } =
-    window.oasSwaggerUiConfig?.security || {};
+    oasSwaggerUiSecurityConfig || {};
 
   if (!extensions.size) return null;
   if (!badgesField || !badgesProcessFn) return null;
