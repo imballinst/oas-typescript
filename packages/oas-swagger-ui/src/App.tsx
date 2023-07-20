@@ -1,5 +1,5 @@
 import { ComponentProps } from 'react';
-import { OasSwaggerUi } from './main-lib';
+import { OasSwaggerUi } from './library/main-lib';
 
 function App({
   swaggerConfig,

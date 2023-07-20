@@ -1,8 +1,8 @@
 // @ts-ignore
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
-import { Operation } from './plugin-overrides/Operation.tsx';
-import { OasSwaggerUiConfig } from './plugin-overrides/types.ts';
+import { Operation } from './plugin-overrides/Operation.js';
+import { OasSwaggerUiConfig } from './plugin-overrides/types.js';
 
 export function OasSwaggerUi({
   swaggerConfig,
