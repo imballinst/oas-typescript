@@ -1,6 +1,6 @@
 {
   "name": "@oas-typescript/swagger-ui",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "lib/oas-swagger-ui.js",
   "module": "lib/oas-swagger-ui.mjs",
   "types": "lib/oas-swagger-ui.d.ts",
