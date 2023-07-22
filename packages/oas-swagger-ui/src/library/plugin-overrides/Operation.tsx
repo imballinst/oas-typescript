@@ -15,7 +15,7 @@ import { List } from 'immutable';
 
 import loadingIcon from './img/rolling-load.svg';
 import './Operation.css';
-import { OasSwaggerUiSecurityConfig } from './types.ts';
+import { OasSwaggerUiSecurityConfig } from '../types.ts';
 
 export class Operation extends PureComponent<any> {
   static defaultProps = {
