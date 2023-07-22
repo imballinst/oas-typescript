@@ -11,17 +11,20 @@ export function OasSwaggerUi({
   swaggerConfig: DefaultSwaggerUiConfig;
   oasSwaggerUiConfig?: OasSwaggerUiConfig;
 }) {
-  const plugins = {
-    wrapComponents: {
-      operation: () => (props: any) =>
-        (
-          <Operation
-            {...props}
-            oasSwaggerUiSecurityConfig={oasSwaggerUiConfig?.security}
-          />
-        )
-    }
-  };
+  const plugins = [
+    {
+      wrapComponents: {
+        operation: () => (props: any) =>
+          (
+            <Operation
+              {...props}
+              oasSwaggerUiSecurityConfig={oasSwaggerUiConfig?.security}
+            />
+          )
+      }
+    },
+    ...(Array.isArray(swaggerConfig.plugins) ? swaggerConfig.plugins : [])
+  ];
 
   return <SwaggerUI {...swaggerConfig} plugins={plugins} />;
 }

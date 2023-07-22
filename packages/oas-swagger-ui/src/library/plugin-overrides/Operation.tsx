@@ -340,9 +340,9 @@ function SecurityBadges({
 
   return (
     <div className="description-badge-wrapper">
-      {securityBadges.map((item: any) => {
+      {securityBadges.map((item, index) => {
         return (
-          <div className="description-badge">
+          <div className="description-badge" key={`description-badge-${index}`}>
             {item.label}
             {item.value && <code>{item.value}</code>}
           </div>

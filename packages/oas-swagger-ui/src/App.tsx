@@ -6,7 +6,10 @@ function App({
   oasSwaggerUiConfig
 }: ComponentProps<typeof OasSwaggerUi>) {
   return (
-    <OasSwaggerUi {...swaggerConfig} oasSwaggerUiConfig={oasSwaggerUiConfig} />
+    <OasSwaggerUi
+      swaggerConfig={swaggerConfig}
+      oasSwaggerUiConfig={oasSwaggerUiConfig}
+    />
   );
 }
 
