@@ -1,15 +1,15 @@
 {
-  "name": "@oas-typescript/koa",
-  "version": "0.5.1",
+  "name": "@oas-typescript/axios",
+  "version": "0.0.1",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/imballinst/oas-typescript.git",
-    "directory": "packages/oas-typescript-koa"
+    "directory": "packages/oas-typescript-axios"
   },
   "homepage": "https://github.com/imballinst/oas-typescript#readme",
   "bin": {
-    "oas-typescript-koa": "cli.js"
+    "oas-typescript-axios": "cli.js"
   },
   "scripts": {
     "gen": "ts-node --esm src/index.ts generate ../shared/src/openapi/api.json --output generated",
@@ -17,26 +17,21 @@
     "gen:templates": "ts-node --esm scripts/fill-templates.ts",
     "build": "yarn test:run && yarn gen:templates && ts-node --esm scripts/build-entry.ts",
     "test": "vitest",
-    "test:run": "vitest run",
-    "test:run-koa": "nodemon"
+    "test:run": "vitest run"
   },
   "dependencies": {
     "meow": "12.0.1",
     "openapi-zod-client": "1.9.0",
     "title-case": "3.0.3"
   },
+  "peerDependencies": {
+    "axios": ">=1.0.0"
+  },
   "devDependencies": {
-    "@koa/bodyparser": "5.0.0",
-    "@koa/router": "12.0.0",
     "@swc/core": "1.3.66",
     "@swc/helpers": "0.5.1",
-    "@types/cookie-parser": "1.4.3",
-    "@types/koa__router": "12.0.0",
-    "cookie-parser": "1.4.6",
+    "axios": "1.4.0",
     "esbuild": "0.18.11",
-    "koa": "2.14.2",
-    "nanoid": "4.0.2",
-    "nodemon": "2.0.22",
     "ts-node": "10.9.1",
     "vitest": "0.33.0",
     "zod": "3.21.4"

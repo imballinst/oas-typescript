@@ -138,7 +138,6 @@ async function main() {
     return capitalizeFirstCharacter(options.fn(this));
   });
 
-  console.info(cliAppSecurityField, DEFAULT_SECURITY_FIELD);
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
     distPath: path.join(lockedGeneratedFilesFolder, 'client.ts'),

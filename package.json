@@ -11,7 +11,8 @@
   "scripts": {
     "wkoa": "yarn workspace @oas-typescript/koa",
     "test:koa": "yarn wkoa test",
-    "gen:koa": "yarn wkoa gen"
+    "gen:koa": "yarn wkoa gen",
+    "waxios": "yarn workspace @oas-typescript/axios"
   },
   "repository": {
     "type": "git",
