@@ -15,7 +15,7 @@ import { List } from 'immutable';
 
 import loadingIcon from './img/rolling-load.svg';
 import './Operation.css';
-import { OasSwaggerUiSecurityConfig } from './types.ts';
+import { OasSwaggerUiSecurityConfig } from '../types.ts';
 
 export class Operation extends PureComponent<any> {
   static defaultProps = {
@@ -340,9 +340,9 @@ function SecurityBadges({
 
   return (
     <div className="description-badge-wrapper">
-      {securityBadges.map((item: any) => {
+      {securityBadges.map((item, index) => {
         return (
-          <div className="description-badge">
+          <div className="description-badge" key={`description-badge-${index}`}>
             {item.label}
             {item.value && <code>{item.value}</code>}
           </div>

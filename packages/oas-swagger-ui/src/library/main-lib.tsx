@@ -2,26 +2,29 @@
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
 import { Operation } from './plugin-overrides/Operation.js';
-import { OasSwaggerUiConfig } from './plugin-overrides/types.js';
+import { DefaultSwaggerUiConfig, OasSwaggerUiConfig } from './types.js';
 
 export function OasSwaggerUi({
   swaggerConfig,
   oasSwaggerUiConfig
 }: {
-  swaggerConfig: any;
+  swaggerConfig: DefaultSwaggerUiConfig;
   oasSwaggerUiConfig?: OasSwaggerUiConfig;
 }) {
-  const plugins = {
-    wrapComponents: {
-      operation: () => (props: any) =>
-        (
-          <Operation
-            {...props}
-            oasSwaggerUiSecurityConfig={oasSwaggerUiConfig?.security}
-          />
-        )
-    }
-  };
+  const plugins = [
+    {
+      wrapComponents: {
+        operation: () => (props: any) =>
+          (
+            <Operation
+              {...props}
+              oasSwaggerUiSecurityConfig={oasSwaggerUiConfig?.security}
+            />
+          )
+      }
+    },
+    ...(Array.isArray(swaggerConfig.plugins) ? swaggerConfig.plugins : [])
+  ];
 
   return <SwaggerUI {...swaggerConfig} plugins={plugins} />;
 }
