@@ -12,6 +12,7 @@ import { execSync } from 'child_process';
 import { createHash } from 'crypto';
 
 import { capitalizeFirstCharacter } from './helpers/change-case.js';
+import { defaultHandlebars } from './templates.js';
 
 const cli = meow(
   `
@@ -62,9 +63,14 @@ async function main() {
   const handlebarsFilePath = path.join(tmpFolder, 'koa/default.hbs');
 
   // Create the files in these folders.
+  await fs.rm(lockedGeneratedFilesFolder, { force: true, recursive: true });
   await Promise.all([
-    fs.mkdir(tmpFolder, { recursive: true }),
+    fs.mkdir(path.dirname(handlebarsFilePath), { recursive: true }),
     fs.mkdir(lockedGeneratedFilesFolder, { recursive: true })
+  ]);
+
+  await Promise.all([
+    fs.writeFile(handlebarsFilePath, defaultHandlebars, 'utf-8')
   ]);
 
   // Start the process.
@@ -80,9 +86,10 @@ async function main() {
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
     distPath: lockedGeneratedFilesFolder,
+    // templatePath: handlebarsFilePath,
     handlebars,
     options: {
-      groupStrategy: 'tag'
+      groupStrategy: 'tag-file'
     }
   });
 

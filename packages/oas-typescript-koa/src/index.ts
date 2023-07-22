@@ -104,7 +104,6 @@ async function main() {
   // Create the files in these folders.
   await Promise.all([
     fs.mkdir(path.dirname(handlebarsFilePath), { recursive: true }),
-    fs.mkdir(tmpFolder, { recursive: true }),
     fs.mkdir(lockedGeneratedFilesFolder, { recursive: true })
   ]);
   const [, , , middlewareHelpersChecksum] = await Promise.all([
