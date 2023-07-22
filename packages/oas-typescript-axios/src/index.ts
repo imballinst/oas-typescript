@@ -85,12 +85,12 @@ async function main() {
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
-    // distPath: lockedGeneratedFilesFolder,
-    distPath: path.join(lockedGeneratedFilesFolder, 'client.ts'),
+    distPath: lockedGeneratedFilesFolder,
+    // distPath: path.join(lockedGeneratedFilesFolder, 'client.ts'),
     // templatePath: handlebarsFilePath,
     handlebars,
     options: {
-      // groupStrategy: 'tag-file'
+      groupStrategy: 'tag-file'
     }
   });
 
