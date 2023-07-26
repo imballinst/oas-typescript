@@ -8,37 +8,104 @@ https://imballinst.github.io/oas-typescript/oas-swagger-ui
 
 ## Installation
 
+### With package managers
+
+This package is available in the npm registry, you can install it with the following.
+
+```bash
+# npm.
+npm install --save @oas-typescript/swagger-ui
+
+# Yarn.
+yarn add @oas-typescript/swagger-ui
+```
+
+Example usage can be seen in this [examples/oas-swagger-ui](https://github.com/imballinst/oas-typescript/blob/main/examples/swagger-ui/src/App.tsx) folder.
+
+### Static assets distributables
+
 Since the original purpose of this package is to customize the Swagger UI distributables, the only way to "install" this package is by copying the [./dist](./dist) package to your project.
 
-## Available customizations
+Example usage can be seen in this [oas-swagger-ui/dist](https://github.com/imballinst/oas-typescript/blob/main/packages/oas-swagger-ui/dist/index.html) folder. Since Swagger UI core bundle also allows for YAML parsing, there is also [an example to load a YAML OpenAPI Specification](https://github.com/imballinst/oas-typescript/blob/main/packages/oas-swagger-ui/dist/example-yaml.html).
+
+## API
+
+With package managers (React) and static assets distributables (vanilla JavaScript), the APIs are more or less the same. Initializing the Swagger UI require an object, with the form as the following.
+
+```ts
+{
+  swaggerConfig: {
+    // `url` and `spec` cannot exist together, only one of them can be set.
+    url?: string;
+    spec?: object;
+    layout?: string;
+    requestInterceptor?: (req: any) => any;
+    responseInterceptor?: (req: any) => any;
+    onComplete?: (system: any) => any;
+    docExpansion?: 'list' | 'full' | 'none';
+    supportedSubmitMethods?: Array<
+      'get' | 'put' | 'post' | 'delete' | 'options' | 'head' | 'patch' | 'trace'
+    >;
+    queryConfigEnabled?: boolean;
+    plugins?: Array<object> | Array<Function> | Function;
+    displayOperationId?: boolean;
+    showMutatedRequest?: boolean;
+    defaultModelExpandDepth?: number;
+    defaultModelsExpandDepth?: number;
+    defaultModelRendering?: 'example' | 'model';
+    presets?: Array<Function>;
+    deepLinking?: boolean;
+    showExtensions?: boolean;
+    showCommonExtensions?: boolean;
+    filter?: string | boolean;
+    requestSnippetsEnabled?: boolean;
+    requestSnippets?: object;
+    tryItOutEnabled?: boolean;
+    displayRequestDuration?: boolean;
+    persistAuthorization?: boolean;
+    withCredentials?: boolean;
+    oauth2RedirectUrl?: string;
+  };
+  oasSwaggerUiConfig?: {
+    security?: {
+      badgesField?: string;
+      badgesDefaultValue?: Array<{ label: string; value?: string }>;
+      badgesProcessFn?: (
+        securityKey: string,
+        value?: string[]
+      ) => Array<{ label: string; value?: string }>;
+    }
+  };
+}
+```
+
+### With package managers
+
+```tsx
+import { OasSwaggerUi } from '@oas-typescript/swagger-ui'
+
+<OasSwaggerUi
+  swaggerConfig={...}
+  oasSwaggerUiConfig={...}
+/>
+```
+
+### Static assets distributables
 
 ```ts
 declare global {
   interface Window {
-    oasSwaggerUiConfig?: {
-      specUrl?: string;
-      security?: {
-        badgesField?: string;
-        badgesDefaultValue?: Array<{ label: string; value: string }>;
-        badgesProcessFn?: (
-          securityKey: string,
-          value?: string[]
-        ) => Array<{ label: string; value: string }>;
-      };
-    };
+    renderSwaggerUi: (param: {
+      swaggerConfig: DefaultSwaggerUiConfig;
+      oasSwaggerUiConfig?: OasSwaggerUiConfig;
+    }) => void;
   }
 }
 ```
 
-### Swagger URL
+## Special customizations with `oasSwaggerUiConfig`
 
-To set the Swagger URL, set the value of `window.oasSwaggerUiConfig.url` to the URL of the OpenAPI Specification file (can be either YAML or JSON).
-
-```ts
-window.oasSwaggerUiConfig = {
-  specUrl: './api.json'
-};
-```
+As we noticed from the API reference above, `swaggerConfig` is the default Swagger UI configs. However, `oasSwaggerUiConfig` is a new config for the customization. More to that in the following sections.
 
 ### Showing authorizations and permissions
 
@@ -58,41 +125,12 @@ As the quote above suggests, previously the array in each of the `security` obje
 }
 ```
 
-To re-iterate, if you are already using OAS 3.1.0, you won't need to use specification extension, you can just use `security` directly. Now, if we want to use it, we need to define this in our HTML (that loads the Swagger UI).
+To re-iterate, if you are already using OAS 3.1.0, you won't need to use specification extension, you can just use `security` directly.
 
-```html
-<script>
-  const AUTH_MAP_TO_STRING = {
-    petstore_auth: 'Required pet store scope: '
-  };
-
-  window.oasSwaggerUiConfig = {
-    security: {
-      badgesField: 'x-security',
-      badgesDefaultValue: [{ label: 'Authorization required' }],
-      badgesProcessFn: (securityKey, security) => {
-        if (!security) return [];
-
-        const badges = [];
-        for (const key in security) {
-          const val = security[key];
-          badges.push({
-            label: AUTH_MAP_TO_STRING[securityKey],
-            value: val
-          });
-        }
-
-        return badges;
-      }
-    }
-  };
-</script>
-```
-
-For `oas-swagger-ui` to work with the enhanced view for the security stuff, it needs 3 variables in the `window.oasSwaggerUiConfig.security` field:
+For `oas-swagger-ui` to work with the enhanced view for the security stuff, it needs 3 variables in the `oasSwaggerUiConfig.security` field:
 
 1. `badgesField`: this is to define which field we're going to use.
-2. `badgesDefaultValue`: this is to define the initial value of the badges, without the scopes/permissions stuff. This defaults to `[]` when not defined.
+2. `badgesDefaultValue`: this is to define the initial value of the badges, without the scopes/permissions stuff. This defaults to `[]` when not defined. Note that default badge object is of type `{ label: string, value?: string }`.
 3. `badgesProcessFn`: this is the function to process the security field.
 
 Then, run the UI and see that there will be badges above each of the endpoint description!

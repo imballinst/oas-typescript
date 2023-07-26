@@ -18,7 +18,7 @@
         };
 
         const { pathname, origin } = window.location;
-        const url = new URL('./api.json', origin + pathname).href;
+        const url = new URL('./api.yaml', origin + pathname).href;
 
         renderSwaggerUi({
           swaggerConfig: {
