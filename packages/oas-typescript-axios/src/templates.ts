@@ -19,47 +19,15 @@ export const {{@key}}{{#if (lookup ../circularTypeByName @key)}}: z.ZodType<{{@k
 export interface {{@key}} extends z.infer<typeof {{@key}}> {}
 {{/each}}
 
-// Endpoints.
 {{#each endpoints}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Parameters = [
-  {{#if parameters}}
-  {{#each parameters}}
-  { 
-    name: '{{name}}',
-    {{#if description}}
-    description: \`{{description}}\`,
-    {{/if}}
-    {{#if type}}
-    type: '{{type}}',
-    {{/if}}
-    schema: {{{schema}}}
-  },
-  {{/each}}
-  {{/if}}
-] as const
-{{#if security}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Security = {{{security}}}
-{{/if}}
-{{#if response}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response = {{{response}}}
-{{/if}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Errors = [
-{{#if errors}}  
-  {{#each errors}}
-  {
-    {{#ifeq status "default" }}
-    status: "default",
-    {{else}}
-    status: {{status}},
-    {{/ifeq}}
-    {{#if description}}
-    description: \`{{description}}\`,
-    {{/if}}
-    schema: {{{schema}}}
-  },
-  {{/each}}
-{{/if}}
-] as const
+{{~{processFunctionParameter parameters}~}}
+{{/each}}
 
-{{/each}}`
+
+export class {{options.apiClientName}} {
+  {{#each endpoints}}
+  {{operationId}} = ({{{getFunctionParameter operationId}}}) => {}
+  {{/each}}
+}
+`
   

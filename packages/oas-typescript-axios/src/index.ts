@@ -60,7 +60,7 @@ async function main() {
 
   // Copy the utility and the middleware helpers.
   const tmpFolder = path.join(tmpdir(), '@oast');
-  const handlebarsFilePath = path.join(tmpFolder, 'koa/default.hbs');
+  const handlebarsFilePath = path.join(tmpFolder, 'axios/default.hbs');
 
   // Create the files in these folders.
   await fs.rm(lockedGeneratedFilesFolder, { force: true, recursive: true });
@@ -79,18 +79,53 @@ async function main() {
   );
 
   const handlebars = getHandlebars();
-  handlebars.registerHelper('capitalizeFirstLetter', function (options: any) {
-    return capitalizeFirstCharacter(options.fn(this));
+  const operationParamsCache: Record<
+    string,
+    {
+      paramsDeclaration: string;
+      paramsName: string;
+    }
+  > = {};
+
+  handlebars.registerHelper('capitalizeFirstLetter', function (context: any) {
+    return capitalizeFirstCharacter(context);
   });
+  handlebars.registerHelper(
+    'processFunctionParameter',
+    function (parameters: any) {
+      if (operationParamsCache[this.operationId] !== undefined)
+        return operationParamsCache[this.operationId];
+
+      const result = constructFunctionParameterFromString(
+        parameters,
+        this.operationId
+      );
+      operationParamsCache[this.operationId] = result;
+
+      return result.paramsDeclaration;
+    }
+  );
+  handlebars.registerHelper(
+    'getFunctionParameter',
+    function (operationId: any) {
+      const paramsName = operationParamsCache[operationId].paramsName;
+      return paramsName ? `params: z.infer<typeof ${paramsName}>` : '';
+    }
+  );
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
     distPath: lockedGeneratedFilesFolder,
-    // distPath: path.join(lockedGeneratedFilesFolder, 'client.ts'),
-    // templatePath: handlebarsFilePath,
+    templatePath: handlebarsFilePath,
     handlebars,
     options: {
-      groupStrategy: 'tag-file'
+      groupStrategy: 'tag-file',
+      endpointDefinitionRefiner: (defaultDefinition, operation) => {
+        const newDefinition = defaultDefinition as any;
+
+        newDefinition.operationId = operation.operationId;
+        return newDefinition;
+      }
     }
   });
 
@@ -99,3 +134,64 @@ async function main() {
 }
 
 main();
+
+// Helper functions.
+function constructFunctionParameterFromString(
+  parameters: any,
+  operationId: string
+) {
+  const result = {
+    paramsDeclaration: '',
+    paramsName: ''
+  };
+
+  if (!parameters) return result;
+
+  const fnParam: {
+    params: Record<string, string>;
+    query: Record<string, string>;
+    body: string;
+  } = {
+    body: '',
+    params: {},
+    query: {}
+  };
+
+  for (const parameter of parameters) {
+    switch (parameter.type) {
+      case 'Body': {
+        fnParam.body = parameter.schema;
+        break;
+      }
+      case 'Path': {
+        fnParam.params[parameter.name] = parameter.schema;
+        break;
+      }
+      case 'Query': {
+        fnParam.query[parameter.name] = parameter.schema;
+        break;
+      }
+    }
+  }
+
+  let rendered = '';
+  let renderedParams = Object.entries(fnParam.params)
+    .map(([k, v]) => `${k}: ${v}`)
+    .join('\n');
+  let renderedQuery = Object.entries(fnParam.query)
+    .map(([k, v]) => `${k}: ${v}`)
+    .join(',\n');
+  let renderedBody = fnParam.body;
+
+  rendered += renderedParams ? `params: z.object({${renderedParams}}),` : '';
+  rendered += renderedQuery ? `query: z.object({${renderedQuery}}),` : '';
+  rendered += renderedBody ? `body: ${renderedBody}` : '';
+
+  if (rendered) {
+    const paramsName = `${capitalizeFirstCharacter(operationId)}Params`;
+    result.paramsDeclaration = `const ${paramsName} = z.object({${rendered}});`;
+    result.paramsName = paramsName;
+  }
+
+  return result;
+}
