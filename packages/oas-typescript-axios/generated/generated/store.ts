@@ -5,7 +5,6 @@ const Order = z
   .object({
     id: z.number().int(),
     petId: z.number().int(),
-    pet: Pet,
     quantity: z.number().int(),
     shipDate: z.string().datetime({ offset: true }),
     status: z.enum(['placed', 'approved', 'delivered']),
@@ -13,30 +12,9 @@ const Order = z
   })
   .partial()
   .passthrough();
-const Pet = z
-  .object({
-    id: z.number().int().optional(),
-    name: z.string(),
-    category: Category.optional(),
-    photoUrls: z.array(z.string()),
-    tags: z.array(Tag).optional(),
-    status: z.enum(['available', 'pending', 'sold']).optional()
-  })
-  .passthrough();
-const Category = z
-  .object({ id: z.number().int(), name: z.string() })
-  .partial()
-  .passthrough();
-const Tag = z
-  .object({ id: z.number().int(), name: z.string() })
-  .partial()
-  .passthrough();
 
 export const schemas = {
-  Order,
-  Pet,
-  Category,
-  Tag
+  Order
 };
 
 const endpoints = makeApi([
@@ -45,7 +23,7 @@ const endpoints = makeApi([
     path: '/store/inventory',
     description: `Returns a map of status codes to quantities`,
     requestFormat: 'json',
-    response: z.record(z.number())
+    response: z.record(z.number().int())
   },
   {
     method: 'post',

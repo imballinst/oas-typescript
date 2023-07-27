@@ -1,6 +1,14 @@
 import { makeApi, Zodios, type ZodiosOptions } from '@zodios/core';
 import { z } from 'zod';
 
+const Category = z
+  .object({ id: z.number().int(), name: z.string() })
+  .partial()
+  .passthrough();
+const Tag = z
+  .object({ id: z.number().int(), name: z.string() })
+  .partial()
+  .passthrough();
 const Pet = z
   .object({
     id: z.number().int().optional(),
@@ -11,23 +19,15 @@ const Pet = z
     status: z.enum(['available', 'pending', 'sold']).optional()
   })
   .passthrough();
-const Category = z
-  .object({ id: z.number().int(), name: z.string() })
-  .partial()
-  .passthrough();
-const Tag = z
-  .object({ id: z.number().int(), name: z.string() })
-  .partial()
-  .passthrough();
 const ApiResponse = z
   .object({ code: z.number().int(), type: z.string(), message: z.string() })
   .partial()
   .passthrough();
 
 export const schemas = {
-  Pet,
   Category,
   Tag,
+  Pet,
   ApiResponse
 };
 
