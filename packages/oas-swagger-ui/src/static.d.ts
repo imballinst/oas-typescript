@@ -1,10 +1,11 @@
 import React from 'react';
+import { DefaultSwaggerUiConfig, OasSwaggerUiConfig } from './library/types';
 
 declare global {
   interface Window {
     renderSwaggerUi: (param: {
-      swaggerConfig: any;
-      oasSwaggerUiConfig: any;
+      swaggerConfig: DefaultSwaggerUiConfig;
+      oasSwaggerUiConfig?: OasSwaggerUiConfig;
     }) => void;
   }
 }

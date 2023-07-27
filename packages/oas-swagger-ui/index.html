@@ -16,9 +16,12 @@
           petstore_auth: 'Required pet store scope: '
         };
 
+        const { pathname, origin } = window.location;
+        const url = new URL('./api.json', origin + pathname).href;
+
         renderSwaggerUi({
           swaggerConfig: {
-            url: './api.json',
+            url,
             deepLinking: true
           },
           oasSwaggerUiConfig: {
