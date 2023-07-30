@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import axios from 'axios';
+import { getQueryParameterString } from './utils/query.js';
 
 // Schemas.
 export const User = z
@@ -35,14 +37,53 @@ const DeleteUserParams = z.object({
   params: z.object({ username: z.string() })
 });
 
-export class UserApi {
-  createUser = (params: z.infer<typeof CreateUserParams>) => {};
-  createUsersWithListInput = (
-    params: z.infer<typeof CreateUsersWithListInputParams>
-  ) => {};
-  loginUser = (params: z.infer<typeof LoginUserParams>) => {};
-  logoutUser = () => {};
-  getUserByName = (params: z.infer<typeof GetUserByNameParams>) => {};
-  updateUser = (params: z.infer<typeof UpdateUserParams>) => {};
-  deleteUser = (params: z.infer<typeof DeleteUserParams>) => {};
+export function userApi() {
+  function createUser(fnParam: z.infer<typeof CreateUserParams>) {
+    let url = `/user`;
+
+    return axios(url);
+  }
+  function createUsersWithListInput(
+    fnParam: z.infer<typeof CreateUsersWithListInputParams>
+  ) {
+    let url = `/user/createWithList`;
+
+    return axios(url);
+  }
+  function loginUser(fnParam: z.infer<typeof LoginUserParams>) {
+    let url = `/user/login`;
+    url += getQueryParameterString(fnParam.query);
+
+    return axios(url);
+  }
+  function logoutUser() {
+    let url = `/user/logout`;
+
+    return axios(url);
+  }
+  function getUserByName(fnParam: z.infer<typeof GetUserByNameParams>) {
+    let url = `/user/:username`;
+
+    return axios(url);
+  }
+  function updateUser(fnParam: z.infer<typeof UpdateUserParams>) {
+    let url = `/user/:username`;
+
+    return axios(url);
+  }
+  function deleteUser(fnParam: z.infer<typeof DeleteUserParams>) {
+    let url = `/user/:username`;
+
+    return axios(url);
+  }
+
+  return {
+    createUser,
+    createUsersWithListInput,
+    loginUser,
+    logoutUser,
+    getUserByName,
+    updateUser,
+    deleteUser
+  };
 }

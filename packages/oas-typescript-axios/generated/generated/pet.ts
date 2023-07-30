@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import axios from 'axios';
+import { getQueryParameterString } from './utils/query.js';
 
 // Schemas.
 export const Category = z
@@ -60,13 +62,60 @@ const UploadFileParams = z.object({
   body: z.instanceof(File)
 });
 
-export class PetApi {
-  updatePet = (params: z.infer<typeof UpdatePetParams>) => {};
-  addPet = (params: z.infer<typeof AddPetParams>) => {};
-  findPetsByStatus = (params: z.infer<typeof FindPetsByStatusParams>) => {};
-  findPetsByTags = (params: z.infer<typeof FindPetsByTagsParams>) => {};
-  getPetById = (params: z.infer<typeof GetPetByIdParams>) => {};
-  updatePetWithForm = (params: z.infer<typeof UpdatePetWithFormParams>) => {};
-  deletePet = (params: z.infer<typeof DeletePetParams>) => {};
-  uploadFile = (params: z.infer<typeof UploadFileParams>) => {};
+export function petApi() {
+  function updatePet(fnParam: z.infer<typeof UpdatePetParams>) {
+    let url = `/pet`;
+
+    return axios(url);
+  }
+  function addPet(fnParam: z.infer<typeof AddPetParams>) {
+    let url = `/pet`;
+
+    return axios(url);
+  }
+  function findPetsByStatus(fnParam: z.infer<typeof FindPetsByStatusParams>) {
+    let url = `/pet/findByStatus`;
+    url += getQueryParameterString(fnParam.query);
+
+    return axios(url);
+  }
+  function findPetsByTags(fnParam: z.infer<typeof FindPetsByTagsParams>) {
+    let url = `/pet/findByTags`;
+    url += getQueryParameterString(fnParam.query);
+
+    return axios(url);
+  }
+  function getPetById(fnParam: z.infer<typeof GetPetByIdParams>) {
+    let url = `/pet/:petId`;
+
+    return axios(url);
+  }
+  function updatePetWithForm(fnParam: z.infer<typeof UpdatePetWithFormParams>) {
+    let url = `/pet/:petId`;
+    url += getQueryParameterString(fnParam.query);
+
+    return axios(url);
+  }
+  function deletePet(fnParam: z.infer<typeof DeletePetParams>) {
+    let url = `/pet/:petId`;
+
+    return axios(url);
+  }
+  function uploadFile(fnParam: z.infer<typeof UploadFileParams>) {
+    let url = `/pet/${fnParam.params.petId}/uploadImage`;
+    url += getQueryParameterString(fnParam.query);
+
+    return axios(url);
+  }
+
+  return {
+    updatePet,
+    addPet,
+    findPetsByStatus,
+    findPetsByTags,
+    getPetById,
+    updatePetWithForm,
+    deletePet,
+    uploadFile
+  };
 }

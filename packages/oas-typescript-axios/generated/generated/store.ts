@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import axios from 'axios';
 
 // Schemas.
 export const Order = z
@@ -22,9 +23,32 @@ const DeleteOrderParams = z.object({
   params: z.object({ orderId: z.number().int() })
 });
 
-export class StoreApi {
-  getInventory = () => {};
-  placeOrder = (params: z.infer<typeof PlaceOrderParams>) => {};
-  getOrderById = (params: z.infer<typeof GetOrderByIdParams>) => {};
-  deleteOrder = (params: z.infer<typeof DeleteOrderParams>) => {};
+export function storeApi() {
+  function getInventory() {
+    let url = `/store/inventory`;
+
+    return axios(url);
+  }
+  function placeOrder(fnParam: z.infer<typeof PlaceOrderParams>) {
+    let url = `/store/order`;
+
+    return axios(url);
+  }
+  function getOrderById(fnParam: z.infer<typeof GetOrderByIdParams>) {
+    let url = `/store/order/:orderId`;
+
+    return axios(url);
+  }
+  function deleteOrder(fnParam: z.infer<typeof DeleteOrderParams>) {
+    let url = `/store/order/:orderId`;
+
+    return axios(url);
+  }
+
+  return {
+    getInventory,
+    placeOrder,
+    getOrderById,
+    deleteOrder
+  };
 }
