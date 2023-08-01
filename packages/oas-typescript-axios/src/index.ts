@@ -34,6 +34,13 @@ const cli = meow(
 );
 const DEFAULT_OUTPUT = path.join(process.cwd(), 'generated');
 const VALID_COMMANDS = ['generate'];
+const REQUEST_CONTENT_TYPE_PRIORITY = [
+  'application/json',
+  'application/x-www-form-urlencoded',
+  'multipart/form-data',
+  'application/octet-stream'
+];
+const METHOD_WITH_REQUEST_BODY = ['post', 'put', 'patch'];
 
 async function main() {
   const [command, cliInput] = cli.input;
@@ -89,8 +96,28 @@ async function main() {
       groupStrategy: 'tag-file',
       endpointDefinitionRefiner: (defaultDefinition, operation) => {
         const newDefinition = defaultDefinition as any;
-
         newDefinition.operationId = operation.operationId;
+
+        if (METHOD_WITH_REQUEST_BODY.includes(defaultDefinition.method)) {
+          const requestBody = operation.requestBody as
+            | OpenAPIV3.RequestBodyObject
+            | undefined;
+
+          if (requestBody) {
+            for (const contentType of REQUEST_CONTENT_TYPE_PRIORITY) {
+              if (requestBody.content[contentType]) {
+                newDefinition.requestBodyContentType = contentType;
+                break;
+              }
+            }
+
+            if (!newDefinition.requestBodyContentType) {
+              newDefinition.requestBodyContentType =
+                REQUEST_CONTENT_TYPE_PRIORITY[0];
+            }
+          }
+        }
+
         return newDefinition;
       }
     }

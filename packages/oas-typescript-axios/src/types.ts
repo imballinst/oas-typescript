@@ -3,4 +3,6 @@ export interface EndpointProcessResult {
   paramsDeclaration: string;
   paramsName: string;
   queryParams: string;
+  contentType: string;
+  hasBody: boolean;
 }

@@ -26,7 +26,8 @@ handlebarsInstance.registerHelper(
       parameters,
       operationId: this.operationId,
       endpointPath: this.path,
-      apiClientName
+      apiClientName,
+      requestBodyContentType: this.requestBodyContentType
     });
     operationParamsCache[this.operationId] = result;
 
@@ -74,24 +75,35 @@ handlebarsInstance.registerHelper(
     return context.at(0)?.toLowerCase() + context.slice(1);
   }
 );
+handlebarsInstance.registerHelper(
+  'processAxiosConfig',
+  function (operationId: string) {
+    const { queryParams } = operationParamsCache[operationId];
+    return queryParams;
+  }
+);
 
 // Helper functions.
 function constructFunctionParameterFromString({
   parameters,
   operationId,
   endpointPath,
-  apiClientName
+  apiClientName,
+  requestBodyContentType
 }: {
   parameters: any;
   operationId: string;
   endpointPath: string;
   apiClientName: string;
+  requestBodyContentType: string | undefined;
 }) {
   const result: EndpointProcessResult = {
     urlDefinition: `\`${endpointPath}\``,
     paramsDeclaration: '',
     paramsName: '',
-    queryParams: ''
+    queryParams: '',
+    contentType: '',
+    hasBody: false
   };
 
   if (!parameters) return result;
@@ -110,6 +122,8 @@ function constructFunctionParameterFromString({
     switch (parameter.type) {
       case 'Body': {
         fnParam.body = parameter.schema;
+        result.hasBody = true;
+        result.contentType = requestBodyContentType || '';
         break;
       }
       case 'Path': {
