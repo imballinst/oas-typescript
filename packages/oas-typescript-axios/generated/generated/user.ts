@@ -41,14 +41,14 @@ export function userApi() {
   function createUser(fnParam: z.infer<typeof CreateUserParams>) {
     let url = `/user`;
 
-    return axios(url);
+    return axios(url, { data: fnParam.body });
   }
   function createUsersWithListInput(
     fnParam: z.infer<typeof CreateUsersWithListInputParams>
   ) {
     let url = `/user/createWithList`;
 
-    return axios(url);
+    return axios(url, { data: fnParam.body });
   }
   function loginUser(fnParam: z.infer<typeof LoginUserParams>) {
     let url = `/user/login`;
@@ -62,17 +62,17 @@ export function userApi() {
     return axios(url);
   }
   function getUserByName(fnParam: z.infer<typeof GetUserByNameParams>) {
-    let url = `/user/:username`;
+    let url = `/user/${fnParam.params.username}`;
 
     return axios(url);
   }
   function updateUser(fnParam: z.infer<typeof UpdateUserParams>) {
-    let url = `/user/:username`;
+    let url = `/user/${fnParam.params.username}`;
 
-    return axios(url);
+    return axios(url, { data: fnParam.body });
   }
   function deleteUser(fnParam: z.infer<typeof DeleteUserParams>) {
-    let url = `/user/:username`;
+    let url = `/user/${fnParam.params.username}`;
 
     return axios(url);
   }

@@ -54,6 +54,16 @@ handlebarsInstance.registerHelper(
     return urlDefinition;
   }
 );
+handlebarsInstance.registerHelper(
+  'getFunctionReturns',
+  function (operationId: string) {
+    const { hasBody } = operationParamsCache[operationId];
+    console.info(operationId, operationParamsCache[operationId]);
+    const axiosConfig = hasBody ? ', { data: fnParam.body }' : '';
+
+    return `return axios(url${axiosConfig})`;
+  }
+);
 handlebarsInstance.registerHelper('getQueryParameterHelperImport', function () {
   const val = apiClientNameToQueryParameterExistence.get(
     this.options.apiClientName
@@ -131,9 +141,11 @@ function constructFunctionParameterFromString({
         const replacement = `${FN_PARAM_NAME}.params.${name}`;
 
         fnParam.params[name] = schema;
+
+        const pattern = new RegExp(`\\B:${name}\\b`);
         result.urlDefinition = result.urlDefinition.replace(
-          new RegExp(`\/:${name}\/`),
-          `/\${${replacement}}/`
+          pattern,
+          `\${${replacement}}`
         );
         break;
       }

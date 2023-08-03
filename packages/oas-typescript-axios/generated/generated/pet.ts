@@ -66,12 +66,12 @@ export function petApi() {
   function updatePet(fnParam: z.infer<typeof UpdatePetParams>) {
     let url = `/pet`;
 
-    return axios(url);
+    return axios(url, { data: fnParam.body });
   }
   function addPet(fnParam: z.infer<typeof AddPetParams>) {
     let url = `/pet`;
 
-    return axios(url);
+    return axios(url, { data: fnParam.body });
   }
   function findPetsByStatus(fnParam: z.infer<typeof FindPetsByStatusParams>) {
     let url = `/pet/findByStatus`;
@@ -86,18 +86,18 @@ export function petApi() {
     return axios(url);
   }
   function getPetById(fnParam: z.infer<typeof GetPetByIdParams>) {
-    let url = `/pet/:petId`;
+    let url = `/pet/${fnParam.params.petId}`;
 
     return axios(url);
   }
   function updatePetWithForm(fnParam: z.infer<typeof UpdatePetWithFormParams>) {
-    let url = `/pet/:petId`;
+    let url = `/pet/${fnParam.params.petId}`;
     url += getQueryParameterString(fnParam.query);
 
     return axios(url);
   }
   function deletePet(fnParam: z.infer<typeof DeletePetParams>) {
-    let url = `/pet/:petId`;
+    let url = `/pet/${fnParam.params.petId}`;
 
     return axios(url);
   }
@@ -105,7 +105,7 @@ export function petApi() {
     let url = `/pet/${fnParam.params.petId}/uploadImage`;
     url += getQueryParameterString(fnParam.query);
 
-    return axios(url);
+    return axios(url, { data: fnParam.body });
   }
 
   return {

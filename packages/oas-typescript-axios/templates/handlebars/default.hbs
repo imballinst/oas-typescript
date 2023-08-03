@@ -40,7 +40,7 @@ export function {{lowercaseFirstCharacter options.apiClientName}}() {
     let url = {{{getFunctionContent operationId}}}
     {{{adjustUrlWithParams operationId}}}
 
-    return axios(url)
+    {{{getFunctionReturns operationId}}}
   }
   {{/each}}
 

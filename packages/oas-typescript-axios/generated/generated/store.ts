@@ -32,15 +32,15 @@ export function storeApi() {
   function placeOrder(fnParam: z.infer<typeof PlaceOrderParams>) {
     let url = `/store/order`;
 
-    return axios(url);
+    return axios(url, { data: fnParam.body });
   }
   function getOrderById(fnParam: z.infer<typeof GetOrderByIdParams>) {
-    let url = `/store/order/:orderId`;
+    let url = `/store/order/${fnParam.params.orderId}`;
 
     return axios(url);
   }
   function deleteOrder(fnParam: z.infer<typeof DeleteOrderParams>) {
-    let url = `/store/order/:orderId`;
+    let url = `/store/order/${fnParam.params.orderId}`;
 
     return axios(url);
   }
