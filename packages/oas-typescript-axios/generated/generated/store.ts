@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 // Schemas.
 export const Order = z
@@ -23,26 +23,71 @@ const DeleteOrderParams = z.object({
   params: z.object({ orderId: z.number().int() })
 });
 
-export function storeApi() {
-  function getInventory() {
+export function storeApi({
+  defaultAxiosRequestConfig
+}: {
+  defaultAxiosRequestConfig?: AxiosRequestConfig;
+}) {
+  function getInventory(axiosConfig?: AxiosRequestConfig) {
     let url = `/store/inventory`;
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, config);
   }
-  function placeOrder(fnParam: z.infer<typeof PlaceOrderParams>) {
+  function placeOrder(
+    fnParam: z.infer<typeof PlaceOrderParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/store/order`;
 
-    return axios(url, { data: fnParam.body });
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, { ...config, data: fnParam.body });
   }
-  function getOrderById(fnParam: z.infer<typeof GetOrderByIdParams>) {
+  function getOrderById(
+    fnParam: z.infer<typeof GetOrderByIdParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/store/order/${fnParam.params.orderId}`;
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, config);
   }
-  function deleteOrder(fnParam: z.infer<typeof DeleteOrderParams>) {
+  function deleteOrder(
+    fnParam: z.infer<typeof DeleteOrderParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/store/order/${fnParam.params.orderId}`;
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, config);
   }
 
   return {

@@ -25,7 +25,7 @@ handlebarsInstance.registerHelper(
     const result = constructFunctionParameterFromString({
       parameters,
       operationId: this.operationId,
-      endpointPath: this.path,
+      url: this.path,
       apiClientName,
       requestBodyContentType: this.requestBodyContentType
     });
@@ -44,7 +44,12 @@ handlebarsInstance.registerHelper(
   'getFunctionParameter',
   function (operationId: any) {
     const paramsName = operationParamsCache[operationId].paramsName;
-    return paramsName ? `${FN_PARAM_NAME}: z.infer<typeof ${paramsName}>` : '';
+    const params: string[] = ['axiosConfig?: AxiosRequestConfig'];
+    if (paramsName) {
+      params.unshift(`${FN_PARAM_NAME}: z.infer<typeof ${paramsName}>`);
+    }
+
+    return params.join(', ');
   }
 );
 handlebarsInstance.registerHelper(
@@ -57,11 +62,23 @@ handlebarsInstance.registerHelper(
 handlebarsInstance.registerHelper(
   'getFunctionReturns',
   function (operationId: string) {
-    const { hasBody } = operationParamsCache[operationId];
-    console.info(operationId, operationParamsCache[operationId]);
-    const axiosConfig = hasBody ? ', { data: fnParam.body }' : '';
+    const { hasBody, hasHeaders } = operationParamsCache[operationId];
+    let configHeaders =
+      '...defaultAxiosRequestConfig?.headers, ...axiosConfig?.headers';
+    if (hasHeaders) {
+      configHeaders += `, ...${FN_PARAM_NAME}.headers`;
+    }
 
-    return `return axios(url${axiosConfig})`;
+    const renderedConfig = `const config = { ...defaultAxiosRequestConfig, ...axiosConfig, headers: { ${configHeaders} } }`;
+    let restArgs: string = '';
+
+    if (hasBody) {
+      restArgs = `, { ...config, data: fnParam.body }`;
+    } else {
+      restArgs = `, config`;
+    }
+
+    return `${renderedConfig}\nreturn axios(url${restArgs})`;
   }
 );
 handlebarsInstance.registerHelper('getQueryParameterHelperImport', function () {
@@ -97,22 +114,23 @@ handlebarsInstance.registerHelper(
 function constructFunctionParameterFromString({
   parameters,
   operationId,
-  endpointPath,
+  url,
   apiClientName,
   requestBodyContentType
 }: {
   parameters: any;
   operationId: string;
-  endpointPath: string;
+  url: string;
   apiClientName: string;
   requestBodyContentType: string | undefined;
 }) {
   const result: EndpointProcessResult = {
-    urlDefinition: `\`${endpointPath}\``,
+    urlDefinition: `\`${url}\``,
     paramsDeclaration: '',
     paramsName: '',
     queryParams: '',
     contentType: '',
+    hasHeaders: false,
     hasBody: false
   };
 
@@ -121,11 +139,13 @@ function constructFunctionParameterFromString({
   const fnParam: {
     params: Record<string, string>;
     query: Record<string, string>;
+    headers: Record<string, string>;
     body: string;
   } = {
     body: '',
     params: {},
-    query: {}
+    query: {},
+    headers: {}
   };
 
   for (const parameter of parameters) {
@@ -153,6 +173,11 @@ function constructFunctionParameterFromString({
         fnParam.query[parameter.name] = parameter.schema;
         break;
       }
+      case 'Header': {
+        fnParam.headers[parameter.name] = parameter.schema;
+        result.hasHeaders = true;
+        break;
+      }
     }
   }
 
@@ -176,16 +201,20 @@ function constructFunctionParameterFromString({
   }
 
   let rendered = '';
-  let renderedParams = Object.entries(fnParam.params)
+  const renderedParams = Object.entries(fnParam.params)
     .map(([k, v]) => `${k}: ${v}`)
     .join('\n');
-  let renderedQuery = Object.entries(fnParam.query)
+  const renderedQuery = Object.entries(fnParam.query)
     .map(([k, v]) => `${k}: ${v}`)
     .join(',\n');
-  let renderedBody = fnParam.body;
+  const renderedHeaders = Object.entries(fnParam.headers)
+    .map(([k, v]) => `${k}: ${v}`)
+    .join(',\n');
+  const renderedBody = fnParam.body;
 
   rendered += renderedParams ? `params: z.object({${renderedParams}}),` : '';
   rendered += renderedQuery ? `query: z.object({${renderedQuery}}),` : '';
+  rendered += renderedHeaders ? `headers: z.object({${renderedHeaders}}),` : '';
   rendered += renderedBody ? `body: ${renderedBody}` : '';
 
   if (rendered) {

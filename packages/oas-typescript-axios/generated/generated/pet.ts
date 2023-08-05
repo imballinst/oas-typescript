@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { getQueryParameterString } from './utils/query.js';
 
 // Schemas.
@@ -54,7 +54,8 @@ const UpdatePetWithFormParams = z.object({
   })
 });
 const DeletePetParams = z.object({
-  params: z.object({ petId: z.number().int() })
+  params: z.object({ petId: z.number().int() }),
+  headers: z.object({ api_key: z.string().optional() })
 });
 const UploadFileParams = z.object({
   params: z.object({ petId: z.number().int() }),
@@ -62,50 +63,143 @@ const UploadFileParams = z.object({
   body: z.instanceof(File)
 });
 
-export function petApi() {
-  function updatePet(fnParam: z.infer<typeof UpdatePetParams>) {
+export function petApi({
+  defaultAxiosRequestConfig
+}: {
+  defaultAxiosRequestConfig?: AxiosRequestConfig;
+}) {
+  function updatePet(
+    fnParam: z.infer<typeof UpdatePetParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/pet`;
 
-    return axios(url, { data: fnParam.body });
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, { ...config, data: fnParam.body });
   }
-  function addPet(fnParam: z.infer<typeof AddPetParams>) {
+  function addPet(
+    fnParam: z.infer<typeof AddPetParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/pet`;
 
-    return axios(url, { data: fnParam.body });
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, { ...config, data: fnParam.body });
   }
-  function findPetsByStatus(fnParam: z.infer<typeof FindPetsByStatusParams>) {
+  function findPetsByStatus(
+    fnParam: z.infer<typeof FindPetsByStatusParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/pet/findByStatus`;
     url += getQueryParameterString(fnParam.query);
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, config);
   }
-  function findPetsByTags(fnParam: z.infer<typeof FindPetsByTagsParams>) {
+  function findPetsByTags(
+    fnParam: z.infer<typeof FindPetsByTagsParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/pet/findByTags`;
     url += getQueryParameterString(fnParam.query);
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, config);
   }
-  function getPetById(fnParam: z.infer<typeof GetPetByIdParams>) {
+  function getPetById(
+    fnParam: z.infer<typeof GetPetByIdParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/pet/${fnParam.params.petId}`;
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, config);
   }
-  function updatePetWithForm(fnParam: z.infer<typeof UpdatePetWithFormParams>) {
+  function updatePetWithForm(
+    fnParam: z.infer<typeof UpdatePetWithFormParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/pet/${fnParam.params.petId}`;
     url += getQueryParameterString(fnParam.query);
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, config);
   }
-  function deletePet(fnParam: z.infer<typeof DeletePetParams>) {
+  function deletePet(
+    fnParam: z.infer<typeof DeletePetParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/pet/${fnParam.params.petId}`;
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers,
+        ...fnParam.headers
+      }
+    };
+    return axios(url, config);
   }
-  function uploadFile(fnParam: z.infer<typeof UploadFileParams>) {
+  function uploadFile(
+    fnParam: z.infer<typeof UploadFileParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/pet/${fnParam.params.petId}/uploadImage`;
     url += getQueryParameterString(fnParam.query);
 
-    return axios(url, { data: fnParam.body });
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, { ...config, data: fnParam.body });
   }
 
   return {

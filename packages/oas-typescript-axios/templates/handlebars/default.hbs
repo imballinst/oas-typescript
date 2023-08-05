@@ -7,7 +7,7 @@
 {{/each}}
 
 import { z } from 'zod';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 {{{getQueryParameterHelperImport}}}
 
 {{#if imports}}
@@ -34,7 +34,11 @@ export interface {{@key}} extends z.infer<typeof {{@key}}> {}
 {{/each}}
 
 
-export function {{lowercaseFirstCharacter options.apiClientName}}() {
+export function {{lowercaseFirstCharacter options.apiClientName}}({
+  defaultAxiosRequestConfig
+}: {
+  defaultAxiosRequestConfig?: AxiosRequestConfig
+}) {
   {{#each endpoints}}
   function {{operationId}}({{{getFunctionParameter operationId}}}) {
     let url = {{{getFunctionContent operationId}}}

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { getQueryParameterString } from './utils/query.js';
 
 // Schemas.
@@ -37,44 +37,120 @@ const DeleteUserParams = z.object({
   params: z.object({ username: z.string() })
 });
 
-export function userApi() {
-  function createUser(fnParam: z.infer<typeof CreateUserParams>) {
+export function userApi({
+  defaultAxiosRequestConfig
+}: {
+  defaultAxiosRequestConfig?: AxiosRequestConfig;
+}) {
+  function createUser(
+    fnParam: z.infer<typeof CreateUserParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/user`;
 
-    return axios(url, { data: fnParam.body });
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, { ...config, data: fnParam.body });
   }
   function createUsersWithListInput(
-    fnParam: z.infer<typeof CreateUsersWithListInputParams>
+    fnParam: z.infer<typeof CreateUsersWithListInputParams>,
+    axiosConfig?: AxiosRequestConfig
   ) {
     let url = `/user/createWithList`;
 
-    return axios(url, { data: fnParam.body });
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, { ...config, data: fnParam.body });
   }
-  function loginUser(fnParam: z.infer<typeof LoginUserParams>) {
+  function loginUser(
+    fnParam: z.infer<typeof LoginUserParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/user/login`;
     url += getQueryParameterString(fnParam.query);
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, config);
   }
-  function logoutUser() {
+  function logoutUser(axiosConfig?: AxiosRequestConfig) {
     let url = `/user/logout`;
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, config);
   }
-  function getUserByName(fnParam: z.infer<typeof GetUserByNameParams>) {
+  function getUserByName(
+    fnParam: z.infer<typeof GetUserByNameParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/user/${fnParam.params.username}`;
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, config);
   }
-  function updateUser(fnParam: z.infer<typeof UpdateUserParams>) {
+  function updateUser(
+    fnParam: z.infer<typeof UpdateUserParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/user/${fnParam.params.username}`;
 
-    return axios(url, { data: fnParam.body });
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, { ...config, data: fnParam.body });
   }
-  function deleteUser(fnParam: z.infer<typeof DeleteUserParams>) {
+  function deleteUser(
+    fnParam: z.infer<typeof DeleteUserParams>,
+    axiosConfig?: AxiosRequestConfig
+  ) {
     let url = `/user/${fnParam.params.username}`;
 
-    return axios(url);
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      }
+    };
+    return axios(url, config);
   }
 
   return {

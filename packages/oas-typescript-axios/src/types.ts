@@ -4,5 +4,6 @@ export interface EndpointProcessResult {
   paramsName: string;
   queryParams: string;
   contentType: string;
+  hasHeaders: boolean;
   hasBody: boolean;
 }
