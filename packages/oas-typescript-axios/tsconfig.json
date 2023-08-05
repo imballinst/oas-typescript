@@ -1,0 +1,12 @@
+{
+  "extends": "../shared/tsconfig.json",
+  "include": ["**/*.ts"],
+  "compilerOptions": {
+    "paths": {
+      "@oast/shared/*": ["../shared/src/*"]
+    }
+  },
+  "ts-node": {
+    "swc": true
+  }
+}

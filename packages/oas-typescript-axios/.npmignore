@@ -3,6 +3,5 @@ scripts/
 src/
 templates/
 
-nodemon.json
 tsconfig.json
 vitest.config.*

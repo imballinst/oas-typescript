@@ -1668,15 +1668,7 @@ autolinker@^3.11.0:
   dependencies:
     tslib "^2.3.0"
 
-axios@^0.27.2:
-  version "0.27.2"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.27.2.tgz#207658cc8621606e586c85db4b41a750e756d972"
-  integrity sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==
-  dependencies:
-    follow-redirects "^1.14.9"
-    form-data "^4.0.0"
-
-axios@^1.4.0:
+axios@1.4.0, axios@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.4.0.tgz#38a7bf1224cd308de271146038b551d725f0be1f"
   integrity sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==
@@ -1684,6 +1676,14 @@ axios@^1.4.0:
     follow-redirects "^1.15.0"
     form-data "^4.0.0"
     proxy-from-env "^1.1.0"
+
+axios@^0.27.2:
+  version "0.27.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.27.2.tgz#207658cc8621606e586c85db4b41a750e756d972"
+  integrity sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==
+  dependencies:
+    follow-redirects "^1.14.9"
+    form-data "^4.0.0"
 
 balanced-match@^1.0.0:
   version "1.0.2"
@@ -3252,10 +3252,10 @@ openapi-types@12.1.3, openapi-types@^12.0.2:
   resolved "https://registry.yarnpkg.com/openapi-types/-/openapi-types-12.1.3.tgz#471995eb26c4b97b7bd356aacf7b91b73e777dd3"
   integrity sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw==
 
-openapi-zod-client@1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/openapi-zod-client/-/openapi-zod-client-1.9.0.tgz#c8b88e16dec4370cba2da94c065d6c99072f4d27"
-  integrity sha512-jCOWGROxm9bq4Aa2hxhklckaKWtnjiOdRlxFGwZpxjal9yTIJoO3dJOa2ytv+OVDJETrC0tF1y8OwstDmjF7Uw==
+openapi-zod-client@1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/openapi-zod-client/-/openapi-zod-client-1.10.0.tgz#7671eb7eb423ff30ffbc83478b3fdbfddb71d02a"
+  integrity sha512-xBeGJPCDK5diSRdVeU5Y5Vw5hx2Z9xRWrNuEqjOkznRB82i5KTCY6+DGkW0PXQLtdUJu+jNgywlwPObAeicxrg==
   dependencies:
     "@apidevtools/swagger-parser" "^10.1.0"
     "@liuli-util/fs-extra" "^0.1.0"
@@ -3720,7 +3720,7 @@ refractor@^3.6.0:
     parse-entities "^2.0.0"
     prismjs "~1.27.0"
 
-regenerator-runtime@0.13.11, regenerator-runtime@^0.13.11:
+regenerator-runtime@^0.13.11:
   version "0.13.11"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
   integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
