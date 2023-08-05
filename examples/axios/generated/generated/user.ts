@@ -37,7 +37,7 @@ const DeleteUserParams = z.object({
   params: z.object({ username: z.string() })
 });
 
-export function userApi({
+export function UserApi({
   defaultAxiosRequestConfig
 }: {
   defaultAxiosRequestConfig?: AxiosRequestConfig;

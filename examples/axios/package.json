@@ -8,7 +8,7 @@
     "gen": "oas-typescript-axios generate ./api.json --output generated"
   },
   "devDependencies": {
-    "@oas-typescript/axios": "0.0.1",
+    "@oas-typescript/axios": "0.0.2",
     "axios": "1.4.0",
     "vitest": "0.33.0"
   },
