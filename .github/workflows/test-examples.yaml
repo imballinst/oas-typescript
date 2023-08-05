@@ -1,4 +1,4 @@
-name: test
+name: test-examples
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  test:
+  koa:
     runs-on: ubuntu-20.04
     steps:
       - name: Cancel Previous Runs
