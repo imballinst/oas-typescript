@@ -23,7 +23,7 @@ const DeleteOrderParams = z.object({
   params: z.object({ orderId: z.number().int() })
 });
 
-export function storeApi({
+export function StoreApi({
   defaultAxiosRequestConfig
 }: {
   defaultAxiosRequestConfig?: AxiosRequestConfig;

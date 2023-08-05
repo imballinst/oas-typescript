@@ -63,7 +63,7 @@ const UploadFileParams = z.object({
   body: z.instanceof(File)
 });
 
-export function petApi({
+export function PetApi({
   defaultAxiosRequestConfig
 }: {
   defaultAxiosRequestConfig?: AxiosRequestConfig;

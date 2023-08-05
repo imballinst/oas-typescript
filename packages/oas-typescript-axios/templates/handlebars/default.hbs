@@ -34,7 +34,7 @@ export interface {{@key}} extends z.infer<typeof {{@key}}> {}
 {{/each}}
 
 
-export function {{lowercaseFirstCharacter options.apiClientName}}({
+export function {{options.apiClientName}}({
   defaultAxiosRequestConfig
 }: {
   defaultAxiosRequestConfig?: AxiosRequestConfig

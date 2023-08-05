@@ -97,12 +97,6 @@ handlebarsInstance.registerHelper(
   }
 );
 handlebarsInstance.registerHelper(
-  'lowercaseFirstCharacter',
-  function (context: string) {
-    return context.at(0)?.toLowerCase() + context.slice(1);
-  }
-);
-handlebarsInstance.registerHelper(
   'processAxiosConfig',
   function (operationId: string) {
     const { queryParams } = operationParamsCache[operationId];
