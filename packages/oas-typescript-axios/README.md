@@ -42,21 +42,10 @@ The command above will read the Open API Specification `api.json` and output the
 
 ```
 generated
-├── controllers
-│   ├── PetController.ts
-│   ├── StoreController.ts
-│   └── UserController.ts
-├── generated
-│   ├── checksum.json
-│   ├── client.ts
-│   ├── controller-types
-│   │   ├── PetControllerTypes.ts
-│   │   ├── StoreControllerTypes.ts
-│   │   └── UserControllerTypes.ts
-│   ├── security-schemes.ts
-│   ├── server.ts
-│   ├── types.ts
-│   └── utils.ts
-├── middleware-helpers.ts
-└── server.ts
+├── index.ts
+├── pet.ts
+├── store.ts
+├── user.ts
+└── utils
+    └── query.ts
 ```

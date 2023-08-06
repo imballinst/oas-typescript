@@ -69,8 +69,7 @@ async function main() {
     cliOutput && path.isAbsolute(cliOutput)
       ? cliOutput
       : path.join(process.cwd(), cliOutput || DEFAULT_OUTPUT);
-  const lockedGeneratedFilesFolder = path.join(rootOutputFolder, 'generated');
-  const generatedUtilsFolder = path.join(lockedGeneratedFilesFolder, 'utils');
+  const generatedUtilsFolder = path.join(rootOutputFolder, 'utils');
 
   // Copy the utility and the middleware helpers.
   const tmpFolder = path.join(tmpdir(), '@oast');
@@ -79,8 +78,8 @@ async function main() {
   const queryUtilsFilePath = path.join(generatedUtilsFolder, 'query.ts');
 
   // Create the files in these folders.
-  await fs.rm(lockedGeneratedFilesFolder, { force: true, recursive: true });
-  await fs.mkdir(lockedGeneratedFilesFolder, { recursive: true });
+  await fs.rm(rootOutputFolder, { force: true, recursive: true });
+  await fs.mkdir(rootOutputFolder, { recursive: true });
 
   await Promise.all([
     fs.mkdir(path.dirname(handlebarsFilePath), { recursive: true }),
@@ -99,7 +98,7 @@ async function main() {
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
-    distPath: lockedGeneratedFilesFolder,
+    distPath: rootOutputFolder,
     templatePath: handlebarsFilePath,
     handlebars: handlebarsInstance,
     options: {
