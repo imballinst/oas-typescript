@@ -9,6 +9,7 @@ import { execSync } from 'child_process';
 
 import { defaultHandlebars, defaultQueryUtils } from './templates.js';
 import { handlebarsInstance } from './helpers/handlebars.js';
+import { GLOBAL_VARS } from './global-vars.js';
 
 const cli = meow(
   `
@@ -17,9 +18,11 @@ const cli = meow(
 
 	Options
 	  --output, -o                  Specify a place for output, defaults to (pwd)/generated.
+	  --headers, -h                 When this flag is set, response will be in the form of AxiosResponse.
 
 	Examples
 	  $ openapi-to-axios generate ./openapi/api.json --output src/generated
+	  $ openapi-to-axios generate ./openapi/api.json --output src/generated --headers
 `,
   {
     importMeta: import.meta,
@@ -28,6 +31,10 @@ const cli = meow(
       output: {
         type: 'string',
         shortFlag: 'o'
+      },
+      headers: {
+        type: 'boolean',
+        shortFlag: 'h'
       }
     }
   }
@@ -53,14 +60,16 @@ async function main() {
     ? cliInput
     : path.join(process.cwd(), cliInput);
 
-  const { output: cliOutput } = cli.flags;
+  const { output: cliOutput, headers: isWithHeaders = false } = cli.flags;
+
+  // Set global flags.
+  GLOBAL_VARS.IS_WITH_HEADERS = isWithHeaders;
 
   const rootOutputFolder =
     cliOutput && path.isAbsolute(cliOutput)
       ? cliOutput
       : path.join(process.cwd(), cliOutput || DEFAULT_OUTPUT);
-  const lockedGeneratedFilesFolder = path.join(rootOutputFolder, 'generated');
-  const generatedUtilsFolder = path.join(lockedGeneratedFilesFolder, 'utils');
+  const generatedUtilsFolder = path.join(rootOutputFolder, 'utils');
 
   // Copy the utility and the middleware helpers.
   const tmpFolder = path.join(tmpdir(), '@oast');
@@ -69,8 +78,8 @@ async function main() {
   const queryUtilsFilePath = path.join(generatedUtilsFolder, 'query.ts');
 
   // Create the files in these folders.
-  await fs.rm(lockedGeneratedFilesFolder, { force: true, recursive: true });
-  await fs.mkdir(lockedGeneratedFilesFolder, { recursive: true });
+  await fs.rm(rootOutputFolder, { force: true, recursive: true });
+  await fs.mkdir(rootOutputFolder, { recursive: true });
 
   await Promise.all([
     fs.mkdir(path.dirname(handlebarsFilePath), { recursive: true }),
@@ -89,7 +98,7 @@ async function main() {
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
-    distPath: lockedGeneratedFilesFolder,
+    distPath: rootOutputFolder,
     templatePath: handlebarsFilePath,
     handlebars: handlebarsInstance,
     options: {

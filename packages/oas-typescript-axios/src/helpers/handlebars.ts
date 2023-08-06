@@ -1,8 +1,10 @@
 import { getHandlebars } from 'openapi-zod-client';
 import { capitalizeFirstCharacter } from './change-case.js';
 import { EndpointProcessResult } from '../types.js';
+import { GLOBAL_VARS } from '../global-vars.js';
 
 const FN_PARAM_NAME = 'fnParam';
+const Z_VOID = 'z.void()';
 
 export const handlebarsInstance = getHandlebars();
 const operationParamsCache: Record<string, EndpointProcessResult> = {};
@@ -27,7 +29,8 @@ handlebarsInstance.registerHelper(
       operationId: this.operationId,
       url: this.path,
       apiClientName,
-      requestBodyContentType: this.requestBodyContentType
+      requestBodyContentType: this.requestBodyContentType,
+      responseSchema: this.response
     });
     operationParamsCache[this.operationId] = result;
 
@@ -38,6 +41,20 @@ handlebarsInstance.registerHelper(
   'getFunctionParameterDeclaration',
   function (operationId: any) {
     return operationParamsCache[operationId].paramsDeclaration;
+  }
+);
+handlebarsInstance.registerHelper(
+  'getResponseDeclaration',
+  function (operationId: any) {
+    const { schema, responseDeclarationName } =
+      operationParamsCache[operationId].responseInfo;
+
+    if (!responseDeclarationName) return '';
+
+    let renderedType = `const ${responseDeclarationName} = ${schema}`;
+    renderedType += `\ninterface ${responseDeclarationName} extends z.infer<typeof ${responseDeclarationName}> {}`;
+
+    return renderedType;
   }
 );
 handlebarsInstance.registerHelper(
@@ -60,9 +77,25 @@ handlebarsInstance.registerHelper(
   }
 );
 handlebarsInstance.registerHelper(
+  'getFunctionReturnType',
+  function (operationId: any) {
+    const {
+      responseInfo: { promiseDataReturnType }
+    } = operationParamsCache[operationId];
+    let promiseContent = promiseDataReturnType;
+
+    if (GLOBAL_VARS.IS_WITH_HEADERS) {
+      promiseContent = `AxiosResponse<${promiseContent}>`;
+    }
+
+    return `Promise<${promiseContent}>`;
+  }
+);
+handlebarsInstance.registerHelper(
   'getFunctionReturns',
   function (operationId: string) {
-    const { hasBody, hasHeaders } = operationParamsCache[operationId];
+    const { bodySchemaName, hasHeaders, responseInfo } =
+      operationParamsCache[operationId];
     let configHeaders =
       '...defaultAxiosRequestConfig?.headers, ...axiosConfig?.headers';
     if (hasHeaders) {
@@ -72,15 +105,33 @@ handlebarsInstance.registerHelper(
     const renderedConfig = `const config = { ...defaultAxiosRequestConfig, ...axiosConfig, headers: { ${configHeaders} } }`;
     let restArgs: string = '';
 
-    if (hasBody) {
+    if (bodySchemaName) {
       restArgs = `, { ...config, data: fnParam.body }`;
     } else {
       restArgs = `, config`;
     }
 
-    return `${renderedConfig}\nreturn axios(url${restArgs})`;
+    let renderedAxiosCall = renderedConfig;
+    renderedAxiosCall += `\nconst response = await axios(url${restArgs})`;
+
+    if (GLOBAL_VARS.IS_WITH_HEADERS) {
+      renderedAxiosCall += `\nresponse.data = ${responseInfo.schema}.parse(response.data)`;
+      renderedAxiosCall += `\nreturn response`;
+    } else {
+      renderedAxiosCall += `\nreturn ${responseInfo.schema}.parse(response.data)`;
+    }
+
+    return renderedAxiosCall;
   }
 );
+handlebarsInstance.registerHelper('getAxiosImports', function () {
+  const namedImports: string[] = ['AxiosRequestConfig'];
+  if (GLOBAL_VARS.IS_WITH_HEADERS) {
+    namedImports.push('AxiosResponse');
+  }
+
+  return `import axios, { ${namedImports.join(', ')} } from 'axios';`;
+});
 handlebarsInstance.registerHelper('getQueryParameterHelperImport', function () {
   const val = apiClientNameToQueryParameterExistence.get(
     this.options.apiClientName
@@ -110,13 +161,15 @@ function constructFunctionParameterFromString({
   operationId,
   url,
   apiClientName,
-  requestBodyContentType
+  requestBodyContentType,
+  responseSchema
 }: {
   parameters: any;
   operationId: string;
   url: string;
   apiClientName: string;
   requestBodyContentType: string | undefined;
+  responseSchema: string;
 }) {
   const result: EndpointProcessResult = {
     urlDefinition: `\`${url}\``,
@@ -125,7 +178,8 @@ function constructFunctionParameterFromString({
     queryParams: '',
     contentType: '',
     hasHeaders: false,
-    hasBody: false
+    bodySchemaName: '',
+    responseInfo: getResponseInfo(responseSchema, operationId)
   };
 
   if (!parameters) return result;
@@ -146,7 +200,7 @@ function constructFunctionParameterFromString({
     switch (parameter.type) {
       case 'Body': {
         fnParam.body = parameter.schema;
-        result.hasBody = true;
+        result.bodySchemaName = parameter.schema;
         result.contentType = requestBodyContentType || '';
         break;
       }
@@ -218,4 +272,24 @@ function constructFunctionParameterFromString({
   }
 
   return result;
+}
+
+function getResponseInfo(schema: string, operationId: string) {
+  let responseDeclarationName: string | undefined;
+  let promiseDataReturnType = schema;
+
+  if (schema === Z_VOID) {
+    promiseDataReturnType = 'void';
+  } else if (schema.startsWith('z.')) {
+    responseDeclarationName = `${capitalizeFirstCharacter(
+      operationId
+    )}Response`;
+    promiseDataReturnType = responseDeclarationName;
+  }
+
+  return {
+    schema,
+    promiseDataReturnType,
+    responseDeclarationName
+  };
 }

@@ -7,7 +7,7 @@ export const defaultHandlebars = `{{!--
 {{/each}}
 
 import { z } from 'zod';
-import axios, { AxiosRequestConfig } from 'axios';
+{{{getAxiosImports}}}
 {{{getQueryParameterHelperImport}}}
 
 {{#if imports}}
@@ -30,7 +30,10 @@ export interface {{@key}} extends z.infer<typeof {{@key}}> {}
 {{/each}}
 
 {{#each endpoints}}
-{{~{getFunctionParameterDeclaration operationId}~}}
+{{{getFunctionParameterDeclaration operationId}}}
+{{{getResponseDeclaration operationId}}}
+
+{{!-- Intentional empty line here, which will be prettified by Prettier anyway. --}}
 {{/each}}
 
 
@@ -40,7 +43,7 @@ export function {{options.apiClientName}}({
   defaultAxiosRequestConfig?: AxiosRequestConfig
 }) {
   {{#each endpoints}}
-  function {{operationId}}({{{getFunctionParameter operationId}}}) {
+  async function {{operationId}}({{{getFunctionParameter operationId}}}): {{{getFunctionReturnType operationId}}} {
     let url = {{{getFunctionContent operationId}}}
     {{{adjustUrlWithParams operationId}}}
 
