@@ -7,7 +7,8 @@ export interface EndpointProcessResult {
   hasHeaders: boolean;
   bodySchemaName: string;
   responseInfo: {
-    name: string;
+    schema: string;
+    promiseDataReturnType: string;
     responseDeclarationName: string | undefined;
   };
 }

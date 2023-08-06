@@ -1,6 +1,7 @@
 import { getHandlebars } from 'openapi-zod-client';
 import { capitalizeFirstCharacter } from './change-case.js';
 import { EndpointProcessResult } from '../types.js';
+import { GLOBAL_VARS } from '../global-vars.js';
 
 const FN_PARAM_NAME = 'fnParam';
 const Z_VOID = 'z.void()';
@@ -43,17 +44,15 @@ handlebarsInstance.registerHelper(
   }
 );
 handlebarsInstance.registerHelper(
-  'getResponseParameterDeclaration',
+  'getResponseDeclaration',
   function (operationId: any) {
-    const { name, responseDeclarationName } =
+    const { schema, responseDeclarationName } =
       operationParamsCache[operationId].responseInfo;
-    if (name === Z_VOID || !name.startsWith('z.')) return '';
 
-    let renderedType = `const ${responseDeclarationName} = ${name}`;
-    renderedType +=
-      name === Z_VOID
-        ? ''
-        : `\ninterface ${responseDeclarationName} extends z.infer<typeof ${responseDeclarationName}> {}`;
+    if (!responseDeclarationName) return '';
+
+    let renderedType = `const ${responseDeclarationName} = ${schema}`;
+    renderedType += `\ninterface ${responseDeclarationName} extends z.infer<typeof ${responseDeclarationName}> {}`;
 
     return renderedType;
   }
@@ -81,9 +80,15 @@ handlebarsInstance.registerHelper(
   'getFunctionReturnType',
   function (operationId: any) {
     const {
-      responseInfo: { name, responseDeclarationName }
+      responseInfo: { promiseDataReturnType }
     } = operationParamsCache[operationId];
-    return `Promise<${responseDeclarationName || name}>`;
+    let promiseContent = promiseDataReturnType;
+
+    if (GLOBAL_VARS.IS_WITH_HEADERS) {
+      promiseContent = `AxiosResponse<${promiseContent}>`;
+    }
+
+    return `Promise<${promiseContent}>`;
   }
 );
 handlebarsInstance.registerHelper(
@@ -108,11 +113,25 @@ handlebarsInstance.registerHelper(
 
     let renderedAxiosCall = renderedConfig;
     renderedAxiosCall += `\nconst response = await axios(url${restArgs})`;
-    renderedAxiosCall += `\nreturn ${responseInfo.name}.parse(response.data)`;
+
+    if (GLOBAL_VARS.IS_WITH_HEADERS) {
+      renderedAxiosCall += `\nresponse.data = ${responseInfo.schema}.parse(response.data)`;
+      renderedAxiosCall += `\nreturn response`;
+    } else {
+      renderedAxiosCall += `\nreturn ${responseInfo.schema}.parse(response.data)`;
+    }
 
     return renderedAxiosCall;
   }
 );
+handlebarsInstance.registerHelper('getAxiosImports', function () {
+  const namedImports: string[] = ['AxiosRequestConfig'];
+  if (GLOBAL_VARS.IS_WITH_HEADERS) {
+    namedImports.push('AxiosResponse');
+  }
+
+  return `import axios, { ${namedImports.join(', ')} } from 'axios';`;
+});
 handlebarsInstance.registerHelper('getQueryParameterHelperImport', function () {
   const val = apiClientNameToQueryParameterExistence.get(
     this.options.apiClientName
@@ -160,10 +179,7 @@ function constructFunctionParameterFromString({
     contentType: '',
     hasHeaders: false,
     bodySchemaName: '',
-    responseInfo: {
-      name: responseSchema,
-      responseDeclarationName: getResponseType(responseSchema, operationId)
-    }
+    responseInfo: getResponseInfo(responseSchema, operationId)
   };
 
   if (!parameters) return result;
@@ -258,10 +274,22 @@ function constructFunctionParameterFromString({
   return result;
 }
 
-function getResponseType(schema: string, operationId: string) {
-  return schema === Z_VOID
-    ? 'void'
-    : schema.startsWith('z.')
-    ? `${capitalizeFirstCharacter(operationId)}Response`
-    : schema;
+function getResponseInfo(schema: string, operationId: string) {
+  let responseDeclarationName: string | undefined;
+  let promiseDataReturnType = schema;
+
+  if (schema === Z_VOID) {
+    promiseDataReturnType = 'void';
+  } else if (schema.startsWith('z.')) {
+    responseDeclarationName = `${capitalizeFirstCharacter(
+      operationId
+    )}Response`;
+    promiseDataReturnType = responseDeclarationName;
+  }
+
+  return {
+    schema,
+    promiseDataReturnType,
+    responseDeclarationName
+  };
 }

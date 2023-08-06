@@ -9,6 +9,7 @@ import { execSync } from 'child_process';
 
 import { defaultHandlebars, defaultQueryUtils } from './templates.js';
 import { handlebarsInstance } from './helpers/handlebars.js';
+import { GLOBAL_VARS } from './global-vars.js';
 
 const cli = meow(
   `
@@ -17,9 +18,11 @@ const cli = meow(
 
 	Options
 	  --output, -o                  Specify a place for output, defaults to (pwd)/generated.
+	  --headers, -h                 When this flag is set, response will be in the form of AxiosResponse.
 
 	Examples
 	  $ openapi-to-axios generate ./openapi/api.json --output src/generated
+	  $ openapi-to-axios generate ./openapi/api.json --output src/generated --headers
 `,
   {
     importMeta: import.meta,
@@ -28,6 +31,10 @@ const cli = meow(
       output: {
         type: 'string',
         shortFlag: 'o'
+      },
+      headers: {
+        type: 'boolean',
+        shortFlag: 'h'
       }
     }
   }
@@ -53,7 +60,10 @@ async function main() {
     ? cliInput
     : path.join(process.cwd(), cliInput);
 
-  const { output: cliOutput } = cli.flags;
+  const { output: cliOutput, headers: isWithHeaders = false } = cli.flags;
+
+  // Set global flags.
+  GLOBAL_VARS.IS_WITH_HEADERS = isWithHeaders;
 
   const rootOutputFolder =
     cliOutput && path.isAbsolute(cliOutput)

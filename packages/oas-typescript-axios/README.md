@@ -16,8 +16,47 @@ yarn add -D @oas-typescript/axios
 
 ## CLI guide
 
-TBD
+```
+Usage
+  $ openapi-to-axios generate <path-to-openapi-json>
+
+Options
+  --output, -o                  Specify a place for output, defaults to (pwd)/generated.
+  --headers, -h                 When this flag is set, response will be in the form of AxiosResponse.
+
+Examples
+  $ openapi-to-axios generate ./openapi/api.json --output src/generated
+  $ openapi-to-axios generate ./openapi/api.json --output src/generated --headers
+```
 
 ## Generating API client
 
-TBD
+To generate an API client, do this command:
+
+```bash
+# Do this using the "scripts" in package.json.
+openapi-typescript-axios generate ./api.json --output generated
+```
+
+The command above will read the Open API Specification `api.json` and output them to the `generated` folder. The result will be as the following.
+
+```
+generated
+├── controllers
+│   ├── PetController.ts
+│   ├── StoreController.ts
+│   └── UserController.ts
+├── generated
+│   ├── checksum.json
+│   ├── client.ts
+│   ├── controller-types
+│   │   ├── PetControllerTypes.ts
+│   │   ├── StoreControllerTypes.ts
+│   │   └── UserControllerTypes.ts
+│   ├── security-schemes.ts
+│   ├── server.ts
+│   ├── types.ts
+│   └── utils.ts
+├── middleware-helpers.ts
+└── server.ts
+```
