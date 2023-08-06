@@ -31,7 +31,9 @@ export const ApiResponse = z
 export interface ApiResponse extends z.infer<typeof ApiResponse> {}
 
 const UpdatePetParams = z.object({ body: Pet });
+
 const AddPetParams = z.object({ body: Pet });
+
 const FindPetsByStatusParams = z.object({
   query: z.object({
     status: z
@@ -40,12 +42,21 @@ const FindPetsByStatusParams = z.object({
       .default('available')
   })
 });
+const FindPetsByStatusResponse = z.array(Pet);
+interface FindPetsByStatusResponse
+  extends z.infer<typeof FindPetsByStatusResponse> {}
+
 const FindPetsByTagsParams = z.object({
   query: z.object({ tags: z.array(z.string()).optional() })
 });
+const FindPetsByTagsResponse = z.array(Pet);
+interface FindPetsByTagsResponse
+  extends z.infer<typeof FindPetsByTagsResponse> {}
+
 const GetPetByIdParams = z.object({
   params: z.object({ petId: z.number().int() })
 });
+
 const UpdatePetWithFormParams = z.object({
   params: z.object({ petId: z.number().int() }),
   query: z.object({
@@ -53,10 +64,12 @@ const UpdatePetWithFormParams = z.object({
     status: z.string().optional()
   })
 });
+
 const DeletePetParams = z.object({
   params: z.object({ petId: z.number().int() }),
   headers: z.object({ api_key: z.string().optional() })
 });
+
 const UploadFileParams = z.object({
   params: z.object({ petId: z.number().int() }),
   query: z.object({ additionalMetadata: z.string().optional() }),
@@ -68,10 +81,10 @@ export function PetApi({
 }: {
   defaultAxiosRequestConfig?: AxiosRequestConfig;
 }) {
-  function updatePet(
+  async function updatePet(
     fnParam: z.infer<typeof UpdatePetParams>,
     axiosConfig?: AxiosRequestConfig
-  ) {
+  ): Promise<Pet> {
     let url = `/pet`;
 
     const config = {
@@ -82,12 +95,13 @@ export function PetApi({
         ...axiosConfig?.headers
       }
     };
-    return axios(url, { ...config, data: fnParam.body });
+    const response = await axios(url, { ...config, data: fnParam.body });
+    return Pet.parse(response.data);
   }
-  function addPet(
+  async function addPet(
     fnParam: z.infer<typeof AddPetParams>,
     axiosConfig?: AxiosRequestConfig
-  ) {
+  ): Promise<Pet> {
     let url = `/pet`;
 
     const config = {
@@ -98,12 +112,13 @@ export function PetApi({
         ...axiosConfig?.headers
       }
     };
-    return axios(url, { ...config, data: fnParam.body });
+    const response = await axios(url, { ...config, data: fnParam.body });
+    return Pet.parse(response.data);
   }
-  function findPetsByStatus(
+  async function findPetsByStatus(
     fnParam: z.infer<typeof FindPetsByStatusParams>,
     axiosConfig?: AxiosRequestConfig
-  ) {
+  ): Promise<FindPetsByStatusResponse> {
     let url = `/pet/findByStatus`;
     url += getQueryParameterString(fnParam.query);
 
@@ -115,12 +130,13 @@ export function PetApi({
         ...axiosConfig?.headers
       }
     };
-    return axios(url, config);
+    const response = await axios(url, config);
+    return z.array(Pet).parse(response.data);
   }
-  function findPetsByTags(
+  async function findPetsByTags(
     fnParam: z.infer<typeof FindPetsByTagsParams>,
     axiosConfig?: AxiosRequestConfig
-  ) {
+  ): Promise<FindPetsByTagsResponse> {
     let url = `/pet/findByTags`;
     url += getQueryParameterString(fnParam.query);
 
@@ -132,12 +148,13 @@ export function PetApi({
         ...axiosConfig?.headers
       }
     };
-    return axios(url, config);
+    const response = await axios(url, config);
+    return z.array(Pet).parse(response.data);
   }
-  function getPetById(
+  async function getPetById(
     fnParam: z.infer<typeof GetPetByIdParams>,
     axiosConfig?: AxiosRequestConfig
-  ) {
+  ): Promise<Pet> {
     let url = `/pet/${fnParam.params.petId}`;
 
     const config = {
@@ -148,12 +165,13 @@ export function PetApi({
         ...axiosConfig?.headers
       }
     };
-    return axios(url, config);
+    const response = await axios(url, config);
+    return Pet.parse(response.data);
   }
-  function updatePetWithForm(
+  async function updatePetWithForm(
     fnParam: z.infer<typeof UpdatePetWithFormParams>,
     axiosConfig?: AxiosRequestConfig
-  ) {
+  ): Promise<void> {
     let url = `/pet/${fnParam.params.petId}`;
     url += getQueryParameterString(fnParam.query);
 
@@ -165,12 +183,13 @@ export function PetApi({
         ...axiosConfig?.headers
       }
     };
-    return axios(url, config);
+    const response = await axios(url, config);
+    return z.void().parse(response.data);
   }
-  function deletePet(
+  async function deletePet(
     fnParam: z.infer<typeof DeletePetParams>,
     axiosConfig?: AxiosRequestConfig
-  ) {
+  ): Promise<void> {
     let url = `/pet/${fnParam.params.petId}`;
 
     const config = {
@@ -182,12 +201,13 @@ export function PetApi({
         ...fnParam.headers
       }
     };
-    return axios(url, config);
+    const response = await axios(url, config);
+    return z.void().parse(response.data);
   }
-  function uploadFile(
+  async function uploadFile(
     fnParam: z.infer<typeof UploadFileParams>,
     axiosConfig?: AxiosRequestConfig
-  ) {
+  ): Promise<ApiResponse> {
     let url = `/pet/${fnParam.params.petId}/uploadImage`;
     url += getQueryParameterString(fnParam.query);
 
@@ -199,7 +219,8 @@ export function PetApi({
         ...axiosConfig?.headers
       }
     };
-    return axios(url, { ...config, data: fnParam.body });
+    const response = await axios(url, { ...config, data: fnParam.body });
+    return ApiResponse.parse(response.data);
   }
 
   return {

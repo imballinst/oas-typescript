@@ -3,6 +3,7 @@ import { capitalizeFirstCharacter } from './change-case.js';
 import { EndpointProcessResult } from '../types.js';
 
 const FN_PARAM_NAME = 'fnParam';
+const Z_VOID = 'z.void()';
 
 export const handlebarsInstance = getHandlebars();
 const operationParamsCache: Record<string, EndpointProcessResult> = {};
@@ -27,7 +28,8 @@ handlebarsInstance.registerHelper(
       operationId: this.operationId,
       url: this.path,
       apiClientName,
-      requestBodyContentType: this.requestBodyContentType
+      requestBodyContentType: this.requestBodyContentType,
+      responseSchema: this.response
     });
     operationParamsCache[this.operationId] = result;
 
@@ -38,6 +40,22 @@ handlebarsInstance.registerHelper(
   'getFunctionParameterDeclaration',
   function (operationId: any) {
     return operationParamsCache[operationId].paramsDeclaration;
+  }
+);
+handlebarsInstance.registerHelper(
+  'getResponseParameterDeclaration',
+  function (operationId: any) {
+    const { name, responseDeclarationName } =
+      operationParamsCache[operationId].responseInfo;
+    if (name === Z_VOID || !name.startsWith('z.')) return '';
+
+    let renderedType = `const ${responseDeclarationName} = ${name}`;
+    renderedType +=
+      name === Z_VOID
+        ? ''
+        : `\ninterface ${responseDeclarationName} extends z.infer<typeof ${responseDeclarationName}> {}`;
+
+    return renderedType;
   }
 );
 handlebarsInstance.registerHelper(
@@ -60,9 +78,19 @@ handlebarsInstance.registerHelper(
   }
 );
 handlebarsInstance.registerHelper(
+  'getFunctionReturnType',
+  function (operationId: any) {
+    const {
+      responseInfo: { name, responseDeclarationName }
+    } = operationParamsCache[operationId];
+    return `Promise<${responseDeclarationName || name}>`;
+  }
+);
+handlebarsInstance.registerHelper(
   'getFunctionReturns',
   function (operationId: string) {
-    const { hasBody, hasHeaders } = operationParamsCache[operationId];
+    const { bodySchemaName, hasHeaders, responseInfo } =
+      operationParamsCache[operationId];
     let configHeaders =
       '...defaultAxiosRequestConfig?.headers, ...axiosConfig?.headers';
     if (hasHeaders) {
@@ -72,13 +100,17 @@ handlebarsInstance.registerHelper(
     const renderedConfig = `const config = { ...defaultAxiosRequestConfig, ...axiosConfig, headers: { ${configHeaders} } }`;
     let restArgs: string = '';
 
-    if (hasBody) {
+    if (bodySchemaName) {
       restArgs = `, { ...config, data: fnParam.body }`;
     } else {
       restArgs = `, config`;
     }
 
-    return `${renderedConfig}\nreturn axios(url${restArgs})`;
+    let renderedAxiosCall = renderedConfig;
+    renderedAxiosCall += `\nconst response = await axios(url${restArgs})`;
+    renderedAxiosCall += `\nreturn ${responseInfo.name}.parse(response.data)`;
+
+    return renderedAxiosCall;
   }
 );
 handlebarsInstance.registerHelper('getQueryParameterHelperImport', function () {
@@ -110,13 +142,15 @@ function constructFunctionParameterFromString({
   operationId,
   url,
   apiClientName,
-  requestBodyContentType
+  requestBodyContentType,
+  responseSchema
 }: {
   parameters: any;
   operationId: string;
   url: string;
   apiClientName: string;
   requestBodyContentType: string | undefined;
+  responseSchema: string;
 }) {
   const result: EndpointProcessResult = {
     urlDefinition: `\`${url}\``,
@@ -125,7 +159,11 @@ function constructFunctionParameterFromString({
     queryParams: '',
     contentType: '',
     hasHeaders: false,
-    hasBody: false
+    bodySchemaName: '',
+    responseInfo: {
+      name: responseSchema,
+      responseDeclarationName: getResponseType(responseSchema, operationId)
+    }
   };
 
   if (!parameters) return result;
@@ -146,7 +184,7 @@ function constructFunctionParameterFromString({
     switch (parameter.type) {
       case 'Body': {
         fnParam.body = parameter.schema;
-        result.hasBody = true;
+        result.bodySchemaName = parameter.schema;
         result.contentType = requestBodyContentType || '';
         break;
       }
@@ -218,4 +256,12 @@ function constructFunctionParameterFromString({
   }
 
   return result;
+}
+
+function getResponseType(schema: string, operationId: string) {
+  return schema === Z_VOID
+    ? 'void'
+    : schema.startsWith('z.')
+    ? `${capitalizeFirstCharacter(operationId)}Response`
+    : schema;
 }

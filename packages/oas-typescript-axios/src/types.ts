@@ -5,5 +5,9 @@ export interface EndpointProcessResult {
   queryParams: string;
   contentType: string;
   hasHeaders: boolean;
-  hasBody: boolean;
+  bodySchemaName: string;
+  responseInfo: {
+    name: string;
+    responseDeclarationName: string | undefined;
+  };
 }
