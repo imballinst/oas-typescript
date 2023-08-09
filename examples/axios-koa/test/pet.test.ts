@@ -3,7 +3,6 @@ import { AxiosError } from 'axios';
 import { PetApi } from '../src/client';
 import { Pet } from '../src/client/pet';
 
-// TODO: use SDK that we generate as well
 describe('pet', () => {
   const api = PetApi({
     defaultAxiosRequestConfig: { baseURL: 'http://localhost:3000' }
