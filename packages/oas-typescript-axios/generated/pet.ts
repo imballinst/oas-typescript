@@ -93,7 +93,8 @@ export function PetApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'put'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
     return Pet.parse(response.data);
@@ -110,7 +111,8 @@ export function PetApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'post'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
     return Pet.parse(response.data);
@@ -128,7 +130,8 @@ export function PetApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'get'
     };
     const response = await axios(url, config);
     return z.array(Pet).parse(response.data);
@@ -146,7 +149,8 @@ export function PetApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'get'
     };
     const response = await axios(url, config);
     return z.array(Pet).parse(response.data);
@@ -163,7 +167,8 @@ export function PetApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'get'
     };
     const response = await axios(url, config);
     return Pet.parse(response.data);
@@ -181,7 +186,8 @@ export function PetApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'post'
     };
     const response = await axios(url, config);
     return z.void().parse(response.data);
@@ -199,7 +205,8 @@ export function PetApi({
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers,
         ...fnParam.headers
-      }
+      },
+      method: 'delete'
     };
     const response = await axios(url, config);
     return z.void().parse(response.data);
@@ -217,7 +224,8 @@ export function PetApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'post'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
     return ApiResponse.parse(response.data);
