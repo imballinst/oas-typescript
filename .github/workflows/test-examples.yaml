@@ -27,7 +27,5 @@ jobs:
         working-directory: ./examples/axios-koa
         run: |
           yarn
-          yarn gen:client
-          yarn gen:server
           yarn build
           yarn test
