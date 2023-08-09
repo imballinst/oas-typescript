@@ -434,10 +434,10 @@
   resolved "https://registry.yarnpkg.com/@nicolo-ribaudo/semver-v6/-/semver-v6-6.3.3.tgz#ea6d23ade78a325f7a52750aab1526b02b628c29"
   integrity sha512-3Yc1fUTs69MG/uZbJlLSI3JISMn2UV2rg+1D/vROUqZyh3l6iYHCs7GMp+M40ZD7yOdDbYjJcU1oTJhrc+dGKg==
 
-"@oas-typescript/axios@0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@oas-typescript/axios/-/axios-0.0.2.tgz#6035ecce5d499c6170b5d17199553f97534a9d65"
-  integrity sha512-ndSar6y16YVRMtSnQJ2C2uY+W+3lOFBlCHZeVIvGl5G2PIm+/FIcY6MnD9ApegcrIisx9AbVSCum+EzLSITGrw==
+"@oas-typescript/axios@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@oas-typescript/axios/-/axios-0.1.0.tgz#f5fab3add2c22fdf6e30bc39123223586156e29f"
+  integrity sha512-jo+jqRq3518MqldXftL+SHAsILr5mNxDXyPISPoRVOApIiKg15tw6cQZKxZdGwJbA8Hn9ffakdYGRFH36nOU2A==
   dependencies:
     meow "12.0.1"
     openapi-zod-client "1.10.0"

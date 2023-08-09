@@ -1,6 +1,7 @@
 import { test, describe, expect } from 'vitest';
 import { AxiosError } from 'axios';
 import { PetApi } from '../src/client';
+import { Pet } from '../src/client/pet';
 
 // TODO: use SDK that we generate as well
 describe('pet', () => {
@@ -17,7 +18,6 @@ describe('pet', () => {
       error = err;
     }
 
-    console.info(error);
     expect(error instanceof AxiosError).toBe(true);
 
     if (error instanceof AxiosError) {
@@ -25,71 +25,82 @@ describe('pet', () => {
     }
   });
 
-  // test('create pet with invalid param', async () => {
-  //   try {
-  //     await api.addPet(
-  //       // @ts-expect-error
-  //       { body: {} },
-  //       {
-  //         headers: {
-  //           helloworld: 'helloworld'
-  //         }
-  //       }
-  //     );
-  //   } catch (err) {
-  //     if (err instanceof AxiosError) {
-  //       expect(err.response?.status).toBe(400);
-  //     }
-  //   }
-  // });
+  test('create pet with invalid param', async () => {
+    let error: unknown;
 
-  // test('create pet with correct param', async () => {
-  //   let response: AxiosResponse | undefined;
-  //   try {
-  //     response = await api.addPet(
-  //       {
-  //         body: {
-  //           name: 'torgal',
-  //           photoUrls: []
-  //         }
-  //       },
-  //       {
-  //         headers: {
-  //           helloworld: 'helloworld'
-  //         }
-  //       }
-  //     );
-  //   } catch (err) {
-  //     // No-op.
-  //   }
+    try {
+      await api.addPet(
+        // @ts-expect-error
+        { body: {} },
+        {
+          headers: {
+            helloworld: 'helloworld'
+          }
+        }
+      );
+    } catch (err) {
+      error = err;
+    }
 
-  //   expect(response).toBeDefined();
-  //   expect(response?.status).toBe(200);
-  // });
+    expect(error instanceof AxiosError).toBe(true);
 
-  // test('create pet with the same param', async () => {
-  //   let response: AxiosResponse | undefined;
-  //   try {
-  //     response = await axios.post(
-  //       'http://localhost:3000/pet',
-  //       {
-  //         name: 'torgal',
-  //         photoUrls: []
-  //       },
-  //       {
-  //         headers: {
-  //           helloworld: 'helloworld'
-  //         }
-  //       }
-  //     );
-  //   } catch (err) {
-  //     // No-op.
-  //     if (err instanceof AxiosError) {
-  //       response = err.response;
-  //     }
-  //   }
+    if (error instanceof AxiosError) {
+      expect(error.response?.status).toBe(400);
+    }
+  });
 
-  //   expect(response).toBeDefined();
-  //   expect(response?.status).toBe(405);
-  // });
+  test('create pet with correct param', async () => {
+    let response: Pet | undefined;
+    try {
+      response = await api.addPet(
+        {
+          body: {
+            name: 'torgal',
+            photoUrls: []
+          }
+        },
+        {
+          headers: {
+            helloworld: 'helloworld'
+          }
+        }
+      );
+    } catch (err) {
+      // No-op.
+    }
+
+    expect(response).toBeDefined();
+    expect(response?.status).toBe(200);
+  });
+
+  test('create pet with the same param', async () => {
+    let response: Pet | undefined;
+    let error: unknown;
+
+    try {
+      response = await api.addPet(
+        {
+          body: {
+            name: 'torgal',
+            photoUrls: []
+          }
+        },
+        {
+          headers: {
+            helloworld: 'helloworld'
+          }
+        }
+      );
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error instanceof AxiosError).toBe(true);
+    expect(response).toBeUndefined();
+
+    if (error instanceof AxiosError) {
+      expect(error.response).toBeDefined();
+      expect(error.response?.status).toBe(405);
+    }
+  });
 });
