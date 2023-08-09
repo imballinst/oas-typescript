@@ -10,13 +10,14 @@ And hence, this project was born.
 
 ## Examples
 
-To see the example, go to the [examples](./examples) folder. This folder contains the OpenAPI Specification (we are using Pet Store with OAS 3 from Swagger). From the specification, we generate the server stubs into the [examples/koa/generated](./examples/koa/generated) folder.
+To see the example, go to the [examples](./examples) folder. This folder contains the OpenAPI Specification (we are using Pet Store with OAS 3 from Swagger). From the specification, we generate the server stubs into the [examples/axios-koa/src/server/generated](./examples/axios-koa/src/server/generated) folder.
 
 ### Running the Koa server
 
 ```bash
-# Execute these inside the examples/koa folder.
+# Execute these inside the examples/axios-koa folder.
 yarn
+yarn build
 # We are using pm2 to manage the process.
 yarn start
 ```
