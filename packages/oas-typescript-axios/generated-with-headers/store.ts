@@ -44,7 +44,8 @@ export function StoreApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'get'
     };
     const response = await axios(url, config);
     response.data = z.record(z.number().int()).parse(response.data);
@@ -62,7 +63,8 @@ export function StoreApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'post'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
     response.data = Order.parse(response.data);
@@ -80,7 +82,8 @@ export function StoreApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'get'
     };
     const response = await axios(url, config);
     response.data = Order.parse(response.data);
@@ -98,7 +101,8 @@ export function StoreApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'delete'
     };
     const response = await axios(url, config);
     response.data = z.void().parse(response.data);

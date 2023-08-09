@@ -28,6 +28,7 @@ handlebarsInstance.registerHelper(
       parameters,
       operationId: this.operationId,
       url: this.path,
+      method: this.method,
       apiClientName,
       requestBodyContentType: this.requestBodyContentType,
       responseSchema: this.response
@@ -94,7 +95,7 @@ handlebarsInstance.registerHelper(
 handlebarsInstance.registerHelper(
   'getFunctionReturns',
   function (operationId: string) {
-    const { bodySchemaName, hasHeaders, responseInfo } =
+    const { bodySchemaName, hasHeaders, responseInfo, method } =
       operationParamsCache[operationId];
     let configHeaders =
       '...defaultAxiosRequestConfig?.headers, ...axiosConfig?.headers';
@@ -102,7 +103,7 @@ handlebarsInstance.registerHelper(
       configHeaders += `, ...${FN_PARAM_NAME}.headers`;
     }
 
-    const renderedConfig = `const config = { ...defaultAxiosRequestConfig, ...axiosConfig, headers: { ${configHeaders} } }`;
+    const renderedConfig = `const config = { ...defaultAxiosRequestConfig, ...axiosConfig, headers: { ${configHeaders} }, method: '${method}' }`;
     let restArgs: string = '';
 
     if (bodySchemaName) {
@@ -160,6 +161,7 @@ function constructFunctionParameterFromString({
   parameters,
   operationId,
   url,
+  method,
   apiClientName,
   requestBodyContentType,
   responseSchema
@@ -167,12 +169,14 @@ function constructFunctionParameterFromString({
   parameters: any;
   operationId: string;
   url: string;
+  method: string;
   apiClientName: string;
   requestBodyContentType: string | undefined;
   responseSchema: string;
 }) {
   const result: EndpointProcessResult = {
     urlDefinition: `\`${url}\``,
+    method,
     paramsDeclaration: '',
     paramsName: '',
     queryParams: '',

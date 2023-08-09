@@ -61,7 +61,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'post'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
     return User.parse(response.data);
@@ -78,7 +79,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'post'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
     return User.parse(response.data);
@@ -96,7 +98,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'get'
     };
     const response = await axios(url, config);
     return z.string().parse(response.data);
@@ -110,7 +113,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'post'
     };
     const response = await axios(url, config);
     return z.void().parse(response.data);
@@ -127,7 +131,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'get'
     };
     const response = await axios(url, config);
     return User.parse(response.data);
@@ -144,7 +149,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'put'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
     return User.parse(response.data);
@@ -161,7 +167,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'delete'
     };
     const response = await axios(url, config);
     return z.void().parse(response.data);

@@ -61,7 +61,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'post'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
     response.data = User.parse(response.data);
@@ -79,7 +80,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'post'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
     response.data = User.parse(response.data);
@@ -98,7 +100,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'get'
     };
     const response = await axios(url, config);
     response.data = z.string().parse(response.data);
@@ -115,7 +118,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'post'
     };
     const response = await axios(url, config);
     response.data = z.void().parse(response.data);
@@ -133,7 +137,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'get'
     };
     const response = await axios(url, config);
     response.data = User.parse(response.data);
@@ -151,7 +156,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'put'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
     response.data = User.parse(response.data);
@@ -169,7 +175,8 @@ export function UserApi({
       headers: {
         ...defaultAxiosRequestConfig?.headers,
         ...axiosConfig?.headers
-      }
+      },
+      method: 'delete'
     };
     const response = await axios(url, config);
     response.data = z.void().parse(response.data);

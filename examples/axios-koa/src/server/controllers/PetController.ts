@@ -28,7 +28,7 @@ export class PetController {
 
     db[params.body.name] = {
       ...params.body,
-      id: Number(customAlphabet('1234567890'))
+      id: Number(customAlphabet('1234567890')(6))
     };
 
     return {
