@@ -69,7 +69,7 @@ describe('pet', () => {
     }
 
     expect(response).toBeDefined();
-    expect(response?.status).toBe(200);
+    expect(response?.name).toBe('torgal');
   });
 
   test('create pet with the same param', async () => {
