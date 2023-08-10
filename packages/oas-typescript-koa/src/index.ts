@@ -9,7 +9,8 @@ import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
 import { execSync } from 'child_process';
-import { createHash } from 'crypto';
+
+import { createOrDuplicateFile } from '@oast/shared/utils/checksum.js';
 
 import {
   defaultHandlebars,
@@ -256,45 +257,3 @@ async function main() {
 }
 
 main();
-
-// Helper functions.
-async function createOrDuplicateFile({
-  previousChecksum,
-  filePath,
-  fileContent
-}: {
-  filePath: string;
-  previousChecksum: string;
-  fileContent: string;
-}) {
-  const currentChecksum = getChecksum(fileContent);
-  let isControllerExist = false;
-  let isChecksumSame = false;
-
-  try {
-    await fs.stat(filePath);
-    // If it doesn't throw, then it exists.
-    isControllerExist = true;
-    isChecksumSame = previousChecksum === currentChecksum;
-  } catch (err) {
-    // It doesn't exist, so we need to create it first.
-    await fs.mkdir(path.dirname(filePath), { recursive: true });
-  }
-
-  if (isControllerExist && isChecksumSame) {
-    return currentChecksum;
-  }
-
-  // TODO: improve this so that we could append/delete as needed, instead of
-  // having to move the old one to *.old.ts.
-  if (isControllerExist) {
-    await fs.rename(filePath, filePath.replace('.ts', '.old.ts'));
-  }
-
-  await fs.writeFile(filePath, fileContent, 'utf-8');
-  return currentChecksum;
-}
-
-function getChecksum(str: string) {
-  return createHash('md5').update(str).digest('hex');
-}
