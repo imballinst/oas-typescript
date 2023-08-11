@@ -247,7 +247,7 @@ export const FindPetsByTagsErrors = [
 
 export const GetInventoryParameters = [] as const;
 export const GetInventorySecurity = [{ api_key: [] }];
-export const GetInventoryResponse = z.record(z.number());
+export const GetInventoryResponse = z.record(z.number().int());
 export const GetInventoryErrors = [] as const;
 
 export const PlaceOrderParameters = [
