@@ -1,5 +1,6 @@
 import { build } from 'esbuild';
 import path from 'path';
+import { nodeExternalsPlugin } from 'esbuild-node-externals';
 
 async function main() {
   await build({
@@ -8,7 +9,7 @@ async function main() {
     entryPoints: [path.join(process.cwd(), 'src/index.ts')],
     platform: 'node',
     outfile: path.join(process.cwd(), 'cli.js'),
-    packages: 'external'
+    plugins: [nodeExternalsPlugin()]
   });
 }
 

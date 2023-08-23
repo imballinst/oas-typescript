@@ -13,9 +13,7 @@
     "allowJs": false,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "paths": {
-      "@oast/shared/*": ["./src/*"]
-    }
+    "composite": true
   },
   "ts-node": {
     "swc": true

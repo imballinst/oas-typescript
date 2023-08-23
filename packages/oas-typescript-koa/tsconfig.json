@@ -6,6 +6,11 @@
       "@oast/shared/*": ["../shared/src/*"]
     }
   },
+  "references": [
+    {
+      "path": "../shared"
+    }
+  ],
   "ts-node": {
     "swc": true
   }
