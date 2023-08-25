@@ -17,6 +17,10 @@ export interface OperationInfo {
    */
   response?: string;
   /**
+   * Contains the response headers.
+   */
+  responseHeaders?: Record<string, number | string>;
+  /**
    * Contains the response success status, which is required.
    */
   responseSuccessStatus: number;

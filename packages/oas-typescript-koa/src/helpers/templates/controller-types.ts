@@ -16,14 +16,24 @@ export function generateTemplateControllerTypes({
       errorStatuses += ` | number`;
     }
 
+    const controllerReturnTypeGenericTypes: Array<number | string> = [
+      `typeof ${operation.response || 'z.void()'}`,
+      errorStatuses,
+      operation.responseSuccessStatus
+    ];
+
+    if (operation.responseHeaders) {
+      const entries = Object.entries(operation.responseHeaders);
+      const mappedEntries = entries.map(([k, v]) => `"${k}": ${v}`).join('; ');
+      controllerReturnTypeGenericTypes.push(`{ ${mappedEntries} }`);
+    }
+
     renderedOperations.push(
       `
 export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
         operation.parametersName
       }>) => ControllerReturnType<
-  typeof ${operation.response || 'z.void()'},
-  ${errorStatuses},
-  ${operation.responseSuccessStatus}
+  ${controllerReturnTypeGenericTypes.join(',\n  ')}
 > 
       `.trim()
     );

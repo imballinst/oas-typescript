@@ -103,3 +103,41 @@ export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParamet
   `.trim()
   );
 });
+
+test('generateTemplateControllerTypes, with headers', () => {
+  expect(
+    generateTemplateControllerTypes({
+      imports: ['SayHelloParameters', 'Message'],
+      operations: [
+        {
+          functionType: 'SayHelloFunction',
+          hasDefaultResponseStatus: true,
+          operationId: 'SayHello',
+          responseSuccessStatus: 200,
+          errorType: 'SayHelloErrors',
+          parametersName: 'SayHelloParameters',
+          response: 'Message',
+          responseHeaders: {
+            'x-rate-limit': 'string'
+          }
+        }
+      ]
+    })
+  ).toEqual(
+    `
+import {
+  SayHelloParameters,
+  Message
+} from '../client.js'
+import { ParsedRequestInfo } from '../utils.js'
+import { ControllerReturnType, ErrorStatuses } from '../types.js'
+
+export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<
+  typeof Message,
+  ErrorStatuses<typeof SayHelloErrors> | number,
+  200,
+  { "x-rate-limit": string }
+>
+  `.trim()
+  );
+});

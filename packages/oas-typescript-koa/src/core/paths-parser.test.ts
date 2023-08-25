@@ -13,7 +13,15 @@ test('parsePaths with all requirements fulfilled', () => {
             responses: {
               '200': {
                 description: 'Successful operation returns user response',
-                $ref: '#/components/schema/User'
+                $ref: '#/components/schema/User',
+                headers: {
+                  'x-ratelimit': {
+                    schema: { type: 'string' }
+                  },
+                  'x-ratelimit-expires-in': {
+                    schema: { type: 'number', nullable: true }
+                  }
+                }
               }
             }
           }
@@ -34,7 +42,11 @@ test('parsePaths with all requirements fulfilled', () => {
           responseSuccessStatus: 200,
           parametersName: 'GetUserParameters',
           response: 'GetUserResponse',
-          hasDefaultResponseStatus: false
+          hasDefaultResponseStatus: false,
+          responseHeaders: {
+            'x-ratelimit': 'string',
+            'x-ratelimit-expires-in': 'number | undefined'
+          }
         }
       ]
     },
