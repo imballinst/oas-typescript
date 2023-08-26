@@ -1,3 +1,22 @@
+export type ResponseHeaders = Record<
+  string,
+  { schema: number | string; nullable?: boolean }
+>;
+
+export interface ErrorResponse {
+  schema: string;
+  headers?: ResponseHeaders;
+}
+
+export interface ResponseSchema {
+  success: {
+    schema?: string;
+    status: number;
+    headers?: ResponseHeaders;
+  };
+  error?: Record<string | number, ErrorResponse>;
+}
+
 export interface OperationInfo {
   /**
    * Contains the operation ID, which is required.
@@ -15,31 +34,5 @@ export interface OperationInfo {
   /**
    * Contains the response object schema.
    */
-  response?: string;
-  /**
-   * Contains the response headers.
-   */
-  responseHeaders?: Record<string, number | string>;
-  /**
-   * Contains the response success status, which is required.
-   */
-  responseSuccessStatus: number;
-  /**
-   * Contains the error type, which is derived from `client.ts`.
-   */
-  errorType?: string;
-  /**
-   * Mostly used for default responses. So, for errors, if defined explicitly, it'll be this:
-   *
-   * ```
-   * { status: 400, error: { ... }}
-   * ```
-   *
-   * However, if we use `default`, then it'll be this:
-   *
-   * ```
-   * { status: number, error: { ... }}
-   * ```
-   */
-  hasDefaultResponseStatus: boolean;
+  response?: ResponseSchema;
 }

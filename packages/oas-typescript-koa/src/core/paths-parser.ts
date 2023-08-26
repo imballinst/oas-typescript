@@ -3,7 +3,12 @@ import { OpenAPIV3 } from 'openapi-types';
 
 import { capitalizeFirstCharacter } from '../helpers/change-case.js';
 import { generateRouteMiddleware } from '../helpers/templates/middleware.js';
-import { OperationInfo } from '../helpers/templates/types.js';
+import {
+  ErrorResponse,
+  OperationInfo,
+  ResponseHeaders,
+  ResponseSchema
+} from '../helpers/templates/types.js';
 
 const PARSED_METHODS = ['get', 'post', 'put', 'delete', 'patch'] as const;
 
@@ -68,16 +73,54 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
         );
       }
 
+      const openAPISuccessResponseHeaders = (
+        responses[responseSuccessStatus] as OpenAPIV3.ResponseObject
+      ).headers;
+
+      const responseSuccessHeaders =
+        convertOpenAPIHeadersToResponseSchemaHeaders(
+          openAPISuccessResponseHeaders
+        );
+      const responseSchema: ResponseSchema = {
+        success: {
+          schema: responseName,
+          status: responseSuccessStatus
+        },
+        error: {}
+      };
+
+      if (responseSuccessHeaders) {
+        responseSchema.success!.headers = responseSuccessHeaders;
+      }
+
+      const responseErrorStatuses = Object.keys(responses).filter(
+        (status) => Number(status) >= 400
+      );
       const hasDefaultResponseStatus = responses.default !== undefined;
+
+      if (responseErrorStatuses.length || hasDefaultResponseStatus) {
+        responseSchema.error = {};
+
+        if (hasDefaultResponseStatus) {
+          responseSchema.error.default = getErrorResponseSchema(
+            errorType,
+            responses.default
+          );
+        } else {
+          for (const responseStatus of responseErrorStatuses) {
+            responseSchema.error[responseStatus] = getErrorResponseSchema(
+              errorType,
+              responses[responseStatus]
+            );
+          }
+        }
+      }
 
       controllerToOperationsRecord[controllerName].push({
         operationId,
         functionType: `${capitalizedOperationId}ControllerFunction`,
         parametersName,
-        errorType,
-        response: responseName,
-        responseSuccessStatus,
-        hasDefaultResponseStatus
+        response: responseSchema
       });
 
       if (parametersName) {
@@ -131,4 +174,38 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
 function convertOpenApiPathToKoaPath(s: string) {
   if (!s.startsWith('{') && !s.endsWith('}')) return s;
   return `:${s.slice(1, -1)}`;
+}
+
+function getErrorResponseSchema(schema: string, content: any) {
+  const errorCodeContent: ErrorResponse = {
+    schema
+  };
+  const headers = convertOpenAPIHeadersToResponseSchemaHeaders(content);
+  if (headers) errorCodeContent.headers = headers;
+
+  return errorCodeContent;
+}
+
+function convertOpenAPIHeadersToResponseSchemaHeaders(responseHeaders: any) {
+  const openAPIHeaders = responseHeaders as Record<
+    string,
+    OpenAPIV3.HeaderObject
+  >;
+  let responseSchemaHeaders: ResponseHeaders | undefined = undefined;
+
+  for (const headerKey in openAPIHeaders) {
+    const schema = openAPIHeaders[headerKey].schema as OpenAPIV3.SchemaObject;
+    if (!schema) continue;
+
+    if (!responseSchemaHeaders) responseSchemaHeaders = {};
+
+    const { type, nullable } = schema;
+    responseSchemaHeaders[headerKey] = {
+      schema: type as string | number
+    };
+
+    if (nullable) responseSchemaHeaders[headerKey].nullable = nullable;
+  }
+
+  return responseSchemaHeaders;
 }

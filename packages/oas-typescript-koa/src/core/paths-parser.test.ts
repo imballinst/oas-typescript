@@ -22,6 +22,10 @@ test('parsePaths with all requirements fulfilled', () => {
                     schema: { type: 'number', nullable: true }
                   }
                 }
+              },
+              '400': {
+                description: 'invalid request',
+                $ref: '#/components/schema/User'
               }
             }
           }
@@ -38,14 +42,21 @@ test('parsePaths with all requirements fulfilled', () => {
         {
           operationId: 'getUser',
           functionType: 'GetUserControllerFunction',
-          errorType: 'GetUserErrors',
-          responseSuccessStatus: 200,
           parametersName: 'GetUserParameters',
-          response: 'GetUserResponse',
-          hasDefaultResponseStatus: false,
-          responseHeaders: {
-            'x-ratelimit': 'string',
-            'x-ratelimit-expires-in': 'number | undefined'
+          response: {
+            success: {
+              schema: 'GetUserResponse',
+              status: 200,
+              headers: {
+                'x-ratelimit': { schema: 'string' },
+                'x-ratelimit-expires-in': { schema: 'number', nullable: true }
+              }
+            },
+            error: {
+              '400': {
+                schema: 'GetUserErrors'
+              }
+            }
           }
         }
       ]
@@ -110,11 +121,18 @@ test('parsePaths with 2xx and default should result in 2xx and all errors', () =
         {
           operationId: 'getUser',
           functionType: 'GetUserControllerFunction',
-          errorType: 'GetUserErrors',
-          responseSuccessStatus: 200,
-          hasDefaultResponseStatus: true,
           parametersName: 'GetUserParameters',
-          response: 'GetUserResponse'
+          response: {
+            success: {
+              schema: 'GetUserResponse',
+              status: 200
+            },
+            error: {
+              default: {
+                schema: 'GetUserErrors'
+              }
+            }
+          }
         }
       ]
     },
