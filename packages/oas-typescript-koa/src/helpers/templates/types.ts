@@ -3,18 +3,25 @@ export type ResponseHeaders = Record<
   { schema: number | string; nullable?: boolean }
 >;
 
-export interface ErrorResponse {
-  schema: string;
+export interface ErrorResponse<
+  TSchemaType = string,
+  TStatus = number | string
+> {
+  status: TStatus extends 'number' ? DefaultHttpErrors : TStatus;
+  schema: TSchemaType;
   headers?: ResponseHeaders;
 }
 
-export interface ResponseSchema {
+export interface ResponseSchema<
+  TSuccessSchemaType = string,
+  TErrorSchemaType = string
+> {
   success: {
-    schema?: string;
+    schema?: TSuccessSchemaType;
     status: number;
     headers?: ResponseHeaders;
   };
-  error?: Record<string | number, ErrorResponse>;
+  error?: Record<string | number, ErrorResponse<TErrorSchemaType>>;
 }
 
 export interface OperationInfo {
@@ -36,3 +43,90 @@ export interface OperationInfo {
    */
   response?: ResponseSchema;
 }
+
+export type ControllerReturnTypeParser<
+  X extends ResponseSchema<unknown, unknown>
+> = X['success'] extends object
+  ?
+      | {
+          // TOOD: might need some tweaking in case it's undefined, maybe
+          // it's better to be `data?: never`.
+          data: X['success']['schema'];
+          status: X['success']['status'];
+        }
+      | ExtractErrorRecord<X['error']>
+  : never;
+
+type ExtractErrorRecord<
+  TErrorRecord extends ResponseSchema<unknown, unknown>['error']
+> = {
+  [Key in keyof TErrorRecord]: TErrorRecord[Key];
+}[keyof TErrorRecord];
+
+type X = ControllerReturnTypeParser<{
+  success: {
+    status: 200;
+    schema: 'Message';
+  };
+  error: {
+    default: {
+      schema: 'SayHelloErrors';
+      status: 'number';
+    };
+  };
+}>;
+type Y = ErrorResponsePatch<{
+  schema: 'SayHelloErrors';
+  status: 404;
+}>;
+
+type ErrorResponsePatch<TErrorRecordEntry extends ErrorResponse> = Omit<
+  TErrorRecordEntry,
+  'status'
+> & {
+  status: TErrorRecordEntry['status'] extends 'number'
+    ? DefaultHttpErrors
+    : TErrorRecordEntry['status'];
+};
+
+type DefaultHttpErrors =
+  | 400
+  | 401
+  | 402
+  | 403
+  | 404
+  | 405
+  | 406
+  | 407
+  | 408
+  | 409
+  | 410
+  | 411
+  | 412
+  | 413
+  | 414
+  | 415
+  | 416
+  | 417
+  | 418
+  | 421
+  | 422
+  | 423
+  | 424
+  | 425
+  | 426
+  | 428
+  | 429
+  | 431
+  | 451
+  | 500
+  | 501
+  | 502
+  | 503
+  | 504
+  | 505
+  | 506
+  | 507
+  | 508
+  | 510
+  | 511;
