@@ -35,9 +35,9 @@ import {
   Message
 } from '../client.js'
 import { ParsedRequestInfo } from '../utils.js'
-import { ControllerReturnTypeParser, ErrorStatuses } from '../types.js'
+import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
-export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnTypeParser<${JSON.stringify(
+export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<${JSON.stringify(
       response,
       null,
       2
@@ -72,9 +72,9 @@ import {
   Message
 } from '../client.js'
 import { ParsedRequestInfo } from '../utils.js'
-import { ControllerReturnTypeParser, ErrorStatuses } from '../types.js'
+import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
-export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnTypeParser<${JSON.stringify(
+export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<${JSON.stringify(
       response,
       null,
       2
@@ -114,9 +114,9 @@ import {
   Message
 } from '../client.js'
 import { ParsedRequestInfo } from '../utils.js'
-import { ControllerReturnTypeParser, ErrorStatuses } from '../types.js'
+import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
-export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnTypeParser<{
+export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<{
   "success": {
     "status": 200,
     "schema": "Message"
@@ -171,9 +171,9 @@ import {
   Message
 } from '../client.js'
 import { ParsedRequestInfo } from '../utils.js'
-import { ControllerReturnTypeParser, ErrorStatuses } from '../types.js'
+import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
-export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnTypeParser<{
+export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<{
   "success": {
     "status": 200,
     "schema": "Message",

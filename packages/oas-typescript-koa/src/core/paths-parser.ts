@@ -104,12 +104,14 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
         if (hasDefaultResponseStatus) {
           responseSchema.error.default = getErrorResponseSchema(
             errorType,
+            'default',
             responses.default
           );
         } else {
           for (const responseStatus of responseErrorStatuses) {
             responseSchema.error[responseStatus] = getErrorResponseSchema(
               errorType,
+              responseStatus,
               responses[responseStatus]
             );
           }
@@ -176,9 +178,10 @@ function convertOpenApiPathToKoaPath(s: string) {
   return `:${s.slice(1, -1)}`;
 }
 
-function getErrorResponseSchema(schema: string, content: any) {
+function getErrorResponseSchema(schema: string, status: string, content: any) {
   const errorCodeContent: ErrorResponse = {
-    schema
+    schema,
+    status
   };
   const headers = convertOpenAPIHeadersToResponseSchemaHeaders(content);
   if (headers) errorCodeContent.headers = headers;

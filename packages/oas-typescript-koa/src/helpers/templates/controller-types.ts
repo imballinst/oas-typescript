@@ -25,11 +25,9 @@ export function generateTemplateControllerTypes({
       `
 export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
         operation.parametersName
-      }>) => ControllerReturnTypeParser<${JSON.stringify(
-        operation.response,
-        null,
-        2
-      ).replace('"status": "number"', '"status": number')}> 
+      }>) => ControllerReturnType<${JSON.stringify(operation.response, null, 2)
+        .replace('"status": "number"', '"status": number')
+        .replace(/"schema": "([\w\d]+)"/, '"schema": $1')}> 
       `.trim()
     );
 
@@ -45,7 +43,7 @@ import {
   ${imports.join(',\n  ')}
 } from '../client.js'
 import { ParsedRequestInfo } from '../utils.js'
-import { ControllerReturnTypeParser, ErrorStatuses } from '../types.js'
+import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
 ${renderedOperations.join('\n\n')}`.trim();
 }

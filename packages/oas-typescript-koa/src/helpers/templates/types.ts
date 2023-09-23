@@ -44,51 +44,6 @@ export interface OperationInfo {
   response?: ResponseSchema;
 }
 
-export type ControllerReturnTypeParser<
-  X extends ResponseSchema<unknown, unknown>
-> = X['success'] extends object
-  ?
-      | {
-          // TOOD: might need some tweaking in case it's undefined, maybe
-          // it's better to be `data?: never`.
-          data: X['success']['schema'];
-          status: X['success']['status'];
-        }
-      | ExtractErrorRecord<X['error']>
-  : never;
-
-type ExtractErrorRecord<
-  TErrorRecord extends ResponseSchema<unknown, unknown>['error']
-> = {
-  [Key in keyof TErrorRecord]: TErrorRecord[Key];
-}[keyof TErrorRecord];
-
-type X = ControllerReturnTypeParser<{
-  success: {
-    status: 200;
-    schema: 'Message';
-  };
-  error: {
-    default: {
-      schema: 'SayHelloErrors';
-      status: 'number';
-    };
-  };
-}>;
-type Y = ErrorResponsePatch<{
-  schema: 'SayHelloErrors';
-  status: 404;
-}>;
-
-type ErrorResponsePatch<TErrorRecordEntry extends ErrorResponse> = Omit<
-  TErrorRecordEntry,
-  'status'
-> & {
-  status: TErrorRecordEntry['status'] extends 'number'
-    ? DefaultHttpErrors
-    : TErrorRecordEntry['status'];
-};
-
 type DefaultHttpErrors =
   | 400
   | 401
