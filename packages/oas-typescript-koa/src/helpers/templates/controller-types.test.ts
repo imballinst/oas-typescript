@@ -132,40 +132,64 @@ export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParamet
   );
 });
 
-// test('generateTemplateControllerTypes, with headers', () => {
-//   expect(
-//     generateTemplateControllerTypes({
-//       imports: ['SayHelloParameters', 'Message'],
-//       operations: [
-//         {
-//           functionType: 'SayHelloFunction',
-//           hasDefaultResponseStatus: true,
-//           operationId: 'SayHello',
-//           responseSuccessStatus: 200,
-//           errorType: 'SayHelloErrors',
-//           parametersName: 'SayHelloParameters',
-//           response: 'Message',
-//           responseHeaders: {
-//             'x-rate-limit': 'string'
-//           }
-//         }
-//       ]
-//     })
-//   ).toEqual(
-//     `
-// import {
-//   SayHelloParameters,
-//   Message
-// } from '../client.js'
-// import { ParsedRequestInfo } from '../utils.js'
-// import { ControllerReturnTypeParser, ErrorStatuses } from '../types.js'
+test('generateTemplateControllerTypes, with headers', () => {
+  expect(
+    generateTemplateControllerTypes({
+      imports: ['SayHelloParameters', 'Message'],
+      operations: [
+        {
+          functionType: 'SayHelloFunction',
+          // hasDefaultResponseStatus: true,
+          operationId: 'SayHello',
+          // responseSuccessStatus: 200,
+          // errorType: 'SayHelloErrors',
+          parametersName: 'SayHelloParameters',
+          response: {
+            success: {
+              status: 200,
+              schema: 'Message',
+              headers: {
+                'x-rate-limit': {
+                  schema: 'string'
+                }
+              }
+            },
+            error: {
+              default: {
+                schema: 'SayHelloErrors',
+                status: 'default'
+              }
+            }
+          }
+        }
+      ]
+    })
+  ).toEqual(
+    `
+import {
+  SayHelloParameters,
+  Message
+} from '../client.js'
+import { ParsedRequestInfo } from '../utils.js'
+import { ControllerReturnTypeParser, ErrorStatuses } from '../types.js'
 
-// export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnTypeParser<
-//   typeof Message,
-//   ErrorStatuses<typeof SayHelloErrors> | number,
-//   200,
-//   { "x-rate-limit": string }
-// >
-//   `.trim()
-//   );
-// });
+export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnTypeParser<{
+  "success": {
+    "status": 200,
+    "schema": "Message",
+    "headers": {
+      "x-rate-limit": {
+        "schema": "string"
+      }
+    }
+  },
+  "error": {
+    "default": {
+      "schema": "SayHelloErrors",
+      "status": number
+    }
+  }
+}>
+  `.trim()
+  );
+});

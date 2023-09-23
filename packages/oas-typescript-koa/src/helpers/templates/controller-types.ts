@@ -1,4 +1,4 @@
-import { OperationInfo } from './types';
+import { OperationInfo, ResponseSchema } from './types';
 
 export function generateTemplateControllerTypes({
   imports,
@@ -17,6 +17,10 @@ export function generateTemplateControllerTypes({
       );
     }
 
+    if (operation.response.error?.default) {
+      operation.response.error.default.status = 'number';
+    }
+
     renderedOperations.push(
       `
 export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
@@ -25,7 +29,7 @@ export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
         operation.response,
         null,
         2
-      )}> 
+      ).replace('"status": "number"', '"status": number')}> 
       `.trim()
     );
 
