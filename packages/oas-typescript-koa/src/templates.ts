@@ -44,15 +44,11 @@ export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}
 export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response = {{{response}}}
 export interface {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response extends z.infer<typeof {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response> {}
 {{/if}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Errors = [
+export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Errors = {
 {{#if errors}}  
   {{#each errors}}
-  {
-    {{#ifeq status "default" }}
-    status: "default",
-    {{else}}
+  {{status}}: {
     status: {{status}},
-    {{/ifeq}}
     {{#if description}}
     description: \`{{description}}\`,
     {{/if}}
@@ -60,7 +56,7 @@ export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}
   },
   {{/each}}
 {{/if}}
-] as const
+} as const
 
 {{/each}}
 `

@@ -37,23 +37,23 @@ export const UpdatePetSecurity = [
 ];
 export const UpdatePetResponse = Pet;
 export interface UpdatePetResponse extends z.infer<typeof UpdatePetResponse> {}
-export const UpdatePetErrors = [
-  {
+export const UpdatePetErrors = {
+  400: {
     status: 400,
     description: `Invalid ID supplied`,
     schema: z.void()
   },
-  {
+  404: {
     status: 404,
     description: `Pet not found`,
     schema: z.void()
   },
-  {
+  405: {
     status: 405,
     description: `Validation exception`,
     schema: z.void()
   }
-] as const;
+} as const;
 
 export const AddPetParameters = [
   {
@@ -66,10 +66,10 @@ export const AddPetParameters = [
 export const AddPetSecurity = [{ petstore_auth: ['write:pets', 'read:pets'] }];
 export const AddPetResponse = Pet;
 export interface AddPetResponse extends z.infer<typeof AddPetResponse> {}
-export const AddPetErrors = [
-  {
+export const AddPetErrors = {
+  405: {
     status: 405,
     description: `Invalid input`,
     schema: z.void()
   }
-] as const;
+} as const;
