@@ -42,7 +42,7 @@ export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}
 {{/if}}
 {{#if response}}
 export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response = {{{response}}}
-export interface {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response extends z.infer<typeof {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}> {}
+export interface {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response extends z.infer<typeof {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response> {}
 {{/if}}
 export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Errors = [
 {{#if errors}}  

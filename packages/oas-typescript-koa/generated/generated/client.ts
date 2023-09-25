@@ -36,7 +36,7 @@ export const UpdatePetSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
 export const UpdatePetResponse = Pet;
-export interface UpdatePetResponse extends z.infer<typeof UpdatePet> {}
+export interface UpdatePetResponse extends z.infer<typeof UpdatePetResponse> {}
 export const UpdatePetErrors = [
   {
     status: 400,
@@ -65,7 +65,7 @@ export const AddPetParameters = [
 ] as const;
 export const AddPetSecurity = [{ petstore_auth: ['write:pets', 'read:pets'] }];
 export const AddPetResponse = Pet;
-export interface AddPetResponse extends z.infer<typeof AddPet> {}
+export interface AddPetResponse extends z.infer<typeof AddPetResponse> {}
 export const AddPetErrors = [
   {
     status: 405,
