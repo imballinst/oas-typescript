@@ -21,7 +21,7 @@ export interface {{@key}} extends z.infer<typeof {{@key}}> {}
 
 // Endpoints.
 {{#each endpoints}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Parameters = [
+export const {{capitalizeFirstLetter operationId "Parameters"}} = [
   {{#if parameters}}
   {{#each parameters}}
   { 
@@ -38,27 +38,13 @@ export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}
   {{/if}}
 ] as const
 {{#if security}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Security = {{{security}}}
+export const {{capitalizeFirstLetter operationId "Security"}} = {{{security}}}
 {{/if}}
-{{#if response}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response = {{{response}}}
-{{/if}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Errors = [
-{{#if errors}}  
-  {{#each errors}}
-  {
-    {{#ifeq status "default" }}
-    status: "default",
-    {{else}}
-    status: {{status}},
-    {{/ifeq}}
-    {{#if description}}
-    description: `{{description}}`,
-    {{/if}}
-    schema: {{{schema}}}
-  },
-  {{/each}}
-{{/if}}
-] as const
+
+export const {{capitalizeFirstLetter operationId "Response"}} = {{{responseSchema.success}}} as const
+{{{interfaceFromZod operationId "Response"}}}
+
+export const {{capitalizeFirstLetter operationId "Errors"}} = {{{responseSchema.error}}} as const
+{{{interfaceFromObject operationId "Errors"}}}
 
 {{/each}}

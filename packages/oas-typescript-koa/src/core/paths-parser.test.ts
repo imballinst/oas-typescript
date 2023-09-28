@@ -13,6 +13,18 @@ test('parsePaths with all requirements fulfilled', () => {
             responses: {
               '200': {
                 description: 'Successful operation returns user response',
+                $ref: '#/components/schema/User',
+                headers: {
+                  'x-ratelimit': {
+                    schema: { type: 'string' }
+                  },
+                  'x-ratelimit-expires-in': {
+                    schema: { type: 'number', nullable: true }
+                  }
+                }
+              },
+              '400': {
+                description: 'invalid request',
                 $ref: '#/components/schema/User'
               }
             }
@@ -30,13 +42,53 @@ test('parsePaths with all requirements fulfilled', () => {
         {
           operationId: 'getUser',
           functionType: 'GetUserControllerFunction',
-          errorType: 'GetUserErrors',
-          responseSuccessStatus: 200,
           parametersName: 'GetUserParameters',
-          response: 'GetUserResponse',
-          hasDefaultResponseStatus: false
+          responseType: {
+            success: 'GetUserResponse',
+            error: 'GetUserErrors'
+          },
+          response: {
+            success: {
+              schema: 'z.void()',
+              status: 200,
+              headers: {
+                'x-ratelimit': { schema: 'z.string()' },
+                'x-ratelimit-expires-in': {
+                  schema: 'z.number()',
+                  nullable: true
+                }
+              }
+            },
+            error: {
+              '400': {
+                schema: 'z.void()',
+                status: '400'
+              }
+            }
+          }
         }
       ]
+    },
+    operationIdToResponseSchemaRecord: {
+      getUser: {
+        success: {
+          schema: 'z.void()',
+          status: 200,
+          headers: {
+            'x-ratelimit': { schema: 'z.string()' },
+            'x-ratelimit-expires-in': {
+              schema: 'z.number()',
+              nullable: true
+            }
+          }
+        },
+        error: {
+          '400': {
+            schema: 'z.void()',
+            status: '400'
+          }
+        }
+      }
     },
     parametersImportsPerController: {
       UsersController: ['GetUserParameters']
@@ -98,13 +150,39 @@ test('parsePaths with 2xx and default should result in 2xx and all errors', () =
         {
           operationId: 'getUser',
           functionType: 'GetUserControllerFunction',
-          errorType: 'GetUserErrors',
-          responseSuccessStatus: 200,
-          hasDefaultResponseStatus: true,
           parametersName: 'GetUserParameters',
-          response: 'GetUserResponse'
+          response: {
+            success: {
+              schema: 'z.void()',
+              status: 200
+            },
+            error: {
+              default: {
+                schema: 'z.void()',
+                status: 'default'
+              }
+            }
+          },
+          responseType: {
+            success: 'GetUserResponse',
+            error: 'GetUserErrors'
+          }
         }
       ]
+    },
+    operationIdToResponseSchemaRecord: {
+      getUser: {
+        success: {
+          schema: 'z.void()',
+          status: 200
+        },
+        error: {
+          default: {
+            schema: 'z.void()',
+            status: 'default'
+          }
+        }
+      }
     },
     parametersImportsPerController: {
       UsersController: ['GetUserParameters']

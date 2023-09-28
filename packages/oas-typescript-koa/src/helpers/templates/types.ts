@@ -1,3 +1,6 @@
+import { z } from 'zod';
+import { DefaultHttpErrors } from '../../../templates/typescript/types';
+
 export interface OperationInfo {
   /**
    * Contains the operation ID, which is required.
@@ -15,27 +18,41 @@ export interface OperationInfo {
   /**
    * Contains the response object schema.
    */
-  response?: string;
+  response: PrebuildResponseSchema;
   /**
-   * Contains the response success status, which is required.
+   * Contains the variable names of the response object schema.
    */
-  responseSuccessStatus: number;
-  /**
-   * Contains the error type, which is derived from `client.ts`.
-   */
-  errorType?: string;
-  /**
-   * Mostly used for default responses. So, for errors, if defined explicitly, it'll be this:
-   *
-   * ```
-   * { status: 400, error: { ... }}
-   * ```
-   *
-   * However, if we use `default`, then it'll be this:
-   *
-   * ```
-   * { status: number, error: { ... }}
-   * ```
-   */
-  hasDefaultResponseStatus: boolean;
+  responseType: {
+    success: string;
+    error?: string;
+  };
+}
+
+export type PrebuildResponseHeaders<THeadersSchemaType = string | number> =
+  Record<string, { schema: THeadersSchemaType; nullable?: boolean }>;
+
+export interface PrebuildErrorResponse<
+  TSchemaType = string,
+  TStatus = number | string,
+  THeadersSchemaType = string | number
+> {
+  status: TStatus extends z.ZodNumber ? DefaultHttpErrors : TStatus;
+  schema: TSchemaType;
+  headers?: PrebuildResponseHeaders<THeadersSchemaType>;
+}
+
+export interface PrebuildResponseSchema<
+  TSuccessSchemaType = string,
+  TErrorSchemaType = string,
+  THeadersSchemaType = string | number
+> {
+  success: {
+    schema?: TSuccessSchemaType;
+    status: number;
+    headers?: PrebuildResponseHeaders;
+  };
+  error?: Record<
+    string | number,
+    PrebuildErrorResponse<TErrorSchemaType, string | number, THeadersSchemaType>
+  >;
 }

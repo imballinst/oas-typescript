@@ -20,9 +20,13 @@ import {
 } from './templates.js';
 import { generateTemplateController } from './helpers/templates/controller.js';
 import { generateTemplateRouter } from './helpers/templates/router.js';
-import { generateTemplateControllerTypes } from './helpers/templates/controller-types.js';
+import {
+  generateTemplateControllerTypes,
+  stringifyControllerReturnTypeGenericType
+} from './helpers/templates/controller-types.js';
 import { capitalizeFirstCharacter } from './helpers/change-case.js';
 import { parsePaths } from './core/paths-parser.js';
+import { OasError } from '../templates/typescript/types.js';
 
 const cli = meow(
   `
@@ -134,9 +138,33 @@ async function main() {
   );
 
   const handlebars = getHandlebars();
-  handlebars.registerHelper('capitalizeFirstLetter', function (options: any) {
-    return capitalizeFirstCharacter(options.fn(this));
+  handlebars.registerHelper('capitalizeFirstLetter', function (...args: any[]) {
+    // Last argument is an object.
+    const [firstWord, ...rest] = args.slice(0, -1);
+    return capitalizeFirstCharacter(firstWord) + rest.join('');
   });
+  handlebars.registerHelper('interfaceFromZod', function (...args: any[]) {
+    // Last argument is an object.
+    const [firstWord, ...rest] = args.slice(0, -1);
+    const interfaceName = capitalizeFirstCharacter(firstWord) + rest.join('');
+    return `export type ${interfaceName} = typeof ${interfaceName}`;
+  });
+  handlebars.registerHelper('interfaceFromObject', function (...args: any[]) {
+    // Last argument is an object.
+    const [firstWord, ...rest] = args.slice(0, -1);
+    const interfaceName = capitalizeFirstCharacter(firstWord) + rest.join('');
+    return `export type ${interfaceName} = typeof ${interfaceName}`;
+  });
+
+  // Generate the definitions only.
+  const {
+    routers,
+    operationIdToResponseSchemaRecord,
+    controllerToOperationsRecord,
+    parametersImportsPerController,
+    controllerImportsPerController,
+    allServerSecurityImports
+  } = parsePaths({ paths: document.paths });
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
@@ -151,22 +179,25 @@ async function main() {
           operation.security = operation[cliAppSecurityField as any];
         }
 
+        if (!operation.operationId) {
+          throw new Error('all operations need to have `operationId`');
+        }
+
+        const { success, error } =
+          operationIdToResponseSchemaRecord[operation.operationId];
+
+        newDefinition.responseSchema = {
+          success: stringifyControllerReturnTypeGenericType(success),
+          error: stringifyControllerReturnTypeGenericType(error || {})
+        };
         newDefinition.operationId = operation.operationId;
         newDefinition.security = JSON.stringify(operation.security);
+
         return newDefinition;
       }
     },
     handlebars
   });
-
-  // Generate the definitions only.
-  const {
-    routers,
-    controllerToOperationsRecord,
-    parametersImportsPerController,
-    controllerImportsPerController,
-    allServerSecurityImports
-  } = parsePaths({ paths: document.paths });
 
   // Create controllers.
   for (const controllerKey in controllerToOperationsRecord) {

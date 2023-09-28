@@ -11,20 +11,22 @@ export function generateTemplateControllerTypes({
   let isRequireZodImport = false;
 
   for (const operation of operations) {
-    let errorStatuses = `ErrorStatuses<typeof ${operation.errorType}>`;
-    if (operation.hasDefaultResponseStatus) {
-      errorStatuses += ` | number`;
+    if (!operation.response) {
+      throw new Error(
+        `Operation ${operation.operationId} does not contain responses`
+      );
+    }
+
+    if (operation.response.error?.default) {
+      operation.response.error.default.status = 'number';
     }
 
     renderedOperations.push(
       `
-export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
-        operation.parametersName
-      }>) => ControllerReturnType<
-  typeof ${operation.response || 'z.void()'},
-  ${errorStatuses},
-  ${operation.responseSuccessStatus}
-> 
+export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${operation.parametersName}>) => ControllerReturnType<{
+  success: ${operation.responseType.success};
+  error: ${operation.responseType.error}
+}> 
       `.trim()
     );
 
@@ -43,4 +45,10 @@ import { ParsedRequestInfo } from '../utils.js'
 import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
 ${renderedOperations.join('\n\n')}`.trim();
+}
+
+export function stringifyControllerReturnTypeGenericType(obj: object) {
+  return JSON.stringify(obj, null, 2)
+    .replace(/"status": "([\w\d]+)"/g, '"status": $1')
+    .replace(/"schema": "([\w\d\[\]\(\).']+)"/g, '"schema": $1');
 }
