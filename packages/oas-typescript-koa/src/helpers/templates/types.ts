@@ -28,14 +28,13 @@ export interface OperationInfo {
   };
 }
 
-export type PrebuildResponseHeaders<
-  THeadersSchemaType = string | number | z.ZodSchema
-> = Record<string, { schema: THeadersSchemaType; nullable?: boolean }>;
+export type PrebuildResponseHeaders<THeadersSchemaType = string | number> =
+  Record<string, { schema: THeadersSchemaType; nullable?: boolean }>;
 
 export interface PrebuildErrorResponse<
   TSchemaType = string,
   TStatus = number | string,
-  THeadersSchemaType = string | number | z.ZodSchema
+  THeadersSchemaType = string | number
 > {
   status: TStatus extends z.ZodNumber ? DefaultHttpErrors : TStatus;
   schema: TSchemaType;
@@ -43,9 +42,9 @@ export interface PrebuildErrorResponse<
 }
 
 export interface PrebuildResponseSchema<
-  TSuccessSchemaType = z.ZodSchema,
+  TSuccessSchemaType = string,
   TErrorSchemaType = string,
-  THeadersSchemaType = string | number | z.ZodSchema
+  THeadersSchemaType = string | number
 > {
   success: {
     schema?: TSuccessSchemaType;

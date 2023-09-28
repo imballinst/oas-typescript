@@ -43,23 +43,52 @@ test('parsePaths with all requirements fulfilled', () => {
           operationId: 'getUser',
           functionType: 'GetUserControllerFunction',
           parametersName: 'GetUserParameters',
+          responseType: {
+            success: 'GetUserResponse',
+            error: 'GetUserErrors'
+          },
           response: {
             success: {
-              schema: 'GetUserResponse',
+              schema: 'z.void()',
               status: 200,
               headers: {
-                'x-ratelimit': { schema: 'string' },
-                'x-ratelimit-expires-in': { schema: 'number', nullable: true }
+                'x-ratelimit': { schema: 'z.string()' },
+                'x-ratelimit-expires-in': {
+                  schema: 'z.number()',
+                  nullable: true
+                }
               }
             },
             error: {
               '400': {
-                schema: 'GetUserErrors'
+                schema: 'z.void()',
+                status: '400'
               }
             }
           }
         }
       ]
+    },
+    operationIdToResponseSchemaRecord: {
+      getUser: {
+        success: {
+          schema: 'z.void()',
+          status: 200,
+          headers: {
+            'x-ratelimit': { schema: 'z.string()' },
+            'x-ratelimit-expires-in': {
+              schema: 'z.number()',
+              nullable: true
+            }
+          }
+        },
+        error: {
+          '400': {
+            schema: 'z.void()',
+            status: '400'
+          }
+        }
+      }
     },
     parametersImportsPerController: {
       UsersController: ['GetUserParameters']
@@ -124,17 +153,36 @@ test('parsePaths with 2xx and default should result in 2xx and all errors', () =
           parametersName: 'GetUserParameters',
           response: {
             success: {
-              schema: 'GetUserResponse',
+              schema: 'z.void()',
               status: 200
             },
             error: {
               default: {
-                schema: 'GetUserErrors'
+                schema: 'z.void()',
+                status: 'default'
               }
             }
+          },
+          responseType: {
+            success: 'GetUserResponse',
+            error: 'GetUserErrors'
           }
         }
       ]
+    },
+    operationIdToResponseSchemaRecord: {
+      getUser: {
+        success: {
+          schema: 'z.void()',
+          status: 200
+        },
+        error: {
+          default: {
+            schema: 'z.void()',
+            status: 'default'
+          }
+        }
+      }
     },
     parametersImportsPerController: {
       UsersController: ['GetUserParameters']
