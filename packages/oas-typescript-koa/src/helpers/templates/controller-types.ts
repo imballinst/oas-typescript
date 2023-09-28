@@ -1,4 +1,4 @@
-import { OperationInfo, ResponseSchema } from './types';
+import { OperationInfo } from './types';
 
 export function generateTemplateControllerTypes({
   imports,
@@ -23,7 +23,10 @@ export function generateTemplateControllerTypes({
 
     renderedOperations.push(
       `
-export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${operation.parametersName}>) => ControllerReturnType<{success:${operation.responseType.success}, error: ${operation.responseType.error}}> 
+export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${operation.parametersName}>) => ControllerReturnType<{
+  success: ${operation.responseType.success};
+  error: ${operation.responseType.error}
+}> 
       `.trim()
     );
 

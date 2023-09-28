@@ -1,8 +1,12 @@
 import { expect, test } from 'vitest';
-import {
-  generateTemplateControllerTypes,
-  stringifyControllerReturnTypeGenericType
-} from './controller-types';
+import { generateTemplateControllerTypes } from './controller-types';
+
+const IMPORTS = [
+  'SayHelloParameters',
+  'SayHelloResponse',
+  'SayHelloErrors',
+  'Message'
+];
 
 // Valid cases.
 test('generateTemplateControllerTypes, without default response', () => {
@@ -21,13 +25,17 @@ test('generateTemplateControllerTypes, without default response', () => {
 
   expect(
     generateTemplateControllerTypes({
-      imports: ['SayHelloParameters', 'Message'],
+      imports: IMPORTS,
       operations: [
         {
           functionType: 'SayHelloFunction',
           operationId: 'SayHello',
           parametersName: 'SayHelloParameters',
-          response
+          response,
+          responseType: {
+            success: 'SayHelloResponse',
+            error: 'SayHelloErrors'
+          }
         }
       ]
     })
@@ -35,14 +43,17 @@ test('generateTemplateControllerTypes, without default response', () => {
     `
 import {
   SayHelloParameters,
+  SayHelloResponse,
+  SayHelloErrors,
   Message
 } from '../client.js'
 import { ParsedRequestInfo } from '../utils.js'
 import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
-export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<${stringifyControllerReturnTypeGenericType(
-      response
-    )}>
+export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<{
+  success: SayHelloResponse;
+  error: SayHelloErrors
+}>
   `.trim()
   );
 });
@@ -56,13 +67,17 @@ test('generateTemplateControllerTypes, with undefined response', () => {
 
   expect(
     generateTemplateControllerTypes({
-      imports: ['SayHelloParameters', 'Message'],
+      imports: IMPORTS,
       operations: [
         {
           functionType: 'SayHelloFunction',
           operationId: 'SayHello',
           parametersName: 'SayHelloParameters',
-          response
+          response,
+          responseType: {
+            success: 'SayHelloResponse',
+            error: 'SayHelloErrors'
+          }
         }
       ]
     })
@@ -70,16 +85,17 @@ test('generateTemplateControllerTypes, with undefined response', () => {
     `
 import {
   SayHelloParameters,
+  SayHelloResponse,
+  SayHelloErrors,
   Message
 } from '../client.js'
 import { ParsedRequestInfo } from '../utils.js'
 import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
-export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<${JSON.stringify(
-      response,
-      null,
-      2
-    )}>
+export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<{
+  success: SayHelloResponse;
+  error: SayHelloErrors
+}>
   `.trim()
   );
 });
@@ -87,7 +103,7 @@ export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParamet
 test('generateTemplateControllerTypes, with default response', () => {
   expect(
     generateTemplateControllerTypes({
-      imports: ['SayHelloParameters', 'Message'],
+      imports: IMPORTS,
       operations: [
         {
           functionType: 'SayHelloFunction',
@@ -104,6 +120,10 @@ test('generateTemplateControllerTypes, with default response', () => {
                 status: 'number'
               }
             }
+          },
+          responseType: {
+            success: 'SayHelloResponse',
+            error: 'SayHelloErrors'
           }
         }
       ]
@@ -112,22 +132,16 @@ test('generateTemplateControllerTypes, with default response', () => {
     `
 import {
   SayHelloParameters,
+  SayHelloResponse,
+  SayHelloErrors,
   Message
 } from '../client.js'
 import { ParsedRequestInfo } from '../utils.js'
 import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
 export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<{
-  "success": {
-    "status": 200,
-    "schema": Message
-  },
-  "error": {
-    "default": {
-      "schema": SayHelloErrors,
-      "status": number
-    }
-  }
+  success: SayHelloResponse;
+  error: SayHelloErrors
 }>
   `.trim()
   );
@@ -161,6 +175,10 @@ test('generateTemplateControllerTypes, with headers', () => {
                 status: 'default'
               }
             }
+          },
+          responseType: {
+            success: 'SayHelloResponse',
+            error: 'SayHelloErrors'
           }
         }
       ]
@@ -175,21 +193,8 @@ import { ParsedRequestInfo } from '../utils.js'
 import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
 export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<{
-  "success": {
-    "status": 200,
-    "schema": Message,
-    "headers": {
-      "x-rate-limit": {
-        "schema": string
-      }
-    }
-  },
-  "error": {
-    "default": {
-      "schema": SayHelloErrors,
-      "status": number
-    }
-  }
+  success: SayHelloResponse;
+  error: SayHelloErrors
 }>
   `.trim()
   );
