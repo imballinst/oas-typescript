@@ -6,8 +6,11 @@ import {
 export class PetController {
   static addPet: AddPetControllerFunction = (params) => {
     return {
-      data: undefined,
-      status: undefined
+      status: 200,
+      data: {
+        name: '',
+        photoUrls: []
+      }
     };
   };
   static updatePet: UpdatePetControllerFunction = (params) => {

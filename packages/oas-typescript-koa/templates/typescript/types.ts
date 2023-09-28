@@ -15,15 +15,16 @@ export type ResponseHeaders<
   THeadersSchemaType = string | number | z.ZodSchema
 > = Record<string, { schema: THeadersSchemaType; nullable?: boolean }>;
 
-type ExtractResponseHeaders<
-  TResponseHeadersType extends ResponseHeaders | undefined
-> = TResponseHeadersType extends object
-  ? {
-      [K in keyof TResponseHeadersType]: TResponseHeadersType[K]['schema'] extends z.ZodSchema
-        ? z.infer<TResponseHeadersType[K]['schema']>
-        : TResponseHeadersType[K]['schema'];
-    }
-  : never;
+type BuildResponseObject<TObject extends { headers?: ResponseHeaders }> =
+  TObject['headers'] extends object
+    ? Omit<TObject, 'headers'> & {
+        headers: {
+          [K in keyof TObject['headers']]: TObject['headers'][K]['schema'] extends z.ZodSchema
+            ? z.infer<TObject['headers'][K]['schema']>
+            : TObject['headers'][K]['schema'];
+        };
+      }
+    : Omit<TObject, 'headers'>;
 
 export interface ErrorResponse<
   TSchemaType = string,
@@ -70,18 +71,17 @@ export interface OperationInfo {
    */
   response?: ResponseSchema;
 }
-
 export type ControllerReturnType<
   X extends ResponseSchema<z.ZodSchema, unknown, z.ZodSchema>
 > = X['success']['schema'] extends object
   ?
-      | {
+      | BuildResponseObject<{
           // TOOD: might need some tweaking in case it's undefined, maybe
           // it's better to be `data?: never`.
           data: z.infer<X['success']['schema']>;
           status: X['success']['status'];
-          headers: ExtractResponseHeaders<X['success']['headers']>;
-        }
+          headers: X['success']['headers'];
+        }>
       | ExtractErrorRecord<X['error']>
   : never;
 
@@ -92,17 +92,17 @@ export type ExtractErrorRecord<
 > = TErrorRecord extends object
   ? {
       [Key in keyof TErrorRecord]: TErrorRecord[Key]['schema'] extends z.ZodVoid
-        ? {
+        ? BuildResponseObject<{
             error?: never;
             status: TErrorRecord[Key]['status'];
-            headers?: ExtractResponseHeaders<TErrorRecord[Key]['headers']>;
-          }
+            headers: TErrorRecord[Key]['headers'];
+          }>
         : TErrorRecord[Key]['schema'] extends z.ZodSchema
-        ? {
+        ? BuildResponseObject<{
             error: z.infer<TErrorRecord[Key]['schema']>;
             status: TErrorRecord[Key]['status'];
-            headers?: ExtractResponseHeaders<TErrorRecord[Key]['headers']>;
-          }
+            headers: TErrorRecord[Key]['headers'];
+          }>
         : never;
     }[keyof TErrorRecord]
   : never;
