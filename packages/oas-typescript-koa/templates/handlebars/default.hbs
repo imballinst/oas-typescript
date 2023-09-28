@@ -40,23 +40,11 @@ export const {{capitalizeFirstLetter operationId "Parameters"}} = [
 {{#if security}}
 export const {{capitalizeFirstLetter operationId "Security"}} = {{{security}}}
 {{/if}}
-{{#if response}}
-export const {{capitalizeFirstLetter operationId "Response"}} = {{{response}}}
+
+export const {{capitalizeFirstLetter operationId "Response"}} = {{{responseSchema.success}}} as const
 {{{interfaceFromZod operationId "Response"}}}
-{{/if}}
-export const {{capitalizeFirstLetter operationId "Errors"}} = {
-{{#if errors}}  
-  {{#each errors}}
-  {{status}}: {
-    status: {{status}},
-    {{#if description}}
-    description: `{{description}}`,
-    {{/if}}
-    schema: {{{schema}}}
-  },
-  {{/each}}
-{{/if}}
-} as const
+
+export const {{capitalizeFirstLetter operationId "Errors"}} = {{{responseSchema.error}}} as const
 {{{interfaceFromObject operationId "Errors"}}}
 
 {{/each}}

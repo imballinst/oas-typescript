@@ -1,6 +1,5 @@
-import { ResponseSchema } from '../../../templates/typescript/types';
-
-export type { ResponseSchema };
+import { z } from 'zod';
+import { DefaultHttpErrors } from '../../../templates/typescript/types';
 
 export interface OperationInfo {
   /**
@@ -19,5 +18,42 @@ export interface OperationInfo {
   /**
    * Contains the response object schema.
    */
-  response?: ResponseSchema;
+  response: PrebuildResponseSchema;
+  /**
+   * Contains the variable names of the response object schema.
+   */
+  responseType: {
+    success: string;
+    error?: string;
+  };
+}
+
+export type PrebuildResponseHeaders<
+  THeadersSchemaType = string | number | z.ZodSchema
+> = Record<string, { schema: THeadersSchemaType; nullable?: boolean }>;
+
+export interface PrebuildErrorResponse<
+  TSchemaType = string,
+  TStatus = number | string,
+  THeadersSchemaType = string | number | z.ZodSchema
+> {
+  status: TStatus extends z.ZodNumber ? DefaultHttpErrors : TStatus;
+  schema: TSchemaType;
+  headers?: PrebuildResponseHeaders<THeadersSchemaType>;
+}
+
+export interface PrebuildResponseSchema<
+  TSuccessSchemaType = z.ZodSchema,
+  TErrorSchemaType = string,
+  THeadersSchemaType = string | number | z.ZodSchema
+> {
+  success: {
+    schema?: TSuccessSchemaType;
+    status: number;
+    headers?: PrebuildResponseHeaders;
+  };
+  error?: Record<
+    string | number,
+    PrebuildErrorResponse<TErrorSchemaType, string | number, THeadersSchemaType>
+  >;
 }

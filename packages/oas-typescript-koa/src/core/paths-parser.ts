@@ -3,16 +3,22 @@ import { OpenAPIV3 } from 'openapi-types';
 
 import { capitalizeFirstCharacter } from '../helpers/change-case.js';
 import { generateRouteMiddleware } from '../helpers/templates/middleware.js';
-import { OperationInfo, ResponseSchema } from '../helpers/templates/types.js';
 import {
-  ErrorResponse,
-  ResponseHeaders
-} from '../../templates/typescript/types.js';
+  OperationInfo,
+  PrebuildResponseSchema,
+  PrebuildErrorResponse,
+  PrebuildResponseHeaders
+} from '../helpers/templates/types.js';
 
 const PARSED_METHODS = ['get', 'post', 'put', 'delete', 'patch'] as const;
 
 export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
   const routers: string[] = [];
+
+  const operationIdToResponseSchemaRecord: Record<
+    string,
+    PrebuildResponseSchema
+  > = {};
 
   const controllerToOperationsRecord: Record<string, OperationInfo[]> = {};
   const parametersImportsPerController: Record<string, string[]> = {};
@@ -57,7 +63,7 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
 
       const capitalizedOperationId = capitalizeFirstCharacter(operationId);
       let parametersName = `${capitalizedOperationId}Parameters`;
-      let errorType = `${capitalizedOperationId}Errors`;
+      const errorType = `${capitalizedOperationId}Errors`;
       let responseName = `${capitalizedOperationId}Response`;
 
       let responseSuccessStatus = Number(
@@ -80,11 +86,11 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
         convertOpenAPIHeadersToResponseSchemaHeaders(
           openAPISuccessResponseHeaders
         );
-      const responseSchema: ResponseSchema = {
-        success: {
-          schema: responseName,
-          status: responseSuccessStatus
-        },
+      const responseSchema: PrebuildResponseSchema = {
+        success: getSuccessResponseSchema(
+          responseSuccessStatus,
+          responses[responseSuccessStatus]
+        ),
         error: {}
       };
 
@@ -102,14 +108,12 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
 
         if (hasDefaultResponseStatus) {
           responseSchema.error.default = getErrorResponseSchema(
-            errorType,
             'default',
             responses.default
           );
         } else {
           for (const responseStatus of responseErrorStatuses) {
             responseSchema.error[responseStatus] = getErrorResponseSchema(
-              errorType,
               responseStatus,
               responses[responseStatus]
             );
@@ -121,8 +125,13 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
         operationId,
         functionType: `${capitalizedOperationId}ControllerFunction`,
         parametersName,
-        response: responseSchema
+        response: responseSchema,
+        responseType: {
+          success: responseName,
+          error: errorType
+        }
       });
+      operationIdToResponseSchemaRecord[operationId] = responseSchema;
 
       if (parametersName) {
         parametersImportsPerController[controllerName].push(parametersName);
@@ -164,6 +173,7 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
 
   return {
     routers,
+    operationIdToResponseSchemaRecord,
     controllerToOperationsRecord,
     parametersImportsPerController,
     controllerImportsPerController,
@@ -177,23 +187,51 @@ function convertOpenApiPathToKoaPath(s: string) {
   return `:${s.slice(1, -1)}`;
 }
 
-function getErrorResponseSchema(schema: string, status: string, content: any) {
-  const errorCodeContent: ErrorResponse = {
-    schema: `${schema}['${status}']['schema']`,
+function getSuccessResponseSchema(status: number, object: any) {
+  const content = object.content;
+  const contentSchema = content?.['application/json']['schema']['$ref'].replace(
+    '#/components/schemas/',
+    ''
+  );
+  const successContent: PrebuildResponseSchema['success'] = {
+    schema: contentSchema || 'z.void()',
     status
   };
-  const headers = convertOpenAPIHeadersToResponseSchemaHeaders(content);
+  const headers = convertOpenAPIHeadersToResponseSchemaHeaders(
+    content?.['headers']
+  );
+  if (headers) successContent.headers = headers;
+
+  return successContent;
+}
+
+function getErrorResponseSchema(status: string, errorObject: any) {
+  const content = errorObject.content?.['application/json'];
+  const contentSchema = content?.['schema']['$ref'].replace(
+    '#/components/schemas/',
+    ''
+  );
+  const errorCodeContent: PrebuildErrorResponse = {
+    schema: contentSchema || 'z.void()',
+    status
+  };
+  const headers = convertOpenAPIHeadersToResponseSchemaHeaders(
+    content?.['headers']
+  );
   if (headers) errorCodeContent.headers = headers;
 
   return errorCodeContent;
 }
 
 function convertOpenAPIHeadersToResponseSchemaHeaders(responseHeaders: any) {
+  if (!responseHeaders) return undefined;
+
   const openAPIHeaders = responseHeaders as Record<
     string,
     OpenAPIV3.HeaderObject
   >;
-  let responseSchemaHeaders: ResponseHeaders | undefined = undefined;
+  let responseSchemaHeaders: PrebuildResponseHeaders<string> | undefined =
+    undefined;
 
   for (const headerKey in openAPIHeaders) {
     const schema = openAPIHeaders[headerKey].schema as OpenAPIV3.SchemaObject;
@@ -203,7 +241,7 @@ function convertOpenAPIHeadersToResponseSchemaHeaders(responseHeaders: any) {
 
     const { type, nullable } = schema;
     responseSchemaHeaders[headerKey] = {
-      schema: type as string | number
+      schema: `z.${type || 'void'}()`
     };
 
     if (nullable) responseSchemaHeaders[headerKey].nullable = nullable;

@@ -40,23 +40,11 @@ export const {{capitalizeFirstLetter operationId "Parameters"}} = [
 {{#if security}}
 export const {{capitalizeFirstLetter operationId "Security"}} = {{{security}}}
 {{/if}}
-{{#if response}}
-export const {{capitalizeFirstLetter operationId "Response"}} = {{{response}}}
+
+export const {{capitalizeFirstLetter operationId "Response"}} = {{{responseSchema.success}}} as const
 {{{interfaceFromZod operationId "Response"}}}
-{{/if}}
-export const {{capitalizeFirstLetter operationId "Errors"}} = {
-{{#if errors}}  
-  {{#each errors}}
-  {{status}}: {
-    status: {{status}},
-    {{#if description}}
-    description: \`{{description}}\`,
-    {{/if}}
-    schema: {{{schema}}}
-  },
-  {{/each}}
-{{/if}}
-} as const
+
+export const {{capitalizeFirstLetter operationId "Errors"}} = {{{responseSchema.error}}} as const
 {{{interfaceFromObject operationId "Errors"}}}
 
 {{/each}}
@@ -337,30 +325,44 @@ export type ErrorStatuses<TOasError extends readonly OasError[]> = Exclude<
   401 | 403
 >;
 
-export type ResponseHeaders = Record<
-  string,
-  { schema: number | string; nullable?: boolean }
->;
+export type ResponseHeaders<
+  THeadersSchemaType = string | number | z.ZodSchema
+> = Record<string, { schema: THeadersSchemaType; nullable?: boolean }>;
+
+type ExtractResponseHeaders<
+  TResponseHeadersType extends ResponseHeaders | undefined
+> = TResponseHeadersType extends object
+  ? {
+      [K in keyof TResponseHeadersType]: TResponseHeadersType[K]['schema'] extends z.ZodSchema
+        ? z.infer<TResponseHeadersType[K]['schema']>
+        : TResponseHeadersType[K]['schema'];
+    }
+  : never;
 
 export interface ErrorResponse<
   TSchemaType = string,
-  TStatus = number | string
+  TStatus = number | string,
+  THeadersSchemaType = string | number | z.ZodSchema
 > {
-  status: TStatus extends 'number' ? DefaultHttpErrors : TStatus;
+  status: TStatus extends z.ZodNumber ? DefaultHttpErrors : TStatus;
   schema: TSchemaType;
-  headers?: ResponseHeaders;
+  headers?: ResponseHeaders<THeadersSchemaType>;
 }
 
 export interface ResponseSchema<
-  TSuccessSchemaType = string,
-  TErrorSchemaType = string
+  TSuccessSchemaType = z.ZodSchema,
+  TErrorSchemaType = string,
+  THeadersSchemaType = string | number | z.ZodSchema
 > {
   success: {
     schema?: TSuccessSchemaType;
     status: number;
     headers?: ResponseHeaders;
   };
-  error?: Record<string | number, ErrorResponse<TErrorSchemaType>>;
+  error?: Record<
+    string | number,
+    ErrorResponse<TErrorSchemaType, string | number, THeadersSchemaType>
+  >;
 }
 
 export interface OperationInfo {
@@ -383,22 +385,23 @@ export interface OperationInfo {
   response?: ResponseSchema;
 }
 
-export type ControllerReturnType<X extends ResponseSchema<unknown, unknown>> =
-  | X['success']['schema'] extends object
+export type ControllerReturnType<
+  X extends ResponseSchema<z.ZodSchema, unknown, z.ZodSchema>
+> = X['success']['schema'] extends object
   ?
       | {
           // TOOD: might need some tweaking in case it's undefined, maybe
           // it's better to be \`data?: never\`.
-          data: X['success']['schema'];
+          data: z.infer<X['success']['schema']>;
           status: X['success']['status'];
-          headers: X['success']['headers'];
+          headers: ExtractResponseHeaders<X['success']['headers']>;
         }
       | ExtractErrorRecord<X['error']>
   : never;
 
 export type ExtractErrorRecord<
   TErrorRecord extends
-    | Record<string | number, ErrorResponse<unknown>>
+    | Record<string | number, ErrorResponse<unknown, unknown, z.ZodSchema>>
     | undefined
 > = TErrorRecord extends object
   ? {
@@ -406,19 +409,19 @@ export type ExtractErrorRecord<
         ? {
             error?: never;
             status: TErrorRecord[Key]['status'];
-            headers: TErrorRecord[Key]['headers'];
+            headers?: ExtractResponseHeaders<TErrorRecord[Key]['headers']>;
           }
         : TErrorRecord[Key]['schema'] extends z.ZodSchema
         ? {
             error: z.infer<TErrorRecord[Key]['schema']>;
             status: TErrorRecord[Key]['status'];
-            headers: TErrorRecord[Key]['headers'];
+            headers?: ExtractResponseHeaders<TErrorRecord[Key]['headers']>;
           }
         : never;
     }[keyof TErrorRecord]
   : never;
 
-type DefaultHttpErrors =
+export type DefaultHttpErrors =
   | 400
   | 401
   | 402

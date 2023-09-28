@@ -116,6 +116,17 @@
               }
             }
           },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/xml": {
+                "schema": { "$ref": "#/components/schemas/ErrorObject" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorObject" }
+              }
+            }
+          },
           "405": { "description": "Invalid input" }
         },
         "security": [{ "petstore_auth": ["write:pets", "read:pets"] }],
@@ -225,7 +236,7 @@
         },
         "xml": { "name": "pet" }
       },
-      "ApiResponse": {
+      "ErrorObject": {
         "type": "object",
         "properties": {
           "code": { "type": "integer", "format": "int32" },

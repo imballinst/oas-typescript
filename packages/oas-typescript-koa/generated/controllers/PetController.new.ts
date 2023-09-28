@@ -12,8 +12,14 @@ export class PetController {
   };
   static updatePet: UpdatePetControllerFunction = (params) => {
     return {
-      data: undefined,
-      status: undefined
+      status: 200,
+      data: {
+        name: '',
+        photoUrls: []
+      },
+      headers: {
+        'x-ratelimit': ''
+      }
     };
   };
 }

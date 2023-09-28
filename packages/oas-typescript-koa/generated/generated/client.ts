@@ -22,6 +22,11 @@ export const Pet = z
   })
   .passthrough();
 export interface Pet extends z.infer<typeof Pet> {}
+export const ErrorObject = z
+  .object({ code: z.number().int(), type: z.string(), message: z.string() })
+  .partial()
+  .passthrough();
+export interface ErrorObject extends z.infer<typeof ErrorObject> {}
 
 // Endpoints.
 export const UpdatePetParameters = [
@@ -35,23 +40,31 @@ export const UpdatePetParameters = [
 export const UpdatePetSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
-export const UpdatePetResponse = Pet;
-export interface UpdatePetResponse extends z.infer<typeof UpdatePetResponse> {}
+
+export const UpdatePetResponse = {
+  schema: Pet,
+  status: 200,
+  headers: {
+    'x-ratelimit': {
+      schema: z.string(),
+      nullable: true
+    }
+  }
+} as const;
+export type UpdatePetResponse = typeof UpdatePetResponse;
+
 export const UpdatePetErrors = {
-  400: {
-    status: 400,
-    description: `Invalid ID supplied`,
-    schema: z.void()
+  '400': {
+    schema: z.void(),
+    status: 400
   },
-  404: {
-    status: 404,
-    description: `Pet not found`,
-    schema: z.void()
+  '404': {
+    schema: z.void(),
+    status: 404
   },
-  405: {
-    status: 405,
-    description: `Validation exception`,
-    schema: z.void()
+  '405': {
+    schema: z.void(),
+    status: 405
   }
 } as const;
 export type UpdatePetErrors = typeof UpdatePetErrors;
@@ -65,13 +78,21 @@ export const AddPetParameters = [
   }
 ] as const;
 export const AddPetSecurity = [{ petstore_auth: ['write:pets', 'read:pets'] }];
-export const AddPetResponse = Pet;
-export interface AddPetResponse extends z.infer<typeof AddPetResponse> {}
+
+export const AddPetResponse = {
+  schema: Pet,
+  status: 200
+} as const;
+export type AddPetResponse = typeof AddPetResponse;
+
 export const AddPetErrors = {
-  405: {
-    status: 405,
-    description: `Invalid input`,
-    schema: z.void()
+  '400': {
+    schema: ErrorObject,
+    status: 400
+  },
+  '405': {
+    schema: z.void(),
+    status: 405
   }
 } as const;
 export type AddPetErrors = typeof AddPetErrors;

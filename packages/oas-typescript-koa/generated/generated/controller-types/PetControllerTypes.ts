@@ -11,44 +11,11 @@ import { ControllerReturnType, ErrorStatuses } from '../types.js';
 
 export type AddPetControllerFunction = (
   params: ParsedRequestInfo<typeof AddPetParameters>
-) => ControllerReturnType<{
-  success: {
-    schema: AddPetResponse;
-    status: 200;
-  };
-  error: {
-    '405': {
-      schema: AddPetErrors['405']['schema'];
-      status: 405;
-    };
-  };
-}>;
+) => ControllerReturnType<{ success: AddPetResponse; error: AddPetErrors }>;
 
 export type UpdatePetControllerFunction = (
   params: ParsedRequestInfo<typeof UpdatePetParameters>
 ) => ControllerReturnType<{
-  success: {
-    schema: UpdatePetResponse;
-    status: 200;
-    headers: {
-      'x-ratelimit': {
-        schema: string;
-        nullable: true;
-      };
-    };
-  };
-  error: {
-    '400': {
-      schema: UpdatePetErrors['400']['schema'];
-      status: 400;
-    };
-    '404': {
-      schema: UpdatePetErrors['404']['schema'];
-      status: 404;
-    };
-    '405': {
-      schema: UpdatePetErrors['405']['schema'];
-      status: 405;
-    };
-  };
+  success: UpdatePetResponse;
+  error: UpdatePetErrors;
 }>;
