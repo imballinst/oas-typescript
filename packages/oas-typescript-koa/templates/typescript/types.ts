@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-interface OasError {
+export interface OasError {
   status: number;
   description: string;
   schema: z.ZodTypeAny;
@@ -58,22 +58,39 @@ export interface OperationInfo {
 }
 
 export type ControllerReturnType<X extends ResponseSchema<unknown, unknown>> =
-  X['success'] extends object
-    ?
-        | {
-            // TOOD: might need some tweaking in case it's undefined, maybe
-            // it's better to be `data?: never`.
-            data: X['success']['schema'];
-            status: X['success']['status'];
-          }
-        | ExtractErrorRecord<X['error']>
-    : never;
+  | X['success']['schema'] extends z.ZodSchema
+  ?
+      | {
+          // TOOD: might need some tweaking in case it's undefined, maybe
+          // it's better to be `data?: never`.
+          data: z.infer<X['success']['schema']>;
+          status: X['success']['status'];
+          headers: X['success']['headers'];
+        }
+      | ExtractErrorRecord<X['error']>
+  : never;
 
-type ExtractErrorRecord<
-  TErrorRecord extends ResponseSchema<unknown, unknown>['error']
-> = {
-  [Key in keyof TErrorRecord]: TErrorRecord[Key];
-}[keyof TErrorRecord];
+export type ExtractErrorRecord<
+  TErrorRecord extends
+    | Record<string | number, ErrorResponse<unknown>>
+    | undefined
+> = TErrorRecord extends object
+  ? {
+      [Key in keyof TErrorRecord]: TErrorRecord[Key]['schema'] extends z.ZodVoid
+        ? {
+            error?: never;
+            status: TErrorRecord[Key]['status'];
+            headers: TErrorRecord[Key]['headers'];
+          }
+        : TErrorRecord[Key]['schema'] extends z.ZodSchema
+        ? {
+            error: z.infer<TErrorRecord[Key]['schema']>;
+            status: TErrorRecord[Key]['status'];
+            headers: TErrorRecord[Key]['headers'];
+          }
+        : never;
+    }[keyof TErrorRecord]
+  : never;
 
 type DefaultHttpErrors =
   | 400

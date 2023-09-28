@@ -18,8 +18,8 @@ export type AddPetControllerFunction = (
   };
   error: {
     '405': {
-      schema: 'AddPetErrors';
-      status: '405';
+      schema: AddPetErrors;
+      status: 405;
     };
   };
 }>;
@@ -32,23 +32,23 @@ export type UpdatePetControllerFunction = (
     status: 200;
     headers: {
       'x-ratelimit': {
-        schema: 'string';
+        schema: string;
         nullable: true;
       };
     };
   };
   error: {
     '400': {
-      schema: 'UpdatePetErrors';
-      status: '400';
+      schema: UpdatePetErrors;
+      status: 400;
     };
     '404': {
-      schema: 'UpdatePetErrors';
-      status: '404';
+      schema: UpdatePetErrors;
+      status: 404;
     };
     '405': {
-      schema: 'UpdatePetErrors';
-      status: '405';
+      schema: UpdatePetErrors;
+      status: 405;
     };
   };
 }>;

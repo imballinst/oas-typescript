@@ -21,7 +21,7 @@ export interface {{@key}} extends z.infer<typeof {{@key}}> {}
 
 // Endpoints.
 {{#each endpoints}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Parameters = [
+export const {{capitalizeFirstLetter operationId "Parameters"}} = [
   {{#if parameters}}
   {{#each parameters}}
   { 
@@ -38,13 +38,13 @@ export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}
   {{/if}}
 ] as const
 {{#if security}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Security = {{{security}}}
+export const {{capitalizeFirstLetter operationId "Security"}} = {{{security}}}
 {{/if}}
 {{#if response}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response = {{{response}}}
-export interface {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response extends z.infer<typeof {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Response> {}
+export const {{capitalizeFirstLetter operationId "Response"}} = {{{response}}}
+{{{interfaceFromZod operationId "Response"}}}
 {{/if}}
-export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}Errors = {
+export const {{capitalizeFirstLetter operationId "Errors"}} = {
 {{#if errors}}  
   {{#each errors}}
   {{status}}: {
@@ -57,6 +57,7 @@ export const {{#capitalizeFirstLetter}}{{operationId}}{{/capitalizeFirstLetter}}
   {{/each}}
 {{/if}}
 } as const
+{{{interfaceFromObject operationId "Errors"}}}
 
 {{/each}}
 `
@@ -325,7 +326,7 @@ function createErrorResponse({
 
 export const typesTs = `import { z } from 'zod';
 
-interface OasError {
+export interface OasError {
   status: number;
   description: string;
   schema: z.ZodTypeAny;
@@ -383,22 +384,36 @@ export interface OperationInfo {
 }
 
 export type ControllerReturnType<X extends ResponseSchema<unknown, unknown>> =
-  X['success'] extends object
-    ?
-        | {
-            // TOOD: might need some tweaking in case it's undefined, maybe
-            // it's better to be \`data?: never\`.
-            data: X['success']['schema'];
-            status: X['success']['status'];
-          }
-        | ExtractErrorRecord<X['error']>
-    : never;
+  | {
+      // TOOD: might need some tweaking in case it's undefined, maybe
+      // it's better to be \`data?: never\`.
+      data: X['success']['schema'];
+      status: X['success']['status'];
+      headers: X['success']['headers'];
+    }
+  | ExtractErrorRecord<X['error']>;
 
-type ExtractErrorRecord<
-  TErrorRecord extends ResponseSchema<unknown, unknown>['error']
-> = {
-  [Key in keyof TErrorRecord]: TErrorRecord[Key];
-}[keyof TErrorRecord];
+export type ExtractErrorRecord<
+  TErrorRecord extends
+    | Record<string | number, ErrorResponse<unknown>>
+    | undefined
+> = TErrorRecord extends object
+  ? {
+      [Key in keyof TErrorRecord]: TErrorRecord[Key]['schema'] extends z.ZodVoid
+        ? {
+            error?: never;
+            status: TErrorRecord[Key]['status'];
+            headers: TErrorRecord[Key]['headers'];
+          }
+        : TErrorRecord[Key]['schema'] extends z.ZodSchema
+        ? {
+            error: z.infer<TErrorRecord[Key]['schema']>;
+            status: TErrorRecord[Key]['status'];
+            headers: TErrorRecord[Key]['headers'];
+          }
+        : never;
+    }[keyof TErrorRecord]
+  : never;
 
 type DefaultHttpErrors =
   | 400

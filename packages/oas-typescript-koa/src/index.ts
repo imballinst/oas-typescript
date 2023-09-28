@@ -23,6 +23,7 @@ import { generateTemplateRouter } from './helpers/templates/router.js';
 import { generateTemplateControllerTypes } from './helpers/templates/controller-types.js';
 import { capitalizeFirstCharacter } from './helpers/change-case.js';
 import { parsePaths } from './core/paths-parser.js';
+import { OasError } from '../templates/typescript/types.js';
 
 const cli = meow(
   `
@@ -134,8 +135,22 @@ async function main() {
   );
 
   const handlebars = getHandlebars();
-  handlebars.registerHelper('capitalizeFirstLetter', function (options: any) {
-    return capitalizeFirstCharacter(options.fn(this));
+  handlebars.registerHelper('capitalizeFirstLetter', function (...args: any[]) {
+    // Last argument is an object.
+    const [firstWord, ...rest] = args.slice(0, -1);
+    return capitalizeFirstCharacter(firstWord) + rest.join('');
+  });
+  handlebars.registerHelper('interfaceFromZod', function (...args: any[]) {
+    // Last argument is an object.
+    const [firstWord, ...rest] = args.slice(0, -1);
+    const interfaceName = capitalizeFirstCharacter(firstWord) + rest.join('');
+    return `export interface ${interfaceName} extends z.infer<typeof ${interfaceName}> {}`;
+  });
+  handlebars.registerHelper('interfaceFromObject', function (...args: any[]) {
+    // Last argument is an object.
+    const [firstWord, ...rest] = args.slice(0, -1);
+    const interfaceName = capitalizeFirstCharacter(firstWord) + rest.join('');
+    return `export type ${interfaceName} = typeof ${interfaceName}`;
   });
 
   await generateZodClientFromOpenAPI({

@@ -26,8 +26,8 @@ export function generateTemplateControllerTypes({
 export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${
         operation.parametersName
       }>) => ControllerReturnType<${JSON.stringify(operation.response, null, 2)
-        .replace('"status": "number"', '"status": number')
-        .replace(/"schema": "([\w\d]+)"/, '"schema": $1')}> 
+        .replace(/"status": "([\w\d]+)"/g, '"status": $1')
+        .replace(/"schema": "([\w\d]+)"/g, '"schema": $1')}> 
       `.trim()
     );
 

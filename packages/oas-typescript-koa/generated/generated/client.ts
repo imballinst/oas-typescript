@@ -54,6 +54,7 @@ export const UpdatePetErrors = {
     schema: z.void()
   }
 } as const;
+export type UpdatePetErrors = typeof UpdatePetErrors;
 
 export const AddPetParameters = [
   {
@@ -73,3 +74,4 @@ export const AddPetErrors = {
     schema: z.void()
   }
 } as const;
+export type AddPetErrors = typeof AddPetErrors;
