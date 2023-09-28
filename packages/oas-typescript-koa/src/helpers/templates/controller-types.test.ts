@@ -1,5 +1,8 @@
 import { expect, test } from 'vitest';
-import { generateTemplateControllerTypes } from './controller-types';
+import {
+  generateTemplateControllerTypes,
+  stringifyControllerReturnTypeGenericType
+} from './controller-types';
 
 // Valid cases.
 test('generateTemplateControllerTypes, without default response', () => {
@@ -37,10 +40,8 @@ import {
 import { ParsedRequestInfo } from '../utils.js'
 import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
-export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<${JSON.stringify(
-      response,
-      null,
-      2
+export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<${stringifyControllerReturnTypeGenericType(
+      response
     )}>
   `.trim()
   );
@@ -119,11 +120,11 @@ import { ControllerReturnType, ErrorStatuses } from '../types.js'
 export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<{
   "success": {
     "status": 200,
-    "schema": "Message"
+    "schema": Message
   },
   "error": {
     "default": {
-      "schema": "SayHelloErrors",
+      "schema": SayHelloErrors,
       "status": number
     }
   }
@@ -176,16 +177,16 @@ import { ControllerReturnType, ErrorStatuses } from '../types.js'
 export type SayHelloFunction = (params: ParsedRequestInfo<typeof SayHelloParameters>) => ControllerReturnType<{
   "success": {
     "status": 200,
-    "schema": "Message",
+    "schema": Message,
     "headers": {
       "x-rate-limit": {
-        "schema": "string"
+        "schema": string
       }
     }
   },
   "error": {
     "default": {
-      "schema": "SayHelloErrors",
+      "schema": SayHelloErrors,
       "status": number
     }
   }

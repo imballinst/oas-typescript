@@ -52,7 +52,7 @@ const CombinedErrorType = z.object({ error: z.string() });
 
 type Combined = ControllerReturnType<{
   success: {
-    schema: typeof CombinedSuccessType;
+    schema: z.infer<typeof CombinedSuccessType>;
     status: 200;
   };
   error: {

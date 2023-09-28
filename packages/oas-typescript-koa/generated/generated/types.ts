@@ -58,14 +58,17 @@ export interface OperationInfo {
 }
 
 export type ControllerReturnType<X extends ResponseSchema<unknown, unknown>> =
-  | {
-      // TOOD: might need some tweaking in case it's undefined, maybe
-      // it's better to be `data?: never`.
-      data: X['success']['schema'];
-      status: X['success']['status'];
-      headers: X['success']['headers'];
-    }
-  | ExtractErrorRecord<X['error']>;
+  | X['success']['schema'] extends object
+  ?
+      | {
+          // TOOD: might need some tweaking in case it's undefined, maybe
+          // it's better to be `data?: never`.
+          data: X['success']['schema'];
+          status: X['success']['status'];
+          headers: X['success']['headers'];
+        }
+      | ExtractErrorRecord<X['error']>
+  : never;
 
 export type ExtractErrorRecord<
   TErrorRecord extends

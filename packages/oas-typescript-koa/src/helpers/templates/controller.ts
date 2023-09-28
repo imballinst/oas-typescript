@@ -24,7 +24,7 @@ function renderControllerMethod(controller: OperationInfo) {
 static ${controller.operationId}: ${controller.functionType} = (params) => {
   return {
     data: undefined,
-    status: ${controller.responseSuccessStatus}
+    status: undefined
   }
 }
   `.trim();

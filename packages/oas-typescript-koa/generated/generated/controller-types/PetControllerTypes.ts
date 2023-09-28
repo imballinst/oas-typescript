@@ -18,7 +18,7 @@ export type AddPetControllerFunction = (
   };
   error: {
     '405': {
-      schema: AddPetErrors;
+      schema: AddPetErrors['405']['schema'];
       status: 405;
     };
   };
@@ -39,15 +39,15 @@ export type UpdatePetControllerFunction = (
   };
   error: {
     '400': {
-      schema: UpdatePetErrors;
+      schema: UpdatePetErrors['400']['schema'];
       status: 400;
     };
     '404': {
-      schema: UpdatePetErrors;
+      schema: UpdatePetErrors['404']['schema'];
       status: 404;
     };
     '405': {
-      schema: UpdatePetErrors;
+      schema: UpdatePetErrors['405']['schema'];
       status: 405;
     };
   };

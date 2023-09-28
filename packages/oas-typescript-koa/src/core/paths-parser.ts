@@ -3,12 +3,11 @@ import { OpenAPIV3 } from 'openapi-types';
 
 import { capitalizeFirstCharacter } from '../helpers/change-case.js';
 import { generateRouteMiddleware } from '../helpers/templates/middleware.js';
+import { OperationInfo, ResponseSchema } from '../helpers/templates/types.js';
 import {
   ErrorResponse,
-  OperationInfo,
-  ResponseHeaders,
-  ResponseSchema
-} from '../helpers/templates/types.js';
+  ResponseHeaders
+} from '../../templates/typescript/types.js';
 
 const PARSED_METHODS = ['get', 'post', 'put', 'delete', 'patch'] as const;
 
@@ -180,7 +179,7 @@ function convertOpenApiPathToKoaPath(s: string) {
 
 function getErrorResponseSchema(schema: string, status: string, content: any) {
   const errorCodeContent: ErrorResponse = {
-    schema,
+    schema: `${schema}['${status}']['schema']`,
     status
   };
   const headers = convertOpenAPIHeadersToResponseSchemaHeaders(content);

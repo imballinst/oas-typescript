@@ -58,12 +58,12 @@ export interface OperationInfo {
 }
 
 export type ControllerReturnType<X extends ResponseSchema<unknown, unknown>> =
-  | X['success']['schema'] extends z.ZodSchema
+  | X['success']['schema'] extends object
   ?
       | {
           // TOOD: might need some tweaking in case it's undefined, maybe
           // it's better to be `data?: never`.
-          data: z.infer<X['success']['schema']>;
+          data: X['success']['schema'];
           status: X['success']['status'];
           headers: X['success']['headers'];
         }
