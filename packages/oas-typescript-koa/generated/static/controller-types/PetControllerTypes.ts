@@ -11,7 +11,10 @@ import { ControllerReturnType, ErrorStatuses } from '../types.js';
 
 export type AddPetControllerFunction = (
   params: ParsedRequestInfo<typeof AddPetParameters>
-) => ControllerReturnType<{ success: AddPetResponse; error: AddPetErrors }>;
+) => ControllerReturnType<{
+  success: AddPetResponse;
+  error: AddPetErrors;
+}>;
 
 export type UpdatePetControllerFunction = (
   params: ParsedRequestInfo<typeof UpdatePetParameters>

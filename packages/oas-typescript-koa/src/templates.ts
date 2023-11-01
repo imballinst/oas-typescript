@@ -48,7 +48,7 @@ export const {{capitalizeFirstLetter operationId "Errors"}} = {{{responseSchema.
 {{{interfaceFromObject operationId "Errors"}}}
 
 {{/each}}
-`
+`;
 
 export const middlewareHelpersTs = `import Koa from 'koa';
 import Router from '@koa/router';
@@ -70,14 +70,14 @@ export class MiddlewareHelpers {
     };
   }
 }
-`
+`;
 
 export const utilsTs = `import Koa from 'koa';
 import Router from '@koa/router';
 import { z } from 'zod';
 import { OpenAPIV3 } from 'openapi-types';
 
-import { securitySchemes } from '../generated/security-schemes.js';
+import { securitySchemes } from '../static/security-schemes.js';
 import { MiddlewareHelpers } from '../middleware-helpers.js';
 
 type KoaCtx = Koa.ParameterizedContext<
@@ -310,7 +310,7 @@ function createErrorResponse({
     detail: zodError.errors
   };
 }
-`
+`;
 
 export const typesTs = `import { z } from 'zod';
 
@@ -462,5 +462,4 @@ export type DefaultHttpErrors =
   | 508
   | 510
   | 511;
-`
-  
+`;

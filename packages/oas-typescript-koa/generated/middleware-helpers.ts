@@ -13,10 +13,8 @@ export class MiddlewareHelpers {
     ctx: KoaCtx,
     scopes: string[] | undefined
   ) {
-    const helloworld = ctx.headers['helloworld'];
-
     return {
-      status: helloworld === 'helloworld' ? 200 : 401
+      status: 200
     };
   }
 }

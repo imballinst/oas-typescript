@@ -8,7 +8,7 @@ import {
 import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
-import { execSync } from 'child_process';
+import { createRequire } from 'node:module';
 
 import { createOrDuplicateFile } from '@oast/shared/utils/checksum.js';
 
@@ -26,7 +26,7 @@ import {
 } from './helpers/templates/controller-types.js';
 import { capitalizeFirstCharacter } from './helpers/change-case.js';
 import { parsePaths } from './core/paths-parser.js';
-import { OasError } from '../templates/typescript/types.js';
+import { execSync } from 'child_process';
 
 const cli = meow(
   `
@@ -64,6 +64,8 @@ const DEFAULT_OUTPUT = path.join(process.cwd(), 'generated');
 const DEFAULT_SECURITY_FIELD = 'security';
 const VALID_COMMANDS = ['generate'];
 
+const require = createRequire(import.meta.url);
+
 async function main() {
   const [command, cliInput] = cli.input;
   if (!cliInput || !VALID_COMMANDS.includes(command)) {
@@ -84,7 +86,7 @@ async function main() {
     cliOutput && path.isAbsolute(cliOutput)
       ? cliOutput
       : path.join(process.cwd(), cliOutput || DEFAULT_OUTPUT);
-  const lockedGeneratedFilesFolder = path.join(rootOutputFolder, 'generated');
+  const lockedGeneratedFilesFolder = path.join(rootOutputFolder, 'static');
 
   // Copy the utility and the middleware helpers.
   const tmpFolder = path.join(tmpdir(), '@oast');
@@ -240,7 +242,7 @@ async function main() {
   });
 
   await fs.writeFile(
-    path.join(lockedGeneratedFilesFolder, 'server.ts'),
+    path.join(lockedGeneratedFilesFolder, 'router.ts'),
     template,
     'utf-8'
   );
@@ -283,8 +285,14 @@ async function main() {
     fs.rm(tmpFolder, { recursive: true, force: true })
   ]);
 
-  // Hijack the prettier because we want to use the prettier from the current node_modules rather than to install a new one.
-  execSync(`yarn prettier ${cliOutput} --write`);
+  // Prettify output.
+  const prettierPath = require.resolve('prettier');
+  const prettierCliPath = path.join(
+    path.dirname(prettierPath),
+    'bin/prettier.cjs'
+  );
+
+  execSync(`node ${prettierCliPath} ${cliOutput} --write`);
 }
 
 main();

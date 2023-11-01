@@ -10,7 +10,7 @@ export function generateTemplateController({
   return `
 import {
   ${operations.map((op) => op.functionType).join(',\n  ')}
-} from '../generated/controller-types/${controllerName}Types.js'
+} from '../static/controller-types/${controllerName}Types.js'
 
 export class ${controllerName} {
 ${operations.map((op) => renderControllerMethod(op)).join('\n  ')}

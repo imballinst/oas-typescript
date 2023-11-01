@@ -14,10 +14,10 @@
   "scripts": {
     "gen": "yarn build:entry && yarn gen:build",
     "gen:build": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated",
-    "gen:templates": "ts-node --esm scripts/fill-templates.ts",
+    "gen:templates": "node --loader ts-node/esm scripts/fill-templates.ts",
     "gen:all": "yarn gen:templates && yarn gen",
     "build": "yarn test:run && yarn gen:templates && yarn build:entry",
-    "build:entry": "ts-node --esm scripts/build-entry.ts",
+    "build:entry": "node --loader ts-node/esm scripts/build-entry.ts",
     "test": "vitest",
     "test:run": "vitest run",
     "test:run-koa": "nodemon"
@@ -25,6 +25,7 @@
   "dependencies": {
     "meow": "12.0.1",
     "openapi-zod-client": "1.10.0",
+    "prettier": "3.0.3",
     "title-case": "3.0.3"
   },
   "devDependencies": {
