@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.5.3
+
+### Patch Changes
+
+- 95ae285: chore: update package.json of all packages
+
 ## 0.5.2
 
 ### Patch Changes
