@@ -16,11 +16,6 @@ const PARSED_METHODS = ['get', 'post', 'put', 'delete', 'patch'] as const;
 export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
   const routers: string[] = [];
 
-  const operationIdToResponseSchemaRecord: Record<
-    string,
-    PrebuildResponseSchema
-  > = {};
-
   const controllerToOperationsRecord: Record<string, OperationInfo[]> = {};
   const parametersImportsPerController: Record<string, string[]> = {};
   const controllerImportsPerController: Record<string, string[]> = {};
@@ -133,7 +128,6 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
           error: errorType
         }
       });
-      operationIdToResponseSchemaRecord[operationId] = responseSchema;
 
       if (parametersName) {
         parametersImportsPerController[controllerName].push(parametersName);
@@ -175,7 +169,6 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
 
   return {
     routers,
-    operationIdToResponseSchemaRecord,
     controllerToOperationsRecord,
     parametersImportsPerController,
     controllerImportsPerController,

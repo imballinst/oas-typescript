@@ -640,9 +640,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oas-typescript/koa@npm:0.5.3":
+"@oas-typescript/koa@file:.yalc/@oas-typescript/koa::locator=axios-koa%40workspace%3A.":
   version: 0.5.3
-  resolution: "@oas-typescript/koa@npm:0.5.3"
+  resolution: "@oas-typescript/koa@file:.yalc/@oas-typescript/koa#.yalc/@oas-typescript/koa::hash=3689d3&locator=axios-koa%40workspace%3A."
   dependencies:
     meow: 12.0.1
     openapi-zod-client: 1.10.0
@@ -650,7 +650,7 @@ __metadata:
     title-case: 3.0.3
   bin:
     oas-typescript-koa: cli.js
-  checksum: 5eea0fa81f330721b9e468d3ef49e76fbb9873215e417e19c905dffb15e52cace3ab02c8022110a9c36ada99194a2878cdb799cc21749437e90d08f3c2da02d9
+  checksum: 3030aad9aa010eac6dea4c610236060d94e63a594fe11653b2c468cdbfc90aba7b29f0c2970eceec183002c994ca784cb649b3578e370b71c7e2b777eb82240f
   languageName: node
   linkType: hard
 
@@ -1275,7 +1275,7 @@ __metadata:
     "@koa/bodyparser": 5.0.0
     "@koa/router": 12.0.0
     "@oas-typescript/axios": 0.1.0
-    "@oas-typescript/koa": 0.5.3
+    "@oas-typescript/koa": "file:.yalc/@oas-typescript/koa"
     "@swc/core": 1.3.66
     "@swc/helpers": 0.5.1
     "@types/node": 20.4.0
