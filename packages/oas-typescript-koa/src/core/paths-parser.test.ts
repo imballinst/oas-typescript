@@ -69,27 +69,6 @@ test('parsePaths with all requirements fulfilled', () => {
         }
       ]
     },
-    operationIdToResponseSchemaRecord: {
-      getUser: {
-        success: {
-          schema: 'z.void()',
-          status: 200,
-          headers: {
-            'x-ratelimit': { schema: 'z.string()' },
-            'x-ratelimit-expires-in': {
-              schema: 'z.number()',
-              nullable: true
-            }
-          }
-        },
-        error: {
-          '400': {
-            schema: 'z.void()',
-            status: '400'
-          }
-        }
-      }
-    },
     parametersImportsPerController: {
       UsersController: ['GetUserParameters']
     },
@@ -169,20 +148,6 @@ test('parsePaths with 2xx and default should result in 2xx and all errors', () =
           }
         }
       ]
-    },
-    operationIdToResponseSchemaRecord: {
-      getUser: {
-        success: {
-          schema: 'z.void()',
-          status: 200
-        },
-        error: {
-          default: {
-            schema: 'z.void()',
-            status: 'default'
-          }
-        }
-      }
     },
     parametersImportsPerController: {
       UsersController: ['GetUserParameters']
