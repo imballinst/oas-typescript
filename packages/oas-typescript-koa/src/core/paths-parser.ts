@@ -9,16 +9,12 @@ import {
   PrebuildErrorResponse,
   PrebuildResponseHeaders
 } from '../helpers/templates/types.js';
+import { z } from 'zod';
 
 const PARSED_METHODS = ['get', 'post', 'put', 'delete', 'patch'] as const;
 
 export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
   const routers: string[] = [];
-
-  const operationIdToResponseSchemaRecord: Record<
-    string,
-    PrebuildResponseSchema
-  > = {};
 
   const controllerToOperationsRecord: Record<string, OperationInfo[]> = {};
   const parametersImportsPerController: Record<string, string[]> = {};
@@ -61,10 +57,10 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
         controllerImportsPerController[controllerName] = [];
       }
 
-      const capitalizedOperationId = capitalizeFirstCharacter(operationId);
-      let parametersName = `${capitalizedOperationId}Parameters`;
-      const errorType = `${capitalizedOperationId}Errors`;
-      let responseName = `${capitalizedOperationId}Response`;
+      const pascalCasedOperationId = capitalizeFirstCharacter(operationId);
+      const errorType = `${pascalCasedOperationId}Errors`;
+      let parametersName = `${pascalCasedOperationId}Parameters`;
+      let responseName = `${pascalCasedOperationId}Response`;
 
       let responseSuccessStatus = Number(
         Object.keys(responses).find(
@@ -87,10 +83,11 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
           openAPISuccessResponseHeaders
         );
       const responseSchema: PrebuildResponseSchema = {
-        success: getSuccessResponseSchema(
-          responseSuccessStatus,
-          responses[responseSuccessStatus]
-        ),
+        success: getSuccessResponseSchema({
+          status: responseSuccessStatus,
+          response: responses[responseSuccessStatus],
+          operationId: pascalCasedOperationId
+        }),
         error: {}
       };
 
@@ -123,7 +120,7 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
 
       controllerToOperationsRecord[controllerName].push({
         operationId,
-        functionType: `${capitalizedOperationId}ControllerFunction`,
+        functionType: `${pascalCasedOperationId}ControllerFunction`,
         parametersName,
         response: responseSchema,
         responseType: {
@@ -131,7 +128,6 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
           error: errorType
         }
       });
-      operationIdToResponseSchemaRecord[operationId] = responseSchema;
 
       if (parametersName) {
         parametersImportsPerController[controllerName].push(parametersName);
@@ -173,7 +169,6 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
 
   return {
     routers,
-    operationIdToResponseSchemaRecord,
     controllerToOperationsRecord,
     parametersImportsPerController,
     controllerImportsPerController,
@@ -182,17 +177,43 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
 }
 
 // Helper functions.
+const zodSuccessResponseSchema = z.object({
+  schema: z.object({
+    $ref: z.string()
+  })
+});
+
 function convertOpenApiPathToKoaPath(s: string) {
   if (!s.startsWith('{') && !s.endsWith('}')) return s;
   return `:${s.slice(1, -1)}`;
 }
 
-function getSuccessResponseSchema(status: number, object: any) {
-  const content = object.content;
-  const contentSchema = content?.['application/json']['schema']['$ref'].replace(
-    '#/components/schemas/',
-    ''
-  );
+function getSuccessResponseSchema({
+  response,
+  operationId,
+  status
+}: {
+  status: number;
+  response: any;
+  operationId: string;
+}) {
+  const content = response.content;
+  const responseJSONObject = content?.['application/json'];
+  let contentSchema = '';
+
+  if (responseJSONObject) {
+    const parsedSchema = zodSuccessResponseSchema.safeParse(responseJSONObject);
+
+    if (parsedSchema.success) {
+      contentSchema = parsedSchema.data.schema.$ref.replace(
+        '#/components/schemas/',
+        ''
+      );
+    } else {
+      contentSchema = operationId;
+    }
+  }
+
   const successContent: PrebuildResponseSchema['success'] = {
     schema: contentSchema || 'z.void()',
     status

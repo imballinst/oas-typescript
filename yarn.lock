@@ -1375,11 +1375,12 @@ __metadata:
     cookie-parser: 1.4.6
     esbuild: 0.18.11
     esbuild-node-externals: 1.8.0
+    json5: 2.2.3
     koa: 2.14.2
     meow: 12.0.1
     nanoid: 4.0.2
     nodemon: 2.0.22
-    openapi-zod-client: 1.10.0
+    openapi-zod-client: 1.13.0
     prettier: 3.0.3
     title-case: 3.0.3
     ts-node: 10.9.1
@@ -5734,7 +5735,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json5@npm:^2.2.2":
+"json5@npm:2.2.3, json5@npm:^2.2.2":
   version: 2.2.3
   resolution: "json5@npm:2.2.3"
   bin:
@@ -6828,6 +6829,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"openapi-zod-client@npm:1.13.0":
+  version: 1.13.0
+  resolution: "openapi-zod-client@npm:1.13.0"
+  dependencies:
+    "@apidevtools/swagger-parser": ^10.1.0
+    "@liuli-util/fs-extra": ^0.1.0
+    "@zodios/core": ^10.3.1
+    axios: ^0.27.2
+    cac: ^6.7.14
+    handlebars: ^4.7.7
+    openapi-types: ^12.0.2
+    openapi3-ts: 3.1.0
+    pastable: ^2.2.1
+    prettier: ^2.7.1
+    tanu: ^0.1.13
+    ts-pattern: ^5.0.1
+    whence: ^2.0.0
+    zod: ^3.19.1
+  bin:
+    openapi-zod-client: bin.js
+  checksum: 10948d05fe9ceee0ae3d01bbf72493507cb53339c38d07b3558bead3d9ff59fa2496ea849bfffe38d86c21ae9c654149162090796f9c253952a810f65850fc61
+  languageName: node
+  linkType: hard
+
 "openapi3-ts@npm:3.1.0":
   version: 3.1.0
   resolution: "openapi3-ts@npm:3.1.0"
@@ -7019,6 +7044,25 @@ __metadata:
     xstate:
       optional: true
   checksum: 3281e27cd478a0265a328b8ddea5f94d3ca858b3d3711918c5e33f976cec7c4ead3023b3376c9a74a22659e320db5d7528d460e0611ec4a25fc0fed3693175a3
+  languageName: node
+  linkType: hard
+
+"pastable@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "pastable@npm:2.2.1"
+  dependencies:
+    "@babel/core": ^7.20.12
+    ts-toolbelt: ^9.6.0
+    type-fest: ^3.5.3
+  peerDependencies:
+    react: ">=17"
+    xstate: ">=4.32.1"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    xstate:
+      optional: true
+  checksum: d78f0325381cb566011848fd83f2cd44f010c5a7c478797cef911276c1a24f2205648f1a5eb23d033d1383d56f6fa1b55f63cb244dc7c396d81b29e3c212bc2a
   languageName: node
   linkType: hard
 

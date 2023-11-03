@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@oas-typescript/koa": {
+      "signature": "86773a536edd87c05be48cd5dc749753",
+      "file": true,
+      "replaced": "0.5.3"
+    }
+  }
+}
