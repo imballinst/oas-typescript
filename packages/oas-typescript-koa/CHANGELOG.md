@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.5.5
+
+### Patch Changes
+
+- fix: fix json5 not being included as dependencies
+
 ## 0.5.4
 
 ### Patch Changes
