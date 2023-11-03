@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.5.4
+
+### Patch Changes
+
+- 58aa32c: fix: use the generated types from openapi-zod-client instead of generating it ourselves
+
 ## 0.5.3
 
 ### Patch Changes
