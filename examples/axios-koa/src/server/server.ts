@@ -1,5 +1,5 @@
 import Koa from 'koa';
-import { generatedRouter } from './generated/server.js';
+import { generatedRouter } from './generated/static/router.js';
 import Router from '@koa/router';
 
 const app = new Koa();
