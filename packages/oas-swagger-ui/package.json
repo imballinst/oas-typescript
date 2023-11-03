@@ -12,12 +12,15 @@
   "homepage": "https://github.com/imballinst/oas-typescript#readme",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "yarn build:assets && yarn build:lib",
+    "build:assets": "tsc && vite build",
     "build:lib": "vite --config vite.config.lib.ts build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@braintree/sanitize-url": "6.0.4",
+    "immutable": "3.8.2",
     "swagger-ui-react": "5.1.3"
   },
   "peerDependencies": {

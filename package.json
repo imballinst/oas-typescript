@@ -12,7 +12,8 @@
     "wkoa": "yarn workspace @oas-typescript/koa",
     "test:koa": "yarn wkoa test",
     "gen:koa": "yarn wkoa gen",
-    "waxios": "yarn workspace @oas-typescript/axios"
+    "waxios": "yarn workspace @oas-typescript/axios",
+    "release": "yarn workspaces foreach run build && yarn changeset publish"
   },
   "repository": {
     "type": "git",
