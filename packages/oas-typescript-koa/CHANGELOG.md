@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.5.8
+
+### Patch Changes
+
+- 3e437e0: fix: fix issues with regards to body typing and types stuff
+
 ## 0.5.7
 
 ### Patch Changes
