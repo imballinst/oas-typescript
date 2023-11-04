@@ -13,6 +13,12 @@ export class MiddlewareHelpers {
     ctx: KoaCtx,
     scopes: string[] | undefined
   ) {
+    if (!ctx.request.headers.helloworld) {
+      return {
+        status: 401
+      };
+    }
+
     return {
       status: 200
     };

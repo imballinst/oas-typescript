@@ -40,6 +40,7 @@ const router = new Router();
 
 router.post(
   '/pet',
+  bodyParser(),
   KoaGeneratedUtils.createSecurityMiddleware(AddPetSecurity),
   async (ctx, next) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
@@ -53,17 +54,13 @@ router.post(
 
     const result = await PetController.addPet(parsedRequestInfo);
     ctx.status = result.status;
-
-    if (result.status > 400) {
-      ctx.body = result.error;
-    } else {
-      ctx.body = result.data;
-    }
+    ctx.body = result.body;
   }
 );
 
 router.put(
   '/pet',
+  bodyParser(),
   KoaGeneratedUtils.createSecurityMiddleware(UpdatePetSecurity),
   async (ctx, next) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
@@ -77,12 +74,7 @@ router.put(
 
     const result = await PetController.updatePet(parsedRequestInfo);
     ctx.status = result.status;
-
-    if (result.status > 400) {
-      ctx.body = result.error;
-    } else {
-      ctx.body = result.data;
-    }
+    ctx.body = result.body;
   }
 );
 
@@ -101,12 +93,7 @@ router.get(
 
     const result = await PetController.findPetsByStatus(parsedRequestInfo);
     ctx.status = result.status;
-
-    if (result.status > 400) {
-      ctx.body = result.error;
-    } else {
-      ctx.body = result.data;
-    }
+    ctx.body = result.body;
   }
 );
 
@@ -125,12 +112,7 @@ router.get(
 
     const result = await PetController.findPetsByTags(parsedRequestInfo);
     ctx.status = result.status;
-
-    if (result.status > 400) {
-      ctx.body = result.error;
-    } else {
-      ctx.body = result.data;
-    }
+    ctx.body = result.body;
   }
 );
 
@@ -149,12 +131,7 @@ router.get(
 
     const result = await PetController.getPetById(parsedRequestInfo);
     ctx.status = result.status;
-
-    if (result.status > 400) {
-      ctx.body = result.error;
-    } else {
-      ctx.body = result.data;
-    }
+    ctx.body = result.body;
   }
 );
 
@@ -173,12 +150,7 @@ router.post(
 
     const result = await PetController.updatePetWithForm(parsedRequestInfo);
     ctx.status = result.status;
-
-    if (result.status > 400) {
-      ctx.body = result.error;
-    } else {
-      ctx.body = result.data;
-    }
+    ctx.body = result.body;
   }
 );
 
@@ -197,17 +169,13 @@ router.delete(
 
     const result = await PetController.deletePet(parsedRequestInfo);
     ctx.status = result.status;
-
-    if (result.status > 400) {
-      ctx.body = result.error;
-    } else {
-      ctx.body = result.data;
-    }
+    ctx.body = result.body;
   }
 );
 
 router.post(
   '/pet/:petId/uploadImage',
+  bodyParser(),
   KoaGeneratedUtils.createSecurityMiddleware(UploadFileSecurity),
   async (ctx, next) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
@@ -221,12 +189,7 @@ router.post(
 
     const result = await PetController.uploadFile(parsedRequestInfo);
     ctx.status = result.status;
-
-    if (result.status > 400) {
-      ctx.body = result.error;
-    } else {
-      ctx.body = result.data;
-    }
+    ctx.body = result.body;
   }
 );
 
@@ -245,16 +208,11 @@ router.get(
 
     const result = await StoreController.getInventory(parsedRequestInfo);
     ctx.status = result.status;
-
-    if (result.status > 400) {
-      ctx.body = result.error;
-    } else {
-      ctx.body = result.data;
-    }
+    ctx.body = result.body;
   }
 );
 
-router.post('/store/order', async (ctx, next) => {
+router.post('/store/order', bodyParser(), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: PlaceOrderParameters
@@ -266,12 +224,7 @@ router.post('/store/order', async (ctx, next) => {
 
   const result = await StoreController.placeOrder(parsedRequestInfo);
   ctx.status = result.status;
-
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
+  ctx.body = result.body;
 });
 
 router.get('/store/order/:orderId', async (ctx, next) => {
@@ -286,12 +239,7 @@ router.get('/store/order/:orderId', async (ctx, next) => {
 
   const result = await StoreController.getOrderById(parsedRequestInfo);
   ctx.status = result.status;
-
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
+  ctx.body = result.body;
 });
 
 router.delete('/store/order/:orderId', async (ctx, next) => {
@@ -306,15 +254,10 @@ router.delete('/store/order/:orderId', async (ctx, next) => {
 
   const result = await StoreController.deleteOrder(parsedRequestInfo);
   ctx.status = result.status;
-
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
+  ctx.body = result.body;
 });
 
-router.post('/user', async (ctx, next) => {
+router.post('/user', bodyParser(), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: CreateUserParameters
@@ -326,15 +269,10 @@ router.post('/user', async (ctx, next) => {
 
   const result = await UserController.createUser(parsedRequestInfo);
   ctx.status = result.status;
-
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
+  ctx.body = result.body;
 });
 
-router.post('/user/createWithList', async (ctx, next) => {
+router.post('/user/createWithList', bodyParser(), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: CreateUsersWithListInputParameters
@@ -344,16 +282,10 @@ router.post('/user/createWithList', async (ctx, next) => {
     return;
   }
 
-  const result = await UserController.createUsersWithListInput(
-    parsedRequestInfo
-  );
+  const result =
+    await UserController.createUsersWithListInput(parsedRequestInfo);
   ctx.status = result.status;
-
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
+  ctx.body = result.body;
 });
 
 router.get('/user/login', async (ctx, next) => {
@@ -368,12 +300,7 @@ router.get('/user/login', async (ctx, next) => {
 
   const result = await UserController.loginUser(parsedRequestInfo);
   ctx.status = result.status;
-
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
+  ctx.body = result.body;
 });
 
 router.post('/user/logout', async (ctx, next) => {
@@ -388,12 +315,7 @@ router.post('/user/logout', async (ctx, next) => {
 
   const result = await UserController.logoutUser(parsedRequestInfo);
   ctx.status = result.status;
-
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
+  ctx.body = result.body;
 });
 
 router.get('/user/:username', async (ctx, next) => {
@@ -408,15 +330,10 @@ router.get('/user/:username', async (ctx, next) => {
 
   const result = await UserController.getUserByName(parsedRequestInfo);
   ctx.status = result.status;
-
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
+  ctx.body = result.body;
 });
 
-router.put('/user/:username', async (ctx, next) => {
+router.put('/user/:username', bodyParser(), async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: UpdateUserParameters
@@ -428,12 +345,7 @@ router.put('/user/:username', async (ctx, next) => {
 
   const result = await UserController.updateUser(parsedRequestInfo);
   ctx.status = result.status;
-
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
+  ctx.body = result.body;
 });
 
 router.delete('/user/:username', async (ctx, next) => {
@@ -448,12 +360,7 @@ router.delete('/user/:username', async (ctx, next) => {
 
   const result = await UserController.deleteUser(parsedRequestInfo);
   ctx.status = result.status;
-
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
+  ctx.body = result.body;
 });
 
 export const generatedRouter = router;
