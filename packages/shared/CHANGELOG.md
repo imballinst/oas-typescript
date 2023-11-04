@@ -1,5 +1,11 @@
 # @oas-typescript/shared
 
+## 0.0.4
+
+### Patch Changes
+
+- 3e437e0: fix: fix issues with regards to body typing and types stuff
+
 ## 0.0.3
 
 ### Patch Changes
