@@ -6,7 +6,7 @@
   "scripts": {
     "start": "pm2 start ecosystem.config.cjs",
     "stop": "pm2 delete ecosystem.config.cjs",
-    "build": "ts-node --esm scripts/build.ts",
+    "build": "node --loader ts-node/esm scripts/build.ts",
     "test": "vitest run",
     "gen:client": "oas-typescript-axios generate ./api.json --output ./src/client",
     "gen:server": "oas-typescript-koa generate ./api.json --output ./src/server/generated"

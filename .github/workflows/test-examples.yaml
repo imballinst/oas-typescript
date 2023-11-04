@@ -23,6 +23,7 @@ jobs:
         with:
           node-version: 20
           cache: yarn
+
       - run: npm install -g yalc
       - name: build the koa folder
         working-directory: ./packages/oas-typescript-koa
