@@ -14,12 +14,14 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v3
+
       - name: prepare publish
         working-directory: ./
         run: |
           mkdir -p ./output/oas-swagger-ui
           cp -r gh-pages/* output
           cp -r packages/oas-swagger-ui/dist/* output/oas-swagger-ui
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}

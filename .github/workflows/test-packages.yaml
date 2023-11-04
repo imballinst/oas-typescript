@@ -43,6 +43,8 @@ jobs:
         with:
           node-version: 20
           cache: yarn
+      - run: corepack enable
+      - run: yarn set version 3.6.4
 
       - name: setup and run tests
         working-directory: ./packages/oas-typescript-koa
