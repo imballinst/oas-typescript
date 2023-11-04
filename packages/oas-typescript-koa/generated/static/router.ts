@@ -40,6 +40,7 @@ const router = new Router();
 
 router.post(
   '/pet',
+  bodyParser(),
   KoaGeneratedUtils.createSecurityMiddleware(AddPetSecurity),
   async (ctx, next) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({

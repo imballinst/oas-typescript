@@ -20,8 +20,8 @@
     "build:entry": "node --loader ts-node/esm scripts/build-entry.ts",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:server:start": "pm2 start ecosystem.config.cjs",
-    "test:server:stop": "pm2 delete ecosystem.config.cjs"
+    "test:server:start": "pm2 start scripts/tests/ecosystem.config.cjs",
+    "test:server:stop": "pm2 delete scripts/tests/ecosystem.config.cjs"
   },
   "dependencies": {
     "meow": "12.0.1",
@@ -37,6 +37,7 @@
     "@types/cookie-parser": "1.4.3",
     "@types/koa": "2.13.10",
     "@types/koa__router": "12.0.0",
+    "axios": "1.6.0",
     "cookie-parser": "1.4.6",
     "esbuild": "0.18.11",
     "esbuild-node-externals": "1.8.0",
@@ -44,7 +45,7 @@
     "nanoid": "4.0.2",
     "pm2": "5.3.0",
     "ts-node": "10.9.1",
-    "vitest": "0.33.0",
+    "vitest": "0.34.6",
     "zod": "3.21.4"
   },
   "publishConfig": {

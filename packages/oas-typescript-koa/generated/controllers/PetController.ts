@@ -1,3 +1,4 @@
+import { Pet } from '../static/client.js';
 import {
   AddPetControllerFunction,
   UpdatePetControllerFunction,
@@ -9,11 +10,22 @@ import {
   UploadFileControllerFunction
 } from '../static/controller-types/PetControllerTypes.js';
 
+const db: Pet[] = [];
+
 export class PetController {
   static addPet: AddPetControllerFunction = (params) => {
+    const existingPet = db.find((row) => row.name === params.body.name);
+    if (existingPet) {
+      return {
+        status: 405
+      };
+    }
+
+    db.push(params.body);
+
     return {
-      data: undefined,
-      status: undefined
+      data: params.body,
+      status: 200
     };
   };
   static updatePet: UpdatePetControllerFunction = (params) => {
