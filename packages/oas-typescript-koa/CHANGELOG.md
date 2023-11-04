@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.5.6
+
+### Patch Changes
+
+- ef1edc6: fix: fix security scheme path
+
 ## 0.5.5
 
 ### Patch Changes
