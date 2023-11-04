@@ -1,5 +1,0 @@
-{
-  "watch": ["generated"],
-  "ext": "ts,json",
-  "exec": "ts-node --esm generated/server.ts"
-}

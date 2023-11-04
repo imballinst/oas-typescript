@@ -20,12 +20,7 @@ async (ctx, next) => {
 
   const result = await ${controllerName}.${operationId}(parsedRequestInfo)
   ctx.status = result.status
-
-  if (result.status > 400) {
-    ctx.body = result.error
-  } else {
-    ctx.body = result.data
-  }
+  ctx.body = result.body
 }
   `.trim();
 }

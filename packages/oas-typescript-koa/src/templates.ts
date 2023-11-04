@@ -388,7 +388,7 @@ export type ControllerReturnType<
       | BuildResponseObject<{
           // TOOD: might need some tweaking in case it's undefined, maybe
           // it's better to be \`data?: never\`.
-          data: z.infer<X['success']['schema']>;
+          body: z.infer<X['success']['schema']>;
           status: X['success']['status'];
           headers: X['success']['headers'];
         }>
@@ -403,13 +403,13 @@ export type ExtractErrorRecord<
   ? {
       [Key in keyof TErrorRecord]: TErrorRecord[Key]['schema'] extends z.ZodVoid
         ? BuildResponseObject<{
-            error?: never;
+            body?: never;
             status: TErrorRecord[Key]['status'];
             headers: TErrorRecord[Key]['headers'];
           }>
         : TErrorRecord[Key]['schema'] extends z.ZodSchema
         ? BuildResponseObject<{
-            error: z.infer<TErrorRecord[Key]['schema']>;
+            body: z.infer<TErrorRecord[Key]['schema']>;
             status: TErrorRecord[Key]['status'];
             headers: TErrorRecord[Key]['headers'];
           }>

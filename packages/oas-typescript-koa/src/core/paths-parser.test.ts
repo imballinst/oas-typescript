@@ -13,7 +13,13 @@ test('parsePaths with all requirements fulfilled', () => {
             responses: {
               '200': {
                 description: 'Successful operation returns user response',
-                $ref: '#/components/schema/User',
+                content: {
+                  'application/json': {
+                    schema: {
+                      $ref: '#/components/schemas/User'
+                    }
+                  }
+                },
                 headers: {
                   'x-ratelimit': {
                     schema: { type: 'string' }
@@ -25,7 +31,13 @@ test('parsePaths with all requirements fulfilled', () => {
               },
               '400': {
                 description: 'invalid request',
-                $ref: '#/components/schema/User'
+                content: {
+                  'application/json': {
+                    schema: {
+                      $ref: '#/components/schemas/ApiResponse'
+                    }
+                  }
+                }
               }
             }
           }
@@ -49,7 +61,7 @@ test('parsePaths with all requirements fulfilled', () => {
           },
           response: {
             success: {
-              schema: 'z.void()',
+              schema: 'User',
               status: 200,
               headers: {
                 'x-ratelimit': { schema: 'z.string()' },
@@ -61,7 +73,7 @@ test('parsePaths with all requirements fulfilled', () => {
             },
             error: {
               '400': {
-                schema: 'z.void()',
+                schema: 'ApiResponse',
                 status: '400'
               }
             }
@@ -86,12 +98,7 @@ router.get('/users/:user', async (ctx, next) => {
 
   const result = await UsersController.getUser(parsedRequestInfo)
   ctx.status = result.status
-
-  if (result.status > 400) {
-    ctx.body = result.error
-  } else {
-    ctx.body = result.data
-  }
+  ctx.body = result.body
 })`.trim()
     ]
   } satisfies ReturnType<typeof parsePaths>);
@@ -108,11 +115,23 @@ test('parsePaths with 2xx and default should result in 2xx and all errors', () =
             responses: {
               '200': {
                 description: 'Successful operation returns user response',
-                $ref: '#/components/schema/User'
+                content: {
+                  'application/json': {
+                    schema: {
+                      $ref: '#/components/schemas/User'
+                    }
+                  }
+                }
               },
               default: {
                 description: 'Unknown error during operation execution',
-                $ref: '#/components/schema/Error'
+                content: {
+                  'application/json': {
+                    schema: {
+                      $ref: '#/components/schemas/Error'
+                    }
+                  }
+                }
               }
             }
           }
@@ -132,12 +151,12 @@ test('parsePaths with 2xx and default should result in 2xx and all errors', () =
           parametersName: 'GetUserParameters',
           response: {
             success: {
-              schema: 'z.void()',
+              schema: 'User',
               status: 200
             },
             error: {
               default: {
-                schema: 'z.void()',
+                schema: 'Error',
                 status: 'default'
               }
             }
@@ -166,12 +185,7 @@ router.get('/users/:user', async (ctx, next) => {
 
   const result = await UsersController.getUser(parsedRequestInfo)
   ctx.status = result.status
-
-  if (result.status > 400) {
-    ctx.body = result.error
-  } else {
-    ctx.body = result.data
-  }
+  ctx.body = result.body
 })`.trim()
     ]
   } satisfies ReturnType<typeof parsePaths>);

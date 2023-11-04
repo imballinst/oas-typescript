@@ -640,18 +640,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oas-typescript/koa@npm:0.5.5":
-  version: 0.5.5
-  resolution: "@oas-typescript/koa@npm:0.5.5"
+"@oas-typescript/koa@npm:0.5.7":
+  version: 0.5.7
+  resolution: "@oas-typescript/koa@npm:0.5.7"
   dependencies:
-    json5: 2.2.3
     meow: 12.0.1
     openapi-zod-client: 1.13.0
     prettier: 3.0.3
     title-case: 3.0.3
   bin:
     oas-typescript-koa: cli.js
-  checksum: 3aa100b882d0cf307195d32f1a2d4274558dddda9ee742e66e130e94b08863da84b85f62aed3e4343309f16ec01952fca7a6f9107bc7e6ca53066ee156e40a99
+  checksum: d5373afc3b179aadd1d3b481fa59131f1d853a7667e59294b8df8d56302e111dc9cfa2fe1cc5d9c18328c8090df836a3033f7a49e06cf9055eb98866a33d88d6
   languageName: node
   linkType: hard
 
@@ -1451,7 +1450,7 @@ __metadata:
     "@koa/bodyparser": 5.0.0
     "@koa/router": 12.0.0
     "@oas-typescript/axios": 0.1.0
-    "@oas-typescript/koa": 0.5.5
+    "@oas-typescript/koa": 0.5.7
     "@swc/core": 1.3.66
     "@swc/helpers": 0.5.1
     "@types/koa": 2.13.10
@@ -3073,7 +3072,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json5@npm:2.2.3, json5@npm:^2.2.2":
+"json5@npm:^2.2.2":
   version: 2.2.3
   resolution: "json5@npm:2.2.3"
   bin:

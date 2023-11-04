@@ -27,18 +27,9 @@ jobs:
       - run: corepack enable
       - run: yarn set version 3.6.4
 
-      - run: npm install -g yalc
-      - name: build the koa folder
-        working-directory: ./packages/oas-typescript-koa
-        run: |
-          yarn 
-          yarn build
-          yalc publish
-
       - name: setup and run tests
         working-directory: ./examples/axios-koa
         run: |
           yarn
-          yalc add @oas-typescript/koa
           yarn build
           yarn test
