@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.5.7
+
+### Patch Changes
+
+- decd988: fix: fix controller not being able to parse properly
+
 ## 0.5.6
 
 ### Patch Changes
