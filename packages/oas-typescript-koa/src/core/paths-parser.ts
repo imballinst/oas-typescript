@@ -112,13 +112,15 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
         if (hasDefaultResponseStatus) {
           responseSchema.error.default = getErrorResponseSchema(
             'default',
-            responses.default
+            responses.default,
+            operationId
           );
         } else {
           for (const responseStatus of responseErrorStatuses) {
             responseSchema.error[responseStatus] = getErrorResponseSchema(
               responseStatus,
-              responses[responseStatus]
+              responses[responseStatus],
+              operationId
             );
           }
         }
@@ -161,7 +163,7 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
       }
 
       if (requestBody) {
-        middlewares.push('bodyParser()');
+        middlewares.unshift('bodyParser()');
       }
 
       const koaPath = pathKey
@@ -236,12 +238,23 @@ function getSuccessResponseSchema({
   return successContent;
 }
 
-function getErrorResponseSchema(status: string, errorObject: any) {
-  const content = errorObject.content?.['application/json'];
+function getErrorResponseSchema(
+  status: string,
+  errorObject: any,
+  operationId: string
+) {
+  if (!errorObject.content) {
+    throw new Error(
+      `Error in operation ${operationId}: responses that are not 204 should have an object to return`
+    );
+  }
+
+  const content = errorObject.content['application/json'];
   const contentSchema = content?.['schema']['$ref'].replace(
     '#/components/schemas/',
     ''
   );
+  console.info(content, contentSchema);
   const errorCodeContent: PrebuildErrorResponse = {
     schema: contentSchema || 'z.void()',
     status

@@ -76,15 +76,15 @@ export type UpdatePetResponse = typeof UpdatePetResponse;
 export const UpdatePetErrors = {
   '400': {
     status: 400,
-    schema: z.void()
+    schema: ApiResponse
   },
   '404': {
     status: 404,
-    schema: z.void()
+    schema: ApiResponse
   },
   '405': {
     status: 405,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type UpdatePetErrors = typeof UpdatePetErrors;
@@ -108,7 +108,7 @@ export type AddPetResponse = typeof AddPetResponse;
 export const AddPetErrors = {
   '405': {
     status: 405,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type AddPetErrors = typeof AddPetErrors;
@@ -134,11 +134,11 @@ export type GetPetByIdResponse = typeof GetPetByIdResponse;
 export const GetPetByIdErrors = {
   '400': {
     status: 400,
-    schema: z.void()
+    schema: ApiResponse
   },
   '404': {
     status: 404,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type GetPetByIdErrors = typeof GetPetByIdErrors;
@@ -203,7 +203,7 @@ export type DeletePetResponse = typeof DeletePetResponse;
 export const DeletePetErrors = {
   '400': {
     status: 400,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type DeletePetErrors = typeof DeletePetErrors;
@@ -261,7 +261,7 @@ export type FindPetsByStatusResponse = typeof FindPetsByStatusResponse;
 export const FindPetsByStatusErrors = {
   '400': {
     status: 400,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type FindPetsByStatusErrors = typeof FindPetsByStatusErrors;
@@ -286,7 +286,7 @@ export type FindPetsByTagsResponse = typeof FindPetsByTagsResponse;
 export const FindPetsByTagsErrors = {
   '400': {
     status: 400,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type FindPetsByTagsErrors = typeof FindPetsByTagsErrors;
@@ -320,7 +320,7 @@ export type PlaceOrderResponse = typeof PlaceOrderResponse;
 export const PlaceOrderErrors = {
   '405': {
     status: 405,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type PlaceOrderErrors = typeof PlaceOrderErrors;
@@ -342,11 +342,11 @@ export type GetOrderByIdResponse = typeof GetOrderByIdResponse;
 export const GetOrderByIdErrors = {
   '400': {
     status: 400,
-    schema: z.void()
+    schema: ApiResponse
   },
   '404': {
     status: 404,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type GetOrderByIdErrors = typeof GetOrderByIdErrors;
@@ -368,11 +368,11 @@ export type DeleteOrderResponse = typeof DeleteOrderResponse;
 export const DeleteOrderErrors = {
   '400': {
     status: 400,
-    schema: z.void()
+    schema: ApiResponse
   },
   '404': {
     status: 404,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type DeleteOrderErrors = typeof DeleteOrderErrors;
@@ -412,11 +412,11 @@ export type GetUserByNameResponse = typeof GetUserByNameResponse;
 export const GetUserByNameErrors = {
   '400': {
     status: 400,
-    schema: z.void()
+    schema: ApiResponse
   },
   '404': {
     status: 404,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type GetUserByNameErrors = typeof GetUserByNameErrors;
@@ -461,11 +461,11 @@ export type DeleteUserResponse = typeof DeleteUserResponse;
 export const DeleteUserErrors = {
   '400': {
     status: 400,
-    schema: z.void()
+    schema: ApiResponse
   },
   '404': {
     status: 404,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type DeleteUserErrors = typeof DeleteUserErrors;
@@ -488,7 +488,7 @@ export type CreateUsersWithListInputResponse =
 export const CreateUsersWithListInputErrors = {
   default: {
     status: 'default',
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type CreateUsersWithListInputErrors =
@@ -516,7 +516,7 @@ export type LoginUserResponse = typeof LoginUserResponse;
 export const LoginUserErrors = {
   '400': {
     status: 400,
-    schema: z.void()
+    schema: ApiResponse
   }
 } as const;
 export type LoginUserErrors = typeof LoginUserErrors;

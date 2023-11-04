@@ -2,6 +2,9 @@ import { test, describe, expect } from 'vitest';
 import axios, { AxiosError } from 'axios';
 
 describe('pet', () => {
+  const currentDate = new Date().valueOf();
+  const petName = `torgal-${currentDate}`;
+
   test('create pet with invalid auth', async () => {
     let error: unknown;
 
@@ -49,7 +52,7 @@ describe('pet', () => {
       response = await axios(`http://localhost:3000/pet`, {
         method: 'post',
         data: {
-          name: 'torgal',
+          name: petName,
           photoUrls: []
         },
         headers: {
@@ -61,7 +64,7 @@ describe('pet', () => {
     }
 
     expect(response).toBeDefined();
-    expect(response.data.name).toBe('torgal');
+    expect(response.data.name).toBe(petName);
   });
 
   test('create pet with the same param', async () => {
@@ -72,7 +75,7 @@ describe('pet', () => {
       response = await axios(`http://localhost:3000/pet`, {
         method: 'post',
         data: {
-          name: 'torgal',
+          name: petName,
           photoUrls: []
         },
         headers: {
@@ -83,7 +86,6 @@ describe('pet', () => {
       error = err;
     }
 
-    console.info(response, error);
     expect(error instanceof AxiosError).toBe(true);
     expect(response).toBeUndefined();
 

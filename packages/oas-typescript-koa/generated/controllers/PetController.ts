@@ -16,15 +16,17 @@ export class PetController {
   static addPet: AddPetControllerFunction = (params) => {
     const existingPet = db.find((row) => row.name === params.body.name);
     if (existingPet) {
+      console.info('params.body existing', params.body);
       return {
-        status: 405
+        status: 405,
+        body: {}
       };
     }
 
     db.push(params.body);
 
     return {
-      data: params.body,
+      body: params.body,
       status: 200
     };
   };

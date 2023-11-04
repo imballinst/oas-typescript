@@ -23,7 +23,7 @@ function renderControllerMethod(controller: OperationInfo) {
   return `
 static ${controller.operationId}: ${controller.functionType} = (params) => {
   return {
-    data: undefined,
+    body: undefined,
     status: undefined
   }
 }
