@@ -18,14 +18,23 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v3
-      - name: Setup node 16
+      - name: Setup Node.js 20
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 20
           cache: yarn
+      - run: npm install -g yalc
+      - name: build the koa folder
+        working-directory: ./packages/oas-typescript-koa
+        run: |
+          yarn 
+          yarn build
+          yalc publish
+
       - name: setup and run tests
         working-directory: ./examples/axios-koa
         run: |
+          yalc add @oas-typescript/koa
           yarn
           yarn build
           yarn test
