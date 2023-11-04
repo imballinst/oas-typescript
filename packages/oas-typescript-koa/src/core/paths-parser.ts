@@ -29,7 +29,13 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
       const operation = pathItem[methodKey];
       if (!operation) continue;
 
-      const { tags = [], operationId, security, responses } = operation;
+      const {
+        tags = [],
+        operationId,
+        security,
+        responses,
+        requestBody
+      } = operation;
       const [tag] = tags;
 
       if (!tag) {
@@ -152,6 +158,10 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
         middlewares.unshift(
           `KoaGeneratedUtils.createSecurityMiddleware(${securityName})`
         );
+      }
+
+      if (requestBody) {
+        middlewares.push('bodyParser()');
       }
 
       const koaPath = pathKey

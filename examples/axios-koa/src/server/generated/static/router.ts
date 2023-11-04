@@ -38,8 +38,6 @@ import { UserController } from '../controllers/UserController.js';
 
 const router = new Router();
 
-router.use(bodyParser());
-
 router.post(
   '/pet',
   KoaGeneratedUtils.createSecurityMiddleware(AddPetSecurity),
@@ -346,8 +344,9 @@ router.post('/user/createWithList', async (ctx, next) => {
     return;
   }
 
-  const result =
-    await UserController.createUsersWithListInput(parsedRequestInfo);
+  const result = await UserController.createUsersWithListInput(
+    parsedRequestInfo
+  );
   ctx.status = result.status;
 
   if (result.status > 400) {

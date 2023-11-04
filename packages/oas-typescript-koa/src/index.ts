@@ -9,7 +9,6 @@ import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
 import { createRequire } from 'node:module';
-import json5 from 'json5';
 
 import { createOrDuplicateFile } from '@oast/shared/utils/checksum.js';
 
@@ -21,7 +20,10 @@ import {
 } from './templates.js';
 import { generateTemplateController } from './helpers/templates/controller.js';
 import { generateTemplateRouter } from './helpers/templates/router.js';
-import { generateTemplateControllerTypes } from './helpers/templates/controller-types.js';
+import {
+  generateTemplateControllerTypes,
+  stringifyControllerReturnTypeGenericType
+} from './helpers/templates/controller-types.js';
 import { capitalizeFirstCharacter } from './helpers/change-case.js';
 import { parsePaths } from './core/paths-parser.js';
 import { execSync } from 'child_process';
@@ -159,20 +161,18 @@ async function main() {
     // Last argument is an object.
     const [operationId, responses] = args.slice(0, -1);
 
-    const successResponse = { schema: '', statusCode: 0 };
-    const errorResponses: Record<
-      string,
-      { schema: string; statusCode: string }
-    > = {};
+    const successResponse = { schema: '', status: 0 };
+    const errorResponses: Record<string, { schema: string; status: string }> =
+      {};
     const declarations: string[] = [];
 
     for (const response of responses) {
       if (response.statusCode < 400) {
         successResponse.schema = response.schema;
-        successResponse.statusCode = response.statusCode;
+        successResponse.status = response.statusCode;
       } else {
         errorResponses[response.statusCode] = {
-          statusCode: response.statusCode,
+          status: response.statusCode,
           schema: response.schema
         };
       }
@@ -182,10 +182,12 @@ async function main() {
     const responseVariableName = `${capitalizeFirstCharacter(
       operationId
     )}Response`;
-    const inferred = `z.infer<typeof ${responseVariableName}>`;
+    const inferred = `typeof ${responseVariableName}`;
 
     declarations.push(
-      `export const ${responseVariableName} = ${successResponse.schema}`,
+      `export const ${responseVariableName} = ${stringifyControllerReturnTypeGenericType(
+        successResponse
+      )} as const`,
       successResponse.schema !== 'z.void()'
         ? `export type ${responseVariableName} = ${inferred}`
         : `export type ${responseVariableName} = ${inferred}`,
@@ -196,9 +198,9 @@ async function main() {
     const errorsVariableName = `${capitalizeFirstCharacter(operationId)}Errors`;
 
     declarations.push(
-      `export const ${errorsVariableName} = ${json5.stringify(errorResponses, {
-        quote: ''
-      })}`,
+      `export const ${errorsVariableName} = ${stringifyControllerReturnTypeGenericType(
+        errorResponses
+      )} as const`,
       `export type ${errorsVariableName} = typeof ${errorsVariableName}`,
       ''
     );

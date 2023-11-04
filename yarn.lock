@@ -1382,7 +1382,6 @@ __metadata:
     cookie-parser: 1.4.6
     esbuild: 0.18.11
     esbuild-node-externals: 1.8.0
-    json5: 2.2.3
     koa: 2.14.2
     meow: 12.0.1
     nanoid: 4.0.2
@@ -5744,7 +5743,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json5@npm:2.2.3, json5@npm:^2.2.2":
+"json5@npm:^2.2.2":
   version: 2.2.3
   resolution: "json5@npm:2.2.3"
   bin:

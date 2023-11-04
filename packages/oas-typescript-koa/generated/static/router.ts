@@ -38,8 +38,6 @@ import { UserController } from '../controllers/UserController.js';
 
 const router = new Router();
 
-router.use(bodyParser());
-
 router.post(
   '/pet',
   KoaGeneratedUtils.createSecurityMiddleware(AddPetSecurity),
@@ -61,7 +59,8 @@ router.post(
     } else {
       ctx.body = result.data;
     }
-  }
+  },
+  bodyParser()
 );
 
 router.put(
@@ -85,7 +84,8 @@ router.put(
     } else {
       ctx.body = result.data;
     }
-  }
+  },
+  bodyParser()
 );
 
 router.get(
@@ -229,7 +229,8 @@ router.post(
     } else {
       ctx.body = result.data;
     }
-  }
+  },
+  bodyParser()
 );
 
 router.get(
@@ -256,25 +257,29 @@ router.get(
   }
 );
 
-router.post('/store/order', async (ctx, next) => {
-  const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
-    ctx,
-    oasParameters: PlaceOrderParameters
-  });
-  if (!parsedRequestInfo) {
-    ctx.status = 400;
-    return;
-  }
+router.post(
+  '/store/order',
+  async (ctx, next) => {
+    const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
+      ctx,
+      oasParameters: PlaceOrderParameters
+    });
+    if (!parsedRequestInfo) {
+      ctx.status = 400;
+      return;
+    }
 
-  const result = await StoreController.placeOrder(parsedRequestInfo);
-  ctx.status = result.status;
+    const result = await StoreController.placeOrder(parsedRequestInfo);
+    ctx.status = result.status;
 
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
-});
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
+  },
+  bodyParser()
+);
 
 router.get('/store/order/:orderId', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
@@ -316,46 +321,54 @@ router.delete('/store/order/:orderId', async (ctx, next) => {
   }
 });
 
-router.post('/user', async (ctx, next) => {
-  const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
-    ctx,
-    oasParameters: CreateUserParameters
-  });
-  if (!parsedRequestInfo) {
-    ctx.status = 400;
-    return;
-  }
+router.post(
+  '/user',
+  async (ctx, next) => {
+    const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
+      ctx,
+      oasParameters: CreateUserParameters
+    });
+    if (!parsedRequestInfo) {
+      ctx.status = 400;
+      return;
+    }
 
-  const result = await UserController.createUser(parsedRequestInfo);
-  ctx.status = result.status;
+    const result = await UserController.createUser(parsedRequestInfo);
+    ctx.status = result.status;
 
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
-});
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
+  },
+  bodyParser()
+);
 
-router.post('/user/createWithList', async (ctx, next) => {
-  const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
-    ctx,
-    oasParameters: CreateUsersWithListInputParameters
-  });
-  if (!parsedRequestInfo) {
-    ctx.status = 400;
-    return;
-  }
+router.post(
+  '/user/createWithList',
+  async (ctx, next) => {
+    const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
+      ctx,
+      oasParameters: CreateUsersWithListInputParameters
+    });
+    if (!parsedRequestInfo) {
+      ctx.status = 400;
+      return;
+    }
 
-  const result =
-    await UserController.createUsersWithListInput(parsedRequestInfo);
-  ctx.status = result.status;
+    const result =
+      await UserController.createUsersWithListInput(parsedRequestInfo);
+    ctx.status = result.status;
 
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
-});
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
+  },
+  bodyParser()
+);
 
 router.get('/user/login', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
@@ -417,25 +430,29 @@ router.get('/user/:username', async (ctx, next) => {
   }
 });
 
-router.put('/user/:username', async (ctx, next) => {
-  const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
-    ctx,
-    oasParameters: UpdateUserParameters
-  });
-  if (!parsedRequestInfo) {
-    ctx.status = 400;
-    return;
-  }
+router.put(
+  '/user/:username',
+  async (ctx, next) => {
+    const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
+      ctx,
+      oasParameters: UpdateUserParameters
+    });
+    if (!parsedRequestInfo) {
+      ctx.status = 400;
+      return;
+    }
 
-  const result = await UserController.updateUser(parsedRequestInfo);
-  ctx.status = result.status;
+    const result = await UserController.updateUser(parsedRequestInfo);
+    ctx.status = result.status;
 
-  if (result.status > 400) {
-    ctx.body = result.error;
-  } else {
-    ctx.body = result.data;
-  }
-});
+    if (result.status > 400) {
+      ctx.body = result.error;
+    } else {
+      ctx.body = result.data;
+    }
+  },
+  bodyParser()
+);
 
 router.delete('/user/:username', async (ctx, next) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({

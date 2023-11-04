@@ -27,8 +27,6 @@ ${Object.keys(controllerToOperationsRecord)
 
 const router = new Router()
 
-router.use(bodyParser());
-
 ${routers.join('\n\n')}
 
 export const generatedRouter = router

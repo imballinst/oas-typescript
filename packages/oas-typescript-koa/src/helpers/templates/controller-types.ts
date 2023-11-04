@@ -46,3 +46,16 @@ import { ControllerReturnType, ErrorStatuses } from '../types.js'
 
 ${renderedOperations.join('\n\n')}`.trim();
 }
+
+export function stringifyControllerReturnTypeGenericType(obj: object) {
+  return JSON.stringify(obj, null, 2)
+    .replace(/"status": "([\w\d]+)"/g, (_, statusGroupMatch) => {
+      let value = statusGroupMatch;
+      if (statusGroupMatch === 'default') {
+        value = `"${value}"`;
+      }
+
+      return `"status": ${value}`;
+    })
+    .replace(/"schema": "([\w\d\[\]\(\).']+)"/g, '"schema": $1');
+}

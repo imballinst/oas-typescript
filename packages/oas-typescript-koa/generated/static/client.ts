@@ -67,14 +67,26 @@ export const UpdatePetSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
 
-export const UpdatePetResponse = Pet;
-export type UpdatePetResponse = z.infer<typeof UpdatePetResponse>;
+export const UpdatePetResponse = {
+  schema: Pet,
+  status: 200
+} as const;
+export type UpdatePetResponse = typeof UpdatePetResponse;
 
 export const UpdatePetErrors = {
-  '400': { statusCode: '400', schema: 'z.void()' },
-  '404': { statusCode: '404', schema: 'z.void()' },
-  '405': { statusCode: '405', schema: 'z.void()' }
-};
+  '400': {
+    status: 400,
+    schema: z.void()
+  },
+  '404': {
+    status: 404,
+    schema: z.void()
+  },
+  '405': {
+    status: 405,
+    schema: z.void()
+  }
+} as const;
 export type UpdatePetErrors = typeof UpdatePetErrors;
 
 export const AddPetParameters = [
@@ -87,12 +99,18 @@ export const AddPetParameters = [
 ] as const;
 export const AddPetSecurity = [{ petstore_auth: ['write:pets', 'read:pets'] }];
 
-export const AddPetResponse = Pet;
-export type AddPetResponse = z.infer<typeof AddPetResponse>;
+export const AddPetResponse = {
+  schema: Pet,
+  status: 200
+} as const;
+export type AddPetResponse = typeof AddPetResponse;
 
 export const AddPetErrors = {
-  '405': { statusCode: '405', schema: 'z.void()' }
-};
+  '405': {
+    status: 405,
+    schema: z.void()
+  }
+} as const;
 export type AddPetErrors = typeof AddPetErrors;
 
 export const GetPetByIdParameters = [
@@ -107,13 +125,22 @@ export const GetPetByIdSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
 
-export const GetPetByIdResponse = Pet;
-export type GetPetByIdResponse = z.infer<typeof GetPetByIdResponse>;
+export const GetPetByIdResponse = {
+  schema: Pet,
+  status: 200
+} as const;
+export type GetPetByIdResponse = typeof GetPetByIdResponse;
 
 export const GetPetByIdErrors = {
-  '400': { statusCode: '400', schema: 'z.void()' },
-  '404': { statusCode: '404', schema: 'z.void()' }
-};
+  '400': {
+    status: 400,
+    schema: z.void()
+  },
+  '404': {
+    status: 404,
+    schema: z.void()
+  }
+} as const;
 export type GetPetByIdErrors = typeof GetPetByIdErrors;
 
 export const UpdatePetWithFormParameters = [
@@ -137,14 +164,18 @@ export const UpdatePetWithFormSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
 
-export const UpdatePetWithFormResponse = z.void();
-export type UpdatePetWithFormResponse = z.infer<
-  typeof UpdatePetWithFormResponse
->;
+export const UpdatePetWithFormResponse = {
+  schema: z.void(),
+  status: 204
+} as const;
+export type UpdatePetWithFormResponse = typeof UpdatePetWithFormResponse;
 
 export const UpdatePetWithFormErrors = {
-  '405': { statusCode: '405', schema: 'ApiResponse' }
-};
+  '405': {
+    status: 405,
+    schema: ApiResponse
+  }
+} as const;
 export type UpdatePetWithFormErrors = typeof UpdatePetWithFormErrors;
 
 export const DeletePetParameters = [
@@ -163,12 +194,18 @@ export const DeletePetSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
 
-export const DeletePetResponse = z.void();
-export type DeletePetResponse = z.infer<typeof DeletePetResponse>;
+export const DeletePetResponse = {
+  schema: z.void(),
+  status: 204
+} as const;
+export type DeletePetResponse = typeof DeletePetResponse;
 
 export const DeletePetErrors = {
-  '400': { statusCode: '400', schema: 'z.void()' }
-};
+  '400': {
+    status: 400,
+    schema: z.void()
+  }
+} as const;
 export type DeletePetErrors = typeof DeletePetErrors;
 
 export const UploadFileParameters = [
@@ -192,10 +229,13 @@ export const UploadFileSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
 
-export const UploadFileResponse = ApiResponse;
-export type UploadFileResponse = z.infer<typeof UploadFileResponse>;
+export const UploadFileResponse = {
+  schema: ApiResponse,
+  status: 200
+} as const;
+export type UploadFileResponse = typeof UploadFileResponse;
 
-export const UploadFileErrors = {};
+export const UploadFileErrors = {} as const;
 export type UploadFileErrors = typeof UploadFileErrors;
 
 export const FindPetsByStatusParameters = [
@@ -212,12 +252,18 @@ export const FindPetsByStatusSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
 
-export const FindPetsByStatusResponse = z.array(Pet);
-export type FindPetsByStatusResponse = z.infer<typeof FindPetsByStatusResponse>;
+export const FindPetsByStatusResponse = {
+  schema: z.array(Pet),
+  status: 200
+} as const;
+export type FindPetsByStatusResponse = typeof FindPetsByStatusResponse;
 
 export const FindPetsByStatusErrors = {
-  '400': { statusCode: '400', schema: 'z.void()' }
-};
+  '400': {
+    status: 400,
+    schema: z.void()
+  }
+} as const;
 export type FindPetsByStatusErrors = typeof FindPetsByStatusErrors;
 
 export const FindPetsByTagsParameters = [
@@ -231,21 +277,30 @@ export const FindPetsByTagsSecurity = [
   { petstore_auth: ['write:pets', 'read:pets'] }
 ];
 
-export const FindPetsByTagsResponse = z.array(Pet);
-export type FindPetsByTagsResponse = z.infer<typeof FindPetsByTagsResponse>;
+export const FindPetsByTagsResponse = {
+  schema: z.array(Pet),
+  status: 200
+} as const;
+export type FindPetsByTagsResponse = typeof FindPetsByTagsResponse;
 
 export const FindPetsByTagsErrors = {
-  '400': { statusCode: '400', schema: 'z.void()' }
-};
+  '400': {
+    status: 400,
+    schema: z.void()
+  }
+} as const;
 export type FindPetsByTagsErrors = typeof FindPetsByTagsErrors;
 
 export const GetInventoryParameters = [] as const;
 export const GetInventorySecurity = [{ api_key: [] }];
 
-export const GetInventoryResponse = z.record(z.number().int());
-export type GetInventoryResponse = z.infer<typeof GetInventoryResponse>;
+export const GetInventoryResponse = {
+  schema: z.record(z.number().int()),
+  status: 200
+} as const;
+export type GetInventoryResponse = typeof GetInventoryResponse;
 
-export const GetInventoryErrors = {};
+export const GetInventoryErrors = {} as const;
 export type GetInventoryErrors = typeof GetInventoryErrors;
 
 export const PlaceOrderParameters = [
@@ -256,12 +311,18 @@ export const PlaceOrderParameters = [
   }
 ] as const;
 
-export const PlaceOrderResponse = Order;
-export type PlaceOrderResponse = z.infer<typeof PlaceOrderResponse>;
+export const PlaceOrderResponse = {
+  schema: Order,
+  status: 200
+} as const;
+export type PlaceOrderResponse = typeof PlaceOrderResponse;
 
 export const PlaceOrderErrors = {
-  '405': { statusCode: '405', schema: 'z.void()' }
-};
+  '405': {
+    status: 405,
+    schema: z.void()
+  }
+} as const;
 export type PlaceOrderErrors = typeof PlaceOrderErrors;
 
 export const GetOrderByIdParameters = [
@@ -272,13 +333,22 @@ export const GetOrderByIdParameters = [
   }
 ] as const;
 
-export const GetOrderByIdResponse = Order;
-export type GetOrderByIdResponse = z.infer<typeof GetOrderByIdResponse>;
+export const GetOrderByIdResponse = {
+  schema: Order,
+  status: 200
+} as const;
+export type GetOrderByIdResponse = typeof GetOrderByIdResponse;
 
 export const GetOrderByIdErrors = {
-  '400': { statusCode: '400', schema: 'z.void()' },
-  '404': { statusCode: '404', schema: 'z.void()' }
-};
+  '400': {
+    status: 400,
+    schema: z.void()
+  },
+  '404': {
+    status: 404,
+    schema: z.void()
+  }
+} as const;
 export type GetOrderByIdErrors = typeof GetOrderByIdErrors;
 
 export const DeleteOrderParameters = [
@@ -289,13 +359,22 @@ export const DeleteOrderParameters = [
   }
 ] as const;
 
-export const DeleteOrderResponse = z.void();
-export type DeleteOrderResponse = z.infer<typeof DeleteOrderResponse>;
+export const DeleteOrderResponse = {
+  schema: z.void(),
+  status: 204
+} as const;
+export type DeleteOrderResponse = typeof DeleteOrderResponse;
 
 export const DeleteOrderErrors = {
-  '400': { statusCode: '400', schema: 'z.void()' },
-  '404': { statusCode: '404', schema: 'z.void()' }
-};
+  '400': {
+    status: 400,
+    schema: z.void()
+  },
+  '404': {
+    status: 404,
+    schema: z.void()
+  }
+} as const;
 export type DeleteOrderErrors = typeof DeleteOrderErrors;
 
 export const CreateUserParameters = [
@@ -307,10 +386,13 @@ export const CreateUserParameters = [
   }
 ] as const;
 
-export const CreateUserResponse = User;
-export type CreateUserResponse = z.infer<typeof CreateUserResponse>;
+export const CreateUserResponse = {
+  schema: User,
+  status: 200
+} as const;
+export type CreateUserResponse = typeof CreateUserResponse;
 
-export const CreateUserErrors = {};
+export const CreateUserErrors = {} as const;
 export type CreateUserErrors = typeof CreateUserErrors;
 
 export const GetUserByNameParameters = [
@@ -321,13 +403,22 @@ export const GetUserByNameParameters = [
   }
 ] as const;
 
-export const GetUserByNameResponse = User;
-export type GetUserByNameResponse = z.infer<typeof GetUserByNameResponse>;
+export const GetUserByNameResponse = {
+  schema: User,
+  status: 200
+} as const;
+export type GetUserByNameResponse = typeof GetUserByNameResponse;
 
 export const GetUserByNameErrors = {
-  '400': { statusCode: '400', schema: 'z.void()' },
-  '404': { statusCode: '404', schema: 'z.void()' }
-};
+  '400': {
+    status: 400,
+    schema: z.void()
+  },
+  '404': {
+    status: 404,
+    schema: z.void()
+  }
+} as const;
 export type GetUserByNameErrors = typeof GetUserByNameErrors;
 
 export const UpdateUserParameters = [
@@ -344,10 +435,13 @@ export const UpdateUserParameters = [
   }
 ] as const;
 
-export const UpdateUserResponse = User;
-export type UpdateUserResponse = z.infer<typeof UpdateUserResponse>;
+export const UpdateUserResponse = {
+  schema: User,
+  status: 200
+} as const;
+export type UpdateUserResponse = typeof UpdateUserResponse;
 
-export const UpdateUserErrors = {};
+export const UpdateUserErrors = {} as const;
 export type UpdateUserErrors = typeof UpdateUserErrors;
 
 export const DeleteUserParameters = [
@@ -358,13 +452,22 @@ export const DeleteUserParameters = [
   }
 ] as const;
 
-export const DeleteUserResponse = z.void();
-export type DeleteUserResponse = z.infer<typeof DeleteUserResponse>;
+export const DeleteUserResponse = {
+  schema: z.void(),
+  status: 204
+} as const;
+export type DeleteUserResponse = typeof DeleteUserResponse;
 
 export const DeleteUserErrors = {
-  '400': { statusCode: '400', schema: 'z.void()' },
-  '404': { statusCode: '404', schema: 'z.void()' }
-};
+  '400': {
+    status: 400,
+    schema: z.void()
+  },
+  '404': {
+    status: 404,
+    schema: z.void()
+  }
+} as const;
 export type DeleteUserErrors = typeof DeleteUserErrors;
 
 export const CreateUsersWithListInputParameters = [
@@ -375,14 +478,19 @@ export const CreateUsersWithListInputParameters = [
   }
 ] as const;
 
-export const CreateUsersWithListInputResponse = User;
-export type CreateUsersWithListInputResponse = z.infer<
-  typeof CreateUsersWithListInputResponse
->;
+export const CreateUsersWithListInputResponse = {
+  schema: User,
+  status: 200
+} as const;
+export type CreateUsersWithListInputResponse =
+  typeof CreateUsersWithListInputResponse;
 
 export const CreateUsersWithListInputErrors = {
-  default: { statusCode: 'default', schema: 'z.void()' }
-};
+  default: {
+    status: 'default',
+    schema: z.void()
+  }
+} as const;
 export type CreateUsersWithListInputErrors =
   typeof CreateUsersWithListInputErrors;
 
@@ -399,18 +507,27 @@ export const LoginUserParameters = [
   }
 ] as const;
 
-export const LoginUserResponse = z.string();
-export type LoginUserResponse = z.infer<typeof LoginUserResponse>;
+export const LoginUserResponse = {
+  schema: z.string(),
+  status: 200
+} as const;
+export type LoginUserResponse = typeof LoginUserResponse;
 
 export const LoginUserErrors = {
-  '400': { statusCode: '400', schema: 'z.void()' }
-};
+  '400': {
+    status: 400,
+    schema: z.void()
+  }
+} as const;
 export type LoginUserErrors = typeof LoginUserErrors;
 
 export const LogoutUserParameters = [] as const;
 
-export const LogoutUserResponse = z.void();
-export type LogoutUserResponse = z.infer<typeof LogoutUserResponse>;
+export const LogoutUserResponse = {
+  schema: z.void(),
+  status: 204
+} as const;
+export type LogoutUserResponse = typeof LogoutUserResponse;
 
-export const LogoutUserErrors = {};
+export const LogoutUserErrors = {} as const;
 export type LogoutUserErrors = typeof LogoutUserErrors;
