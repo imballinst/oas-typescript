@@ -13,8 +13,7 @@
     "test:koa": "yarn wkoa test",
     "gen:koa": "yarn wkoa gen",
     "waxios": "yarn workspace @oas-typescript/axios",
-    "release": "yarn workspaces foreach run build && yarn release:prepare && yarn changeset publish",
-    "release:prepare": "node scripts/release.mjs"
+    "release": "node scripts/release.mjs"
   },
   "repository": {
     "type": "git",

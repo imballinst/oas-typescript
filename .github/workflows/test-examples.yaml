@@ -38,7 +38,7 @@ jobs:
       - name: setup and run tests
         working-directory: ./examples/axios-koa
         run: |
-          yalc add @oas-typescript/koa
           yarn
+          yalc add @oas-typescript/koa
           yarn build
           yarn test
