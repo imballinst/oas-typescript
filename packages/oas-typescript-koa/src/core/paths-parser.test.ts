@@ -58,25 +58,6 @@ test('parsePaths with all requirements fulfilled', () => {
           responseType: {
             success: 'GetUserResponse',
             error: 'GetUserErrors'
-          },
-          response: {
-            success: {
-              schema: 'User',
-              status: 200,
-              headers: {
-                'x-ratelimit': { schema: 'z.string()' },
-                'x-ratelimit-expires-in': {
-                  schema: 'z.number()',
-                  nullable: true
-                }
-              }
-            },
-            error: {
-              '400': {
-                schema: 'ApiResponse',
-                status: '400'
-              }
-            }
           }
         }
       ]
@@ -149,18 +130,6 @@ test('parsePaths with 2xx and default should result in 2xx and all errors', () =
           operationId: 'getUser',
           functionType: 'GetUserControllerFunction',
           parametersName: 'GetUserParameters',
-          response: {
-            success: {
-              schema: 'User',
-              status: 200
-            },
-            error: {
-              default: {
-                schema: 'Error',
-                status: 'default'
-              }
-            }
-          },
           responseType: {
             success: 'GetUserResponse',
             error: 'GetUserErrors'
@@ -223,23 +192,5 @@ test('parsePaths throws when there are no operationId', () => {
     })
   ).toThrowError(
     `The operation ID for the method get of /users/{user} is not defined. Define it, then try again.`
-  );
-});
-
-test('parsePaths throws when there is no 2xx or 3xx response', () => {
-  expect(() =>
-    parsePaths({
-      paths: {
-        '/users/{user}': {
-          get: {
-            tags: ['users'],
-            operationId: 'getUser',
-            responses: {}
-          }
-        }
-      }
-    })
-  ).toThrowError(
-    `Invalid response of getUser: should have 2xx or 3xx response defined`
   );
 });

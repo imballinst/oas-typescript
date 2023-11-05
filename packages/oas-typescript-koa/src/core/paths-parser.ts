@@ -3,13 +3,7 @@ import { OpenAPIV3 } from 'openapi-types';
 
 import { capitalizeFirstCharacter } from '../helpers/change-case.js';
 import { generateRouteMiddleware } from '../helpers/templates/middleware.js';
-import {
-  OperationInfo,
-  PrebuildResponseSchema,
-  PrebuildErrorResponse,
-  PrebuildResponseHeaders
-} from '../helpers/templates/types.js';
-import { z } from 'zod';
+import { OperationInfo } from '../helpers/templates/types.js';
 
 const PARSED_METHODS = ['get', 'post', 'put', 'delete', 'patch'] as const;
 
@@ -29,13 +23,7 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
       const operation = pathItem[methodKey];
       if (!operation) continue;
 
-      const {
-        tags = [],
-        operationId,
-        security,
-        responses,
-        requestBody
-      } = operation;
+      const { tags = [], operationId, security, requestBody } = operation;
       const [tag] = tags;
 
       if (!tag) {
@@ -65,73 +53,13 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
 
       const pascalCasedOperationId = capitalizeFirstCharacter(operationId);
       const errorType = `${pascalCasedOperationId}Errors`;
-      let parametersName = `${pascalCasedOperationId}Parameters`;
-      let responseName = `${pascalCasedOperationId}Response`;
-
-      let responseSuccessStatus = Number(
-        Object.keys(responses).find(
-          // Assume that 3xx redirections are also possible, e.g. OAuth endpoint.
-          (status) => Number(status) >= 200 && Number(status) < 400
-        )
-      );
-      if (isNaN(responseSuccessStatus)) {
-        throw new Error(
-          `Invalid response of ${operationId}: should have 2xx or 3xx response defined`
-        );
-      }
-
-      const openAPISuccessResponseHeaders = (
-        responses[responseSuccessStatus] as OpenAPIV3.ResponseObject
-      ).headers;
-
-      const responseSuccessHeaders =
-        convertOpenAPIHeadersToResponseSchemaHeaders({
-          operationId,
-          responseHeaders: openAPISuccessResponseHeaders
-        });
-      const responseSchema: PrebuildResponseSchema = {
-        success: getSuccessResponseSchema({
-          status: responseSuccessStatus,
-          response: responses[responseSuccessStatus],
-          operationId: pascalCasedOperationId
-        }),
-        error: {}
-      };
-
-      if (responseSuccessHeaders) {
-        responseSchema.success!.headers = responseSuccessHeaders;
-      }
-
-      const responseErrorStatuses = Object.keys(responses).filter(
-        (status) => Number(status) >= 400
-      );
-      const hasDefaultResponseStatus = responses.default !== undefined;
-
-      if (responseErrorStatuses.length || hasDefaultResponseStatus) {
-        responseSchema.error = {};
-
-        if (hasDefaultResponseStatus) {
-          responseSchema.error.default = getErrorResponseSchema(
-            'default',
-            responses.default,
-            operationId
-          );
-        } else {
-          for (const responseStatus of responseErrorStatuses) {
-            responseSchema.error[responseStatus] = getErrorResponseSchema(
-              responseStatus,
-              responses[responseStatus],
-              operationId
-            );
-          }
-        }
-      }
+      const parametersName = `${pascalCasedOperationId}Parameters`;
+      const responseName = `${pascalCasedOperationId}Response`;
 
       controllerToOperationsRecord[controllerName].push({
         operationId,
         functionType: `${pascalCasedOperationId}ControllerFunction`,
         parametersName,
-        response: responseSchema,
         responseType: {
           success: responseName,
           error: errorType
@@ -190,121 +118,7 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
 }
 
 // Helper functions.
-const zodSuccessResponseSchema = z.object({
-  schema: z.object({
-    $ref: z.string()
-  })
-});
-
 function convertOpenApiPathToKoaPath(s: string) {
   if (!s.startsWith('{') && !s.endsWith('}')) return s;
   return `:${s.slice(1, -1)}`;
-}
-
-function getSuccessResponseSchema({
-  response,
-  operationId,
-  status
-}: {
-  status: number;
-  response: any;
-  operationId: string;
-}) {
-  const content = response.content;
-  const responseJSONObject = content?.['application/json'];
-  let contentSchema = '';
-
-  if (responseJSONObject) {
-    const parsedSchema = zodSuccessResponseSchema.safeParse(responseJSONObject);
-
-    if (parsedSchema.success) {
-      contentSchema = parsedSchema.data.schema.$ref.replace(
-        '#/components/schemas/',
-        ''
-      );
-    } else {
-      contentSchema = operationId;
-    }
-  }
-
-  const successContent: PrebuildResponseSchema['success'] = {
-    schema: contentSchema || 'z.void()',
-    status
-  };
-  const headers = convertOpenAPIHeadersToResponseSchemaHeaders({
-    operationId,
-    responseHeaders: content?.['headers']
-  });
-  if (headers) successContent.headers = headers;
-
-  return successContent;
-}
-
-function getErrorResponseSchema(
-  status: string,
-  errorObject: any,
-  operationId: string
-) {
-  if (!errorObject.content) {
-    throw new Error(
-      `Error in operation ${operationId}: responses that are not 204 should have an object to return`
-    );
-  }
-
-  const content = errorObject.content['application/json'];
-  const contentSchema = content?.['schema']['$ref'].replace(
-    '#/components/schemas/',
-    ''
-  );
-
-  const errorCodeContent: PrebuildErrorResponse = {
-    schema: contentSchema || 'z.void()',
-    status
-  };
-  const headers = convertOpenAPIHeadersToResponseSchemaHeaders({
-    operationId,
-    responseHeaders: content?.['headers']
-  });
-  if (headers) errorCodeContent.headers = headers;
-
-  return errorCodeContent;
-}
-
-export function convertOpenAPIHeadersToResponseSchemaHeaders({
-  operationId,
-  responseHeaders
-}: {
-  operationId: string;
-  responseHeaders: any;
-}) {
-  if (!responseHeaders) return undefined;
-
-  const openAPIHeaders = responseHeaders as Record<
-    string,
-    OpenAPIV3.HeaderObject
-  >;
-  let responseSchemaHeaders: PrebuildResponseHeaders<string> | undefined =
-    undefined;
-
-  for (const headerKey in openAPIHeaders) {
-    const schema = openAPIHeaders[headerKey].schema as OpenAPIV3.SchemaObject;
-    if (!schema) continue;
-
-    if (!responseSchemaHeaders) responseSchemaHeaders = {};
-
-    const { type, nullable } = schema;
-    if (!type) {
-      throw new Error(
-        `Invalid header type in ${headerKey} of operation ${operationId}. Expected "integer" or "string".`
-      );
-    }
-
-    responseSchemaHeaders[headerKey] = {
-      schema: `z.${type === 'string' ? 'string' : 'number'}()`
-    };
-
-    if (nullable) responseSchemaHeaders[headerKey].nullable = nullable;
-  }
-
-  return responseSchemaHeaders;
 }

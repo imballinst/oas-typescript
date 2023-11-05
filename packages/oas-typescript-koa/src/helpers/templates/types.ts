@@ -16,10 +16,6 @@ export interface OperationInfo {
    */
   parametersName?: string;
   /**
-   * Contains the response object schema.
-   */
-  response: PrebuildResponseSchema;
-  /**
    * Contains the variable names of the response object schema.
    */
   responseType: {
@@ -31,7 +27,7 @@ export interface OperationInfo {
 export type PrebuildResponseHeaders<THeadersSchemaType = string | number> =
   Record<string, { schema: THeadersSchemaType; nullable?: boolean }>;
 
-export interface PrebuildErrorResponse<
+interface PrebuildErrorResponse<
   TSchemaType = string,
   TStatus = number | string,
   THeadersSchemaType = string | number

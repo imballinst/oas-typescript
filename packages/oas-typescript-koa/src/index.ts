@@ -9,6 +9,7 @@ import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
 import { createRequire } from 'node:module';
+import { execSync } from 'child_process';
 
 import { createOrDuplicateFile } from '@oast/shared/utils/checksum.js';
 
@@ -25,12 +26,9 @@ import {
   stringifyControllerReturnTypeGenericType
 } from './helpers/templates/controller-types.js';
 import { capitalizeFirstCharacter } from './helpers/change-case.js';
-import {
-  convertOpenAPIHeadersToResponseSchemaHeaders,
-  parsePaths
-} from './core/paths-parser.js';
-import { execSync } from 'child_process';
+import { parsePaths } from './core/paths-parser.js';
 import { PrebuildResponseSchema } from './helpers/templates/types.js';
+import { convertOpenAPIHeadersToResponseSchemaHeaders } from './core/header-parser.js';
 
 const cli = meow(
   `
