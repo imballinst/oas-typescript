@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.5.9
+
+### Patch Changes
+
+- 771b2f8: refactor: cut unnecessary logics, defer to logic of openapi-zod-client instead
+
 ## 0.5.8
 
 ### Patch Changes
