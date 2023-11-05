@@ -8,19 +8,8 @@ export function generateTemplateControllerTypes({
   operations: OperationInfo[];
 }) {
   const renderedOperations: string[] = [];
-  let isRequireZodImport = false;
 
   for (const operation of operations) {
-    if (!operation.response) {
-      throw new Error(
-        `Operation ${operation.operationId} does not contain responses`
-      );
-    }
-
-    if (operation.response.error?.default) {
-      operation.response.error.default.status = 'number';
-    }
-
     renderedOperations.push(
       `
 export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${operation.parametersName}>) => ControllerReturnType<{
@@ -29,15 +18,9 @@ export type ${operation.functionType} = (params: ParsedRequestInfo<typeof ${oper
 }> 
       `.trim()
     );
-
-    if (operation.response === undefined) {
-      isRequireZodImport = true;
-    }
   }
 
   return `
-${isRequireZodImport ? `import { z } from 'zod'` : ''}
-
 import {
   ${imports.join(',\n  ')}
 } from '../client.js'

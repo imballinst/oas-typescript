@@ -1,5 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { PrebuildResponseHeaders } from '../helpers/templates/types';
+import { PrebuildResponseHeaders } from './core-types';
 
 export function convertOpenAPIHeadersToResponseSchemaHeaders({
   operationId,

@@ -27,8 +27,8 @@ import {
 } from './helpers/templates/controller-types.js';
 import { capitalizeFirstCharacter } from './helpers/change-case.js';
 import { parsePaths } from './core/paths-parser.js';
-import { PrebuildResponseSchema } from './helpers/templates/types.js';
 import { convertOpenAPIHeadersToResponseSchemaHeaders } from './core/header-parser.js';
+import { PrebuildResponseSchema } from './core/core-types.js';
 
 const cli = meow(
   `
