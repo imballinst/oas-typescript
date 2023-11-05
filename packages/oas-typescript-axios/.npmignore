@@ -1,4 +1,5 @@
 generated/
+generated-with-headers/
 scripts/
 src/
 templates/
