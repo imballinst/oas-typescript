@@ -25,8 +25,12 @@ import {
   stringifyControllerReturnTypeGenericType
 } from './helpers/templates/controller-types.js';
 import { capitalizeFirstCharacter } from './helpers/change-case.js';
-import { parsePaths } from './core/paths-parser.js';
+import {
+  convertOpenAPIHeadersToResponseSchemaHeaders,
+  parsePaths
+} from './core/paths-parser.js';
 import { execSync } from 'child_process';
+import { PrebuildResponseSchema } from './helpers/templates/types.js';
 
 const cli = meow(
   `
@@ -161,19 +165,23 @@ async function main() {
     // Last argument is an object.
     const [operationId, responses] = args.slice(0, -1);
 
-    const successResponse = { schema: '', status: 0 };
-    const errorResponses: Record<string, { schema: string; status: string }> =
-      {};
+    const successResponse: PrebuildResponseSchema['success'] = {
+      schema: '',
+      status: 0
+    };
+    const errorResponses: Record<string, PrebuildResponseSchema['error']> = {};
     const declarations: string[] = [];
 
     for (const response of responses) {
       if (response.statusCode < 400) {
         successResponse.schema = response.schema;
         successResponse.status = response.statusCode;
+        successResponse.headers = response.headers;
       } else {
         errorResponses[response.statusCode] = {
           status: response.statusCode,
-          schema: response.schema
+          schema: response.schema,
+          headers: response.headers
         };
       }
     }
@@ -228,7 +236,7 @@ async function main() {
 
         if (cliAppSecurityField !== DEFAULT_SECURITY_FIELD) {
           // Force inject the security of the custom field.
-          operation.security = operation[cliAppSecurityField as any];
+          newDefinition.security = operation[cliAppSecurityField as any];
         }
 
         if (!operation.operationId) {
@@ -237,6 +245,22 @@ async function main() {
 
         newDefinition.operationId = operation.operationId;
         newDefinition.security = JSON.stringify(operation.security);
+
+        for (const statusCode in operation.responses) {
+          const response = operation.responses[statusCode];
+
+          if (response.headers) {
+            // Patch the headers from `responses` field.
+            const matchingDefinition = newDefinition.responses.find(
+              (item: any) => item.statusCode === statusCode
+            );
+            matchingDefinition.headers =
+              convertOpenAPIHeadersToResponseSchemaHeaders({
+                operationId: operation.operationId,
+                responseHeaders: response.headers
+              });
+          }
+        }
 
         return newDefinition;
       }

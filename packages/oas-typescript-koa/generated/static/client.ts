@@ -509,7 +509,15 @@ export const LoginUserParameters = [
 
 export const LoginUserResponse = {
   schema: z.string(),
-  status: 200
+  status: 200,
+  headers: {
+    'X-Rate-Limit': {
+      schema: z.number()
+    },
+    'X-Expires-After': {
+      schema: z.string()
+    }
+  }
 } as const;
 export type LoginUserResponse = typeof LoginUserResponse;
 

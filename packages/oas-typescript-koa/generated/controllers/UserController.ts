@@ -11,44 +11,44 @@ import {
 export class UserController {
   static createUser: CreateUserControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static createUsersWithListInput: CreateUsersWithListInputControllerFunction =
     (params) => {
       return {
-        data: undefined,
+        body: undefined,
         status: undefined
       };
     };
   static loginUser: LoginUserControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static logoutUser: LogoutUserControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static getUserByName: GetUserByNameControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static updateUser: UpdateUserControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static deleteUser: DeleteUserControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };

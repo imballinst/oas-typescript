@@ -85,9 +85,10 @@ export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
       ).headers;
 
       const responseSuccessHeaders =
-        convertOpenAPIHeadersToResponseSchemaHeaders(
-          openAPISuccessResponseHeaders
-        );
+        convertOpenAPIHeadersToResponseSchemaHeaders({
+          operationId,
+          responseHeaders: openAPISuccessResponseHeaders
+        });
       const responseSchema: PrebuildResponseSchema = {
         success: getSuccessResponseSchema({
           status: responseSuccessStatus,
@@ -230,9 +231,10 @@ function getSuccessResponseSchema({
     schema: contentSchema || 'z.void()',
     status
   };
-  const headers = convertOpenAPIHeadersToResponseSchemaHeaders(
-    content?.['headers']
-  );
+  const headers = convertOpenAPIHeadersToResponseSchemaHeaders({
+    operationId,
+    responseHeaders: content?.['headers']
+  });
   if (headers) successContent.headers = headers;
 
   return successContent;
@@ -254,20 +256,27 @@ function getErrorResponseSchema(
     '#/components/schemas/',
     ''
   );
-  console.info(content, contentSchema);
+
   const errorCodeContent: PrebuildErrorResponse = {
     schema: contentSchema || 'z.void()',
     status
   };
-  const headers = convertOpenAPIHeadersToResponseSchemaHeaders(
-    content?.['headers']
-  );
+  const headers = convertOpenAPIHeadersToResponseSchemaHeaders({
+    operationId,
+    responseHeaders: content?.['headers']
+  });
   if (headers) errorCodeContent.headers = headers;
 
   return errorCodeContent;
 }
 
-function convertOpenAPIHeadersToResponseSchemaHeaders(responseHeaders: any) {
+export function convertOpenAPIHeadersToResponseSchemaHeaders({
+  operationId,
+  responseHeaders
+}: {
+  operationId: string;
+  responseHeaders: any;
+}) {
   if (!responseHeaders) return undefined;
 
   const openAPIHeaders = responseHeaders as Record<
@@ -284,8 +293,14 @@ function convertOpenAPIHeadersToResponseSchemaHeaders(responseHeaders: any) {
     if (!responseSchemaHeaders) responseSchemaHeaders = {};
 
     const { type, nullable } = schema;
+    if (!type) {
+      throw new Error(
+        `Invalid header type in ${headerKey} of operation ${operationId}. Expected "integer" or "string".`
+      );
+    }
+
     responseSchemaHeaders[headerKey] = {
-      schema: `z.${type || 'void'}()`
+      schema: `z.${type === 'string' ? 'string' : 'number'}()`
     };
 
     if (nullable) responseSchemaHeaders[headerKey].nullable = nullable;
