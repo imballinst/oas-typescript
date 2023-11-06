@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.5.10
+
+### Patch Changes
+
+- 9ea3d0b: fix: fix deliverables to npm
+
 ## 0.5.9
 
 ### Patch Changes
