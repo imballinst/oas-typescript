@@ -15,11 +15,25 @@ jobs:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v3
 
-      - name: prepare publish
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: yarn
+      - run: corepack enable
+      - run: yarn set version 3.6.4
+
+      - name: prepare publish Docusaurus
+        working-directory: ./docs
+        run: |
+          yarn
+          yarn build
+          mv build ../output
+
+      - name: prepare publish Swagger UI
         working-directory: ./
         run: |
           mkdir -p ./output/oas-swagger-ui
-          cp -r gh-pages/* output
           cp -r packages/oas-swagger-ui/dist/* output/oas-swagger-ui
 
       - name: Deploy to gh-pages
