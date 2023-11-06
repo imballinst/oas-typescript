@@ -47,18 +47,10 @@ export const {{capitalizeFirstLetter operationId "Security"}} = {{{security}}}
 `
 
 export const middlewareHelpersTs = `import Koa from 'koa';
-import Router from '@koa/router';
-
-type KoaCtx = Koa.ParameterizedContext<
-  Koa.DefaultState,
-  Koa.DefaultContext &
-    Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>,
-  unknown
->;
 
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
-    ctx: KoaCtx,
+    ctx: Koa.Context,
     scopes: string[] | undefined
   ) {
     return {
@@ -69,19 +61,11 @@ export class MiddlewareHelpers {
 `
 
 export const utilsTs = `import Koa from 'koa';
-import Router from '@koa/router';
 import { z } from 'zod';
 import { OpenAPIV3 } from 'openapi-types';
 
 import { securitySchemes } from './security-schemes.js';
 import { MiddlewareHelpers } from '../middleware-helpers.js';
-
-type KoaCtx = Koa.ParameterizedContext<
-  Koa.DefaultState,
-  Koa.DefaultContext &
-    Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>,
-  unknown
->;
 
 const securitySchemeWithOauthScope =
   findSecuritySchemeWithOauthScope(securitySchemes);
@@ -147,12 +131,7 @@ export class KoaGeneratedUtils {
     ctx,
     oasParameters
   }: {
-    ctx: Koa.ParameterizedContext<
-      Koa.DefaultState,
-      Koa.DefaultContext &
-        Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>,
-      unknown
-    >;
+    ctx: Koa.Context;
     oasParameters: OasParametersType;
   }): ParsedRequestInfo<OasParametersType> | undefined {
     const pathParams: Record<string, any> = {};
@@ -251,7 +230,7 @@ export class KoaGeneratedUtils {
       (item) => Object.keys(item)[0] === securitySchemeWithOauthScope
     )?.[securitySchemeWithOauthScope];
 
-    return async (ctx: KoaCtx, next: Koa.Next) => {
+    return async (ctx: Koa.Context, next: Koa.Next) => {
       const { status } = await MiddlewareHelpers.doAdditionalSecurityValidation(
         ctx,
         scopes
@@ -404,18 +383,22 @@ export type ExtractErrorRecord<
       [Key in keyof TErrorRecord]: TErrorRecord[Key]['schema'] extends z.ZodVoid
         ? BuildResponseObject<{
             body?: never;
-            status: TErrorRecord[Key]['status'];
+            status: ExtractErrorStatus<TErrorRecord[Key]['status']>;
             headers: TErrorRecord[Key]['headers'];
           }>
         : TErrorRecord[Key]['schema'] extends z.ZodSchema
         ? BuildResponseObject<{
             body: z.infer<TErrorRecord[Key]['schema']>;
-            status: TErrorRecord[Key]['status'];
+            status: ExtractErrorStatus<TErrorRecord[Key]['status']>;
             headers: TErrorRecord[Key]['headers'];
           }>
         : never;
     }[keyof TErrorRecord]
   : never;
+
+type ExtractErrorStatus<TStatus> = TStatus extends 'default'
+  ? Exclude<TStatus, 'default'> | DefaultHttpErrors
+  : TStatus;
 
 export type DefaultHttpErrors =
   | 400

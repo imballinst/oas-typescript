@@ -1,17 +1,9 @@
 import Koa from 'koa';
-import Router from '@koa/router';
 import { z } from 'zod';
 import { OpenAPIV3 } from 'openapi-types';
 
 import { securitySchemes } from './security-schemes.js';
 import { MiddlewareHelpers } from '../middleware-helpers.js';
-
-type KoaCtx = Koa.ParameterizedContext<
-  Koa.DefaultState,
-  Koa.DefaultContext &
-    Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>,
-  unknown
->;
 
 const securitySchemeWithOauthScope =
   findSecuritySchemeWithOauthScope(securitySchemes);
@@ -77,12 +69,7 @@ export class KoaGeneratedUtils {
     ctx,
     oasParameters
   }: {
-    ctx: Koa.ParameterizedContext<
-      Koa.DefaultState,
-      Koa.DefaultContext &
-        Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>,
-      unknown
-    >;
+    ctx: Koa.Context;
     oasParameters: OasParametersType;
   }): ParsedRequestInfo<OasParametersType> | undefined {
     const pathParams: Record<string, any> = {};
@@ -181,7 +168,7 @@ export class KoaGeneratedUtils {
       (item) => Object.keys(item)[0] === securitySchemeWithOauthScope
     )?.[securitySchemeWithOauthScope];
 
-    return async (ctx: KoaCtx, next: Koa.Next) => {
+    return async (ctx: Koa.Context, next: Koa.Next) => {
       const { status } = await MiddlewareHelpers.doAdditionalSecurityValidation(
         ctx,
         scopes

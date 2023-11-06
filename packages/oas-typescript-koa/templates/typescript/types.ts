@@ -94,18 +94,22 @@ export type ExtractErrorRecord<
       [Key in keyof TErrorRecord]: TErrorRecord[Key]['schema'] extends z.ZodVoid
         ? BuildResponseObject<{
             body?: never;
-            status: TErrorRecord[Key]['status'];
+            status: ExtractErrorStatus<TErrorRecord[Key]['status']>;
             headers: TErrorRecord[Key]['headers'];
           }>
         : TErrorRecord[Key]['schema'] extends z.ZodSchema
         ? BuildResponseObject<{
             body: z.infer<TErrorRecord[Key]['schema']>;
-            status: TErrorRecord[Key]['status'];
+            status: ExtractErrorStatus<TErrorRecord[Key]['status']>;
             headers: TErrorRecord[Key]['headers'];
           }>
         : never;
     }[keyof TErrorRecord]
   : never;
+
+type ExtractErrorStatus<TStatus> = TStatus extends 'default'
+  ? Exclude<TStatus, 'default'> | DefaultHttpErrors
+  : TStatus;
 
 export type DefaultHttpErrors =
   | 400

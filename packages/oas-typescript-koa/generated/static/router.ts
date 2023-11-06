@@ -42,7 +42,7 @@ router.post(
   '/pet',
   bodyParser(),
   KoaGeneratedUtils.createSecurityMiddleware(AddPetSecurity),
-  async (ctx, next) => {
+  async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
       oasParameters: AddPetParameters
@@ -62,7 +62,7 @@ router.put(
   '/pet',
   bodyParser(),
   KoaGeneratedUtils.createSecurityMiddleware(UpdatePetSecurity),
-  async (ctx, next) => {
+  async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
       oasParameters: UpdatePetParameters
@@ -81,7 +81,7 @@ router.put(
 router.get(
   '/pet/findByStatus',
   KoaGeneratedUtils.createSecurityMiddleware(FindPetsByStatusSecurity),
-  async (ctx, next) => {
+  async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
       oasParameters: FindPetsByStatusParameters
@@ -100,7 +100,7 @@ router.get(
 router.get(
   '/pet/findByTags',
   KoaGeneratedUtils.createSecurityMiddleware(FindPetsByTagsSecurity),
-  async (ctx, next) => {
+  async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
       oasParameters: FindPetsByTagsParameters
@@ -119,7 +119,7 @@ router.get(
 router.get(
   '/pet/:petId',
   KoaGeneratedUtils.createSecurityMiddleware(GetPetByIdSecurity),
-  async (ctx, next) => {
+  async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
       oasParameters: GetPetByIdParameters
@@ -138,7 +138,7 @@ router.get(
 router.post(
   '/pet/:petId',
   KoaGeneratedUtils.createSecurityMiddleware(UpdatePetWithFormSecurity),
-  async (ctx, next) => {
+  async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
       oasParameters: UpdatePetWithFormParameters
@@ -157,7 +157,7 @@ router.post(
 router.delete(
   '/pet/:petId',
   KoaGeneratedUtils.createSecurityMiddleware(DeletePetSecurity),
-  async (ctx, next) => {
+  async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
       oasParameters: DeletePetParameters
@@ -177,7 +177,7 @@ router.post(
   '/pet/:petId/uploadImage',
   bodyParser(),
   KoaGeneratedUtils.createSecurityMiddleware(UploadFileSecurity),
-  async (ctx, next) => {
+  async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
       oasParameters: UploadFileParameters
@@ -196,7 +196,7 @@ router.post(
 router.get(
   '/store/inventory',
   KoaGeneratedUtils.createSecurityMiddleware(GetInventorySecurity),
-  async (ctx, next) => {
+  async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
       oasParameters: GetInventoryParameters
@@ -212,7 +212,7 @@ router.get(
   }
 );
 
-router.post('/store/order', bodyParser(), async (ctx, next) => {
+router.post('/store/order', bodyParser(), async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: PlaceOrderParameters
@@ -227,7 +227,7 @@ router.post('/store/order', bodyParser(), async (ctx, next) => {
   ctx.body = result.body;
 });
 
-router.get('/store/order/:orderId', async (ctx, next) => {
+router.get('/store/order/:orderId', async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: GetOrderByIdParameters
@@ -242,7 +242,7 @@ router.get('/store/order/:orderId', async (ctx, next) => {
   ctx.body = result.body;
 });
 
-router.delete('/store/order/:orderId', async (ctx, next) => {
+router.delete('/store/order/:orderId', async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: DeleteOrderParameters
@@ -257,7 +257,7 @@ router.delete('/store/order/:orderId', async (ctx, next) => {
   ctx.body = result.body;
 });
 
-router.post('/user', bodyParser(), async (ctx, next) => {
+router.post('/user', bodyParser(), async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: CreateUserParameters
@@ -272,7 +272,7 @@ router.post('/user', bodyParser(), async (ctx, next) => {
   ctx.body = result.body;
 });
 
-router.post('/user/createWithList', bodyParser(), async (ctx, next) => {
+router.post('/user/createWithList', bodyParser(), async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: CreateUsersWithListInputParameters
@@ -288,7 +288,7 @@ router.post('/user/createWithList', bodyParser(), async (ctx, next) => {
   ctx.body = result.body;
 });
 
-router.get('/user/login', async (ctx, next) => {
+router.get('/user/login', async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: LoginUserParameters
@@ -303,7 +303,7 @@ router.get('/user/login', async (ctx, next) => {
   ctx.body = result.body;
 });
 
-router.post('/user/logout', async (ctx, next) => {
+router.post('/user/logout', async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: LogoutUserParameters
@@ -318,7 +318,7 @@ router.post('/user/logout', async (ctx, next) => {
   ctx.body = result.body;
 });
 
-router.get('/user/:username', async (ctx, next) => {
+router.get('/user/:username', async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: GetUserByNameParameters
@@ -333,7 +333,7 @@ router.get('/user/:username', async (ctx, next) => {
   ctx.body = result.body;
 });
 
-router.put('/user/:username', bodyParser(), async (ctx, next) => {
+router.put('/user/:username', bodyParser(), async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: UpdateUserParameters
@@ -348,7 +348,7 @@ router.put('/user/:username', bodyParser(), async (ctx, next) => {
   ctx.body = result.body;
 });
 
-router.delete('/user/:username', async (ctx, next) => {
+router.delete('/user/:username', async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: DeleteUserParameters
