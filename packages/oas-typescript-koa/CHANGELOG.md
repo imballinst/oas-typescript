@@ -1,5 +1,21 @@
 # @oas-typescript/koa
 
+## 0.6.0
+
+### Minor Changes
+
+- cc69e56: feat: implement better typing for errors with default type
+
+### Patch Changes
+
+- cc69e56: fix: fix invalid types when using bodyParser and all other context stuff
+
+## 0.5.10
+
+### Patch Changes
+
+- 9ea3d0b: fix: fix deliverables to npm
+
 ## 0.5.9
 
 ### Patch Changes

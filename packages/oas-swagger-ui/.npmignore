@@ -4,3 +4,4 @@ public/
 tsconfig.*
 vite.config.*
 index.html
+CHANGELOG.md

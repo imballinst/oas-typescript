@@ -2,7 +2,7 @@ generated/
 scripts/
 src/
 templates/
+tests/
 
-nodemon.json
 tsconfig.json
 vitest.config.*

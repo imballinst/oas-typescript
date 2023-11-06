@@ -8,7 +8,7 @@ export function generateRouteMiddleware({
   operationId: string;
 }) {
   return `
-async (ctx, next) => {
+async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: ${parametersName}

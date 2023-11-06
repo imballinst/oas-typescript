@@ -67,7 +67,7 @@ test('parsePaths with all requirements fulfilled', () => {
     },
     routers: [
       `  
-router.get('/users/:user', async (ctx, next) => {
+router.get('/users/:user', async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: GetUserParameters
@@ -142,7 +142,7 @@ test('parsePaths with 2xx and default should result in 2xx and all errors', () =
     },
     routers: [
       `  
-router.get('/users/:user', async (ctx, next) => {
+router.get('/users/:user', async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
     oasParameters: GetUserParameters

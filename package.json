@@ -36,5 +36,8 @@
   "packageManager": "yarn@3.6.4",
   "engines": {
     "node": ">=18"
+  },
+  "resolutions": {
+    "@types/koa": "2.13.10"
   }
 }

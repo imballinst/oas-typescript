@@ -31,7 +31,6 @@ test('generateTemplateControllerTypes, without default response', () => {
           functionType: 'SayHelloFunction',
           operationId: 'SayHello',
           parametersName: 'SayHelloParameters',
-          response,
           responseType: {
             success: 'SayHelloResponse',
             error: 'SayHelloErrors'
@@ -73,7 +72,6 @@ test('generateTemplateControllerTypes, with undefined response', () => {
           functionType: 'SayHelloFunction',
           operationId: 'SayHello',
           parametersName: 'SayHelloParameters',
-          response,
           responseType: {
             success: 'SayHelloResponse',
             error: 'SayHelloErrors'
@@ -109,18 +107,6 @@ test('generateTemplateControllerTypes, with default response', () => {
           functionType: 'SayHelloFunction',
           operationId: 'SayHello',
           parametersName: 'SayHelloParameters',
-          response: {
-            success: {
-              status: 200,
-              schema: 'Message'
-            },
-            error: {
-              default: {
-                schema: 'SayHelloErrors',
-                status: 'number'
-              }
-            }
-          },
           responseType: {
             success: 'SayHelloResponse',
             error: 'SayHelloErrors'
@@ -159,23 +145,6 @@ test('generateTemplateControllerTypes, with headers', () => {
           // responseSuccessStatus: 200,
           // errorType: 'SayHelloErrors',
           parametersName: 'SayHelloParameters',
-          response: {
-            success: {
-              status: 200,
-              schema: 'Message',
-              headers: {
-                'x-rate-limit': {
-                  schema: 'string'
-                }
-              }
-            },
-            error: {
-              default: {
-                schema: 'SayHelloErrors',
-                status: 'default'
-              }
-            }
-          },
           responseType: {
             success: 'SayHelloResponse',
             error: 'SayHelloErrors'
