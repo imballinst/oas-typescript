@@ -1,0 +1,52 @@
+---
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Quick start
+
+To start using `@oas-typescript/koa`, run the command below.
+
+<Tabs groupId="package-managers">
+  <TabItem value="npm" label="npm" default>
+
+```bash
+npx openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+
+```bash
+yarn openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
+```
+
+  </TabItem>
+</Tabs>
+
+## Usage
+
+To use the CLI, use the following command.
+
+<Tabs groupId="package-managers">
+  <TabItem value="npm" label="npm" default>
+
+```bash
+npx openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+
+```bash
+yarn openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
+```
+
+  </TabItem>
+</Tabs>
+
+The CLI has following options that can be passed as arguments.
+
+- `--output`, `-o`: specify a place for output, defaults to (pwd)/generated. |
+- `--app-security-field`, `-a`: specify the custom security field used in the backend application. Mostly useful when you have role names in the application, in which these roles are required to do the operation. You might not need this parameter if you are using OpenAPI v3.1.0. Reference: https://spec.openapis.org/oas/v3.1.0#patterned-fields-2.
