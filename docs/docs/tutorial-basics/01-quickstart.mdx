@@ -6,20 +6,31 @@ import TabItem from '@theme/TabItem';
 
 # Quick start
 
-To start using `@oas-typescript/koa`, run the command below.
+This section contains the quick start on how to use `@oas-typescript/koa`.
+
+## Requirements
+
+The requirements to use `@oas-typescript/koa` are as the following.
+
+- Node.js installation, along with Working package manager, such as `npm` or `yarn`.
+- OpenAPI 3.0 specification file. If you are still using Swagger 2.0, you might need to [migrate](https://swagger.io/blog/news/whats-new-in-openapi-3-0/) or convert your Swagger 2.0 specification into OpenAPI 3.0.
+
+## Installation
+
+To install `@oas-typescript/koa`, run the command below.
 
 <Tabs groupId="package-managers">
   <TabItem value="npm" label="npm" default>
 
 ```bash
-npx openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
+npm install -D @oas-typescript/koa
 ```
 
   </TabItem>
   <TabItem value="yarn" label="Yarn">
 
 ```bash
-yarn openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
+yarn add -D @oas-typescript/koa
 ```
 
   </TabItem>
@@ -50,3 +61,5 @@ The CLI has following options that can be passed as arguments.
 
 - `--output`, `-o`: specify a place for output, defaults to (pwd)/generated. |
 - `--app-security-field`, `-a`: specify the custom security field used in the backend application. Mostly useful when you have role names in the application, in which these roles are required to do the operation. You might not need this parameter if you are using OpenAPI v3.1.0. Reference: https://spec.openapis.org/oas/v3.1.0#patterned-fields-2.
+
+There's that! After running that command, you will have your generated files ready at the output directory.

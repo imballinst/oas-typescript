@@ -2,9 +2,6 @@ name: test-packages
 
 on:
   pull_request:
-    branches:
-      - main
-
   push:
     branches:
       - main
@@ -27,7 +24,7 @@ jobs:
       - run: corepack enable
       - run: yarn set version 3.6.4
 
-      - name: setup and run tests
+      - name: Setup and run tests
         working-directory: ./packages/oas-typescript-axios
         run: |
           yarn
@@ -50,7 +47,7 @@ jobs:
       - run: corepack enable
       - run: yarn set version 3.6.4
 
-      - name: setup and run tests
+      - name: Setup and run tests
         working-directory: ./packages/oas-typescript-koa
         run: |
           yarn
