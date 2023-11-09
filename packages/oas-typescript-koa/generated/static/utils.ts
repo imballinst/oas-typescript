@@ -2,15 +2,9 @@ import Koa from 'koa';
 import { z } from 'zod';
 import { OpenAPIV3 } from 'openapi-types';
 
-import { securitySchemes } from './security-schemes.js';
 import { MiddlewareHelpers } from '../middleware-helpers.js';
-
-const securitySchemeWithOauthScope =
-  findSecuritySchemeWithOauthScope(securitySchemes);
-
-interface OasSecurity {
-  [name: string]: string[] | undefined;
-}
+import { SecuritySchemes } from './security-schemes.js';
+import { SecurityMiddlewareError } from './middleware-helpers.js';
 
 interface OasParameter {
   name: string;
@@ -161,25 +155,30 @@ export class KoaGeneratedUtils {
     } as unknown as ParsedRequestInfo<OasParametersType>;
   }
 
-  static createSecurityMiddleware<EndpointParameter extends OasSecurity[]>(
-    security: EndpointParameter | undefined
-  ) {
-    const scopes = security?.find(
-      (item) => Object.keys(item)[0] === securitySchemeWithOauthScope
-    )?.[securitySchemeWithOauthScope];
-
+  static createSecurityMiddleware(security: SecuritySchemes) {
     return async (ctx: Koa.Context, next: Koa.Next) => {
-      const { status } = await MiddlewareHelpers.doAdditionalSecurityValidation(
-        ctx,
-        scopes
-      );
+      try {
+        await MiddlewareHelpers.doAdditionalSecurityValidation(ctx, security);
 
-      if (status !== 200) {
-        ctx.status = status;
-        return;
+        next();
+      } catch (err) {
+        if (err instanceof SecurityMiddlewareError) {
+          const { content } = err;
+
+          ctx.status = content.status;
+          ctx.body = content.body;
+          return;
+        }
+
+        if (err instanceof Error) {
+          ctx.status = 500;
+          ctx.body = { message: err.stack || err.message };
+          return;
+        }
+
+        ctx.status = 500;
+        ctx.body = { message: 'Internal server error' };
       }
-
-      next();
     };
   }
 }
