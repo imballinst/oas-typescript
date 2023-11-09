@@ -1,12 +1,12 @@
 import Koa from 'koa';
+import { SecuritySchemes } from './static/security-schemes.js';
+import { SecurityMiddlewareError } from './static/types.js';
 
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
     ctx: Koa.Context,
-    scopes: string[] | undefined
-  ) {
-    return {
-      status: 200
-    };
+    securityObject: SecuritySchemes
+  ): Promise<void> {
+    return Promise.resolve();
   }
 }

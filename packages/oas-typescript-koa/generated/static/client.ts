@@ -63,9 +63,23 @@ export const UpdatePetParameters = [
     schema: Pet
   }
 ] as const;
-export const UpdatePetSecurity = [
-  { petstore_auth: ['write:pets', 'read:pets'] }
-];
+export const UpdatePetSecurity = {
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  }
+} as const;
 
 export const UpdatePetResponse = {
   schema: Pet,
@@ -97,7 +111,31 @@ export const AddPetParameters = [
     schema: Pet
   }
 ] as const;
-export const AddPetSecurity = [{ petstore_auth: ['write:pets', 'read:pets'] }];
+export const AddPetSecurity = {
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  },
+  api_key: {
+    meta: {
+      type: 'apiKey',
+      name: 'api_key',
+      in: 'header'
+    },
+    value: [] as string[]
+  }
+} as const;
 
 export const AddPetResponse = {
   schema: Pet,
@@ -120,10 +158,31 @@ export const GetPetByIdParameters = [
     schema: z.number().int()
   }
 ] as const;
-export const GetPetByIdSecurity = [
-  { api_key: [] },
-  { petstore_auth: ['write:pets', 'read:pets'] }
-];
+export const GetPetByIdSecurity = {
+  api_key: {
+    meta: {
+      type: 'apiKey',
+      name: 'api_key',
+      in: 'header'
+    },
+    value: [] as string[]
+  },
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  }
+} as const;
 
 export const GetPetByIdResponse = {
   schema: Pet,
@@ -160,9 +219,23 @@ export const UpdatePetWithFormParameters = [
     schema: z.string().optional()
   }
 ] as const;
-export const UpdatePetWithFormSecurity = [
-  { petstore_auth: ['write:pets', 'read:pets'] }
-];
+export const UpdatePetWithFormSecurity = {
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  }
+} as const;
 
 export const UpdatePetWithFormResponse = {
   schema: z.void(),
@@ -190,9 +263,23 @@ export const DeletePetParameters = [
     schema: z.number().int()
   }
 ] as const;
-export const DeletePetSecurity = [
-  { petstore_auth: ['write:pets', 'read:pets'] }
-];
+export const DeletePetSecurity = {
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  }
+} as const;
 
 export const DeletePetResponse = {
   schema: z.void(),
@@ -225,9 +312,23 @@ export const UploadFileParameters = [
     schema: z.string().optional()
   }
 ] as const;
-export const UploadFileSecurity = [
-  { petstore_auth: ['write:pets', 'read:pets'] }
-];
+export const UploadFileSecurity = {
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  }
+} as const;
 
 export const UploadFileResponse = {
   schema: ApiResponse,
@@ -248,9 +349,23 @@ export const FindPetsByStatusParameters = [
       .default('available')
   }
 ] as const;
-export const FindPetsByStatusSecurity = [
-  { petstore_auth: ['write:pets', 'read:pets'] }
-];
+export const FindPetsByStatusSecurity = {
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  }
+} as const;
 
 export const FindPetsByStatusResponse = {
   schema: z.array(Pet),
@@ -273,9 +388,23 @@ export const FindPetsByTagsParameters = [
     schema: z.array(z.string()).optional()
   }
 ] as const;
-export const FindPetsByTagsSecurity = [
-  { petstore_auth: ['write:pets', 'read:pets'] }
-];
+export const FindPetsByTagsSecurity = {
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  }
+} as const;
 
 export const FindPetsByTagsResponse = {
   schema: z.array(Pet),
@@ -292,7 +421,16 @@ export const FindPetsByTagsErrors = {
 export type FindPetsByTagsErrors = typeof FindPetsByTagsErrors;
 
 export const GetInventoryParameters = [] as const;
-export const GetInventorySecurity = [{ api_key: [] }];
+export const GetInventorySecurity = {
+  api_key: {
+    meta: {
+      type: 'apiKey',
+      name: 'api_key',
+      in: 'header'
+    },
+    value: [] as string[]
+  }
+} as const;
 
 export const GetInventoryResponse = {
   schema: z.record(z.number().int()),

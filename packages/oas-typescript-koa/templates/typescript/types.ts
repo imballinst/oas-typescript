@@ -1,5 +1,15 @@
 import { z } from 'zod';
 
+export class SecurityMiddlewareError extends Error {
+  content: { status: number; body: any };
+
+  constructor({ body, status }: { status: number; body: any }) {
+    super();
+
+    this.content = { status, body };
+  }
+}
+
 export interface OasError {
   status: number;
   description: string;

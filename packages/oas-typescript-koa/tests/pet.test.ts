@@ -32,7 +32,7 @@ describe('pet', () => {
         method: 'post',
         data: {},
         headers: {
-          helloworld: 'helloworld'
+          api_key: 'helloworld'
         }
       });
     } catch (err) {
@@ -56,7 +56,7 @@ describe('pet', () => {
           photoUrls: []
         },
         headers: {
-          helloworld: 'helloworld'
+          api_key: 'helloworld'
         }
       });
     } catch (err) {
@@ -79,7 +79,7 @@ describe('pet', () => {
           photoUrls: []
         },
         headers: {
-          helloworld: 'helloworld'
+          api_key: 'helloworld'
         }
       });
     } catch (err) {

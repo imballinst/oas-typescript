@@ -38,7 +38,7 @@ export const {{capitalizeFirstLetter operationId "Parameters"}} = [
   {{/if}}
 ] as const
 {{#if security}}
-export const {{capitalizeFirstLetter operationId "Security"}} = {{{security}}}
+{{{extractOperationSecurity operationId security}}}
 {{/if}}
 
 {{{extractResponses operationId responses}}}
