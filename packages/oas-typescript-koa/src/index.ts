@@ -238,10 +238,13 @@ async function main() {
       for (const securityObject of securityArray) {
         const keyName = Object.keys(securityObject)[0];
         const meta = securitySchemes[keyName];
-        securityRecord[keyName] = {
-          meta,
-          value: securityObject[keyName]
-        };
+
+        if (meta) {
+          securityRecord[keyName] = {
+            meta,
+            value: securityObject[keyName]
+          };
+        }
       }
 
       return `export const ${titleCased}Security = ${JSON.stringify(
