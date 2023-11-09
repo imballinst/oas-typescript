@@ -38,7 +38,7 @@ export const {{capitalizeFirstLetter operationId "Parameters"}} = [
   {{/if}}
 ] as const
 {{#if security}}
-export const {{capitalizeFirstLetter operationId "Security"}} = {{{security}}}
+{{{extractOperationSecurity operationId security}}}
 {{/if}}
 
 {{{extractResponses operationId responses}}}
@@ -73,9 +73,11 @@ export const utilsTs = `import Koa from 'koa';
 import { z } from 'zod';
 import { OpenAPIV3 } from 'openapi-types';
 
-import { MiddlewareHelpers } from '../middleware-helpers.js';
+import {
+  MiddlewareHelpers,
+  SecurityMiddlewareError
+} from '../middleware-helpers.js';
 import { SecuritySchemes } from './security-schemes.js';
-import { SecurityMiddlewareError } from './middleware-helpers.js';
 
 interface OasParameter {
   name: string;
@@ -255,24 +257,6 @@ export class KoaGeneratedUtils {
 }
 
 // Helper functions.
-function findSecuritySchemeWithOauthScope(
-  securitySchemes: OpenAPIV3.ComponentsObject['securitySchemes']
-) {
-  if (!securitySchemes) return '';
-
-  for (const key in securitySchemes) {
-    const securityScheme = securitySchemes[
-      key
-    ] as OpenAPIV3.SecuritySchemeObject;
-
-    if (securityScheme.type === 'oauth2') {
-      return key;
-    }
-  }
-
-  return '';
-}
-
 function createErrorResponse({
   errorCode,
   zodError,

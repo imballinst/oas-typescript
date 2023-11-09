@@ -19,7 +19,7 @@ export class MiddlewareHelpers {
     let isValid = true;
 
     if (securityObject.api_key) {
-      const apiKeyInHeader = ctx.headers.api_key;
+      const apiKeyInHeader = ctx.headers[securityObject.api_key.meta.name];
 
       if (!apiKeyInHeader) {
         isValid = false;

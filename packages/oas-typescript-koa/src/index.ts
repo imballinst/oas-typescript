@@ -141,6 +141,16 @@ async function main() {
     await fs.readFile(input, 'utf-8')
   );
 
+  // Parse paths and security schemes.
+  const {
+    routers,
+    controllerToOperationsRecord,
+    parametersImportsPerController,
+    controllerImportsPerController,
+    allServerSecurityImports
+  } = parsePaths({ paths: document.paths });
+  const securitySchemes = document.components?.securitySchemes || {};
+
   const handlebars = getHandlebars();
   handlebars.registerHelper('capitalizeFirstLetter', function (...args: any[]) {
     // Last argument is an object.
@@ -213,15 +223,30 @@ async function main() {
 
     return declarations.join('\n');
   });
+  handlebars.registerHelper(
+    'extractOperationSecurity',
+    function (...args: any[]) {
+      // Last argument is an object.
+      const [operationId, securityArray] = args.slice(0, -1);
+      const securityRecord: Record<string, any> = {};
+      const titleCased = capitalizeFirstCharacter(operationId);
 
-  // Generate the definitions only.
-  const {
-    routers,
-    controllerToOperationsRecord,
-    parametersImportsPerController,
-    controllerImportsPerController,
-    allServerSecurityImports
-  } = parsePaths({ paths: document.paths });
+      for (const securityObject of securityArray) {
+        const keyName = Object.keys(securityObject)[0];
+        const meta = securitySchemes[keyName];
+        securityRecord[keyName] = {
+          meta,
+          value: securityObject[keyName]
+        };
+      }
+
+      return `export const ${titleCased}Security = ${JSON.stringify(
+        securityRecord,
+        null,
+        2
+      ).replace(/\]/g, '] as string[]')} as const`;
+    }
+  );
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
@@ -242,7 +267,7 @@ async function main() {
         }
 
         newDefinition.operationId = operation.operationId;
-        newDefinition.security = JSON.stringify(operation.security);
+        newDefinition.security = operation.security;
 
         for (const statusCode in operation.responses) {
           const response = operation.responses[statusCode];
@@ -286,20 +311,6 @@ async function main() {
     nextChecksum[checksumKey] = fileChecksum;
   }
 
-  // Output security schemes.
-  const securitySchemes = document.components?.securitySchemes;
-  if (securitySchemes) {
-    await fs.writeFile(
-      path.join(lockedGeneratedFilesFolder, 'security-schemes.ts'),
-      `
-const securitySchemes = ${JSON.stringify(securitySchemes, null, 2)} as const
-
-export type SecuritySchemes = Partial<typeof securitySchemes>
-      `.trim(),
-      'utf-8'
-    );
-  }
-
   const template = generateTemplateRouter({
     allServerSecurityImports,
     controllerToOperationsRecord,
@@ -317,7 +328,6 @@ export type SecuritySchemes = Partial<typeof securitySchemes>
   const distClientPath = path.join(lockedGeneratedFilesFolder, 'client.ts');
   let distClientContent = await fs.readFile(distClientPath, 'utf-8');
   if (distClientContent.includes('z.instanceof(File)')) {
-    // Replace with z.any().
     distClientContent = distClientContent.replace(
       /z\.instanceof\(File\)/g,
       'z.any()'
@@ -350,6 +360,31 @@ export type SecuritySchemes = Partial<typeof securitySchemes>
     fs.writeFile(distClientPath, distClientContent, 'utf-8'),
     fs.rm(tmpFolder, { recursive: true, force: true })
   ]);
+
+  if (securitySchemes) {
+    const securitySchemesWithEmptyMeta: any = {};
+
+    for (const key in securitySchemes) {
+      securitySchemesWithEmptyMeta[key] = {
+        meta: securitySchemes[key],
+        value: []
+      };
+    }
+
+    await fs.writeFile(
+      path.join(lockedGeneratedFilesFolder, 'security-schemes.ts'),
+      `
+const securitySchemes = ${JSON.stringify(
+        securitySchemesWithEmptyMeta,
+        null,
+        2
+      ).replace(/\]/g, '] as string[]')} as const
+
+export type SecuritySchemes = Partial<typeof securitySchemes>
+      `.trim(),
+      'utf-8'
+    );
+  }
 
   // Prettify output.
   const prettierPath = require.resolve('prettier');
