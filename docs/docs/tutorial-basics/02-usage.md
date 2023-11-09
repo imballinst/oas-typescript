@@ -49,28 +49,61 @@ First things first, router will receive request from the client. These routers a
 
 ## Security Middleware (optional)
 
-<!-- TODO: fix the example. -->
-
 The default security middleware looks like this.
 
 ```ts
 import Koa from 'koa';
+import { SecuritySchemes } from './static/security-schemes.js';
+import { SecurityMiddlewareError } from './static/types.js';
 
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
     ctx: Koa.Context,
-    scopes: string[] | undefined
-  ) {
-    return {
-      status: 200
-    };
+    securityObject: SecuritySchemes
+  ): Promise<void> {
+    return Promise.resolve();
   }
 }
 ```
 
-The function receives `ctx` and `scopes`, the former comes from Koa whereas the latter comes from the OpenAPI specification. Here, you can do various validations, for example, if you want to validate the cookie here, you can do so by extracting the cookie value from `ctx`, then use the information from the `scopes` to determine whether the client has sufficient permissions or not.
+The function receives `ctx` and `securityObject`, the former comes from Koa whereas the latter comes from the OpenAPI specification. The function returns a resolved Promise (if validation is successful) and a rejected Promise (if validation fails). A modified security middleware helper looks like this:
 
-If you return a rejected Promise in this function, you will need to specify the `status` and the `body` which the server will send to the client. Otherwise, this middleware will pass along to the next process.
+```ts
+export class MiddlewareHelpers {
+  static async doAdditionalSecurityValidation(
+    ctx: Koa.Context,
+    securityObject: SecuritySchemes
+  ): Promise<void> {
+    // highlight-start
+    let isValid = true;
+
+    if (securityObject.api_key) {
+      const apiKeyInHeader = ctx.headers[securityObject.api_key.meta.name];
+
+      if (!apiKeyInHeader) {
+        isValid = false;
+      } else {
+        // Example.
+        isValid = apiKeyInHeader === 'helloworld';
+      }
+    }
+
+    if (!isValid) {
+      return Promise.reject(
+        new SecurityMiddlewareError({
+          status: 401,
+          body: { message: 'invalid credentials' }
+        })
+      );
+    }
+    // highlight-end
+
+    return Promise.resolve();
+  }
+}
+```
+
+If we look above, the added parts are related to validating the request. With the `securityObject` being type-safe, we can check if a request contains any available values defined in the top-level `components.securitySchemes` (or any field that's defined in your `--app-security-schemes-field`).
 
 ## Request validator
 
@@ -103,7 +136,7 @@ export class PetController {
 So here, we have a `PetController`, which is named after `<tag>Controller`. So, if you have a tag named "User", then it will be `UserController`. Inside this, you will want to do the endpoint operations. Using the `addPet` above, we can have a very simplified example.
 
 ```ts
-const db: Pet[] = []
+const db: Pet[] = [];
 
 export class PetController {
   static addPet: AddPetControllerFunction = (params) => {

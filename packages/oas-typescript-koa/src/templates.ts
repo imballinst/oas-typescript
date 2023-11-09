@@ -48,16 +48,7 @@ export const {{capitalizeFirstLetter operationId "Parameters"}} = [
 
 export const middlewareHelpersTs = `import Koa from 'koa';
 import { SecuritySchemes } from './static/security-schemes.js';
-
-export class SecurityMiddlewareError extends Error {
-  content: { status: number; body: any };
-
-  constructor({ body, status }: { status: number; body: any }) {
-    super();
-
-    this.content = { status, body };
-  }
-}
+import { SecurityMiddlewareError } from './static/types.js';
 
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
@@ -71,13 +62,10 @@ export class MiddlewareHelpers {
 
 export const utilsTs = `import Koa from 'koa';
 import { z } from 'zod';
-import { OpenAPIV3 } from 'openapi-types';
 
-import {
-  MiddlewareHelpers,
-  SecurityMiddlewareError
-} from '../middleware-helpers.js';
+import { MiddlewareHelpers } from '../middleware-helpers.js';
 import { SecuritySchemes } from './security-schemes.js';
+import { SecurityMiddlewareError } from './types.js';
 
 interface OasParameter {
   name: string;
@@ -280,6 +268,16 @@ function createErrorResponse({
 `
 
 export const typesTs = `import { z } from 'zod';
+
+export class SecurityMiddlewareError extends Error {
+  content: { status: number; body: any };
+
+  constructor({ body, status }: { status: number; body: any }) {
+    super();
+
+    this.content = { status, body };
+  }
+}
 
 export interface OasError {
   status: number;

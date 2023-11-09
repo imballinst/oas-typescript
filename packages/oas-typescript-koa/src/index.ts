@@ -36,16 +36,13 @@ const cli = meow(
 	  $ openapi-to-koa generate <path-to-openapi-json>
 
 	Options
-	  --output, -o                  Specify a place for output, defaults to (pwd)/generated.
-	  --app-security-field, -a      Specify the custom security field used in the backend application.
-                                  Mostly useful when you have role names in the application, in which
-                                  these roles are required to do the operation. You might not need this
-                                  parameter if you are using OpenAPI Specification v3.1.0. Reference:
-                                  https://spec.openapis.org/oas/v3.1.0#patterned-fields-2.
+	  --output, -o                        Specify a place for output, defaults to (pwd)/generated.
+	  --app-security-schemes-field        Specify the security requirements field used. Defaults to "security".
+	  --app-security-requirements-field   Specify the security scheme field used. Defaults to "securitySchemes".
 
 	Examples
 	  $ openapi-to-koa generate ./openapi/api.json --output src/generated
-	  $ openapi-to-koa generate ./openapi/api.json --output src/generated --app-security-field x-security
+	  $ openapi-to-koa generate ./openapi/api.json --output src/generated --app-security-schemes-field x-security-schemes --app-security-requirements-field x-security
 `,
   {
     importMeta: import.meta,
@@ -55,15 +52,18 @@ const cli = meow(
         type: 'string',
         shortFlag: 'o'
       },
-      appSecurityField: {
-        type: 'string',
-        shortFlag: 'a'
+      appSecuritySchemesField: {
+        type: 'string'
+      },
+      appSecurityRequirementsField: {
+        type: 'string'
       }
     }
   }
 );
 const DEFAULT_OUTPUT = path.join(process.cwd(), 'generated');
-const DEFAULT_SECURITY_FIELD = 'security';
+const DEFAULT_SECURITY_REQUIREMENTS_FIELD = 'security';
+const DEFAULT_SECURITY_SCHEMES_FIELD = 'securitySchemes';
 const VALID_COMMANDS = ['generate'];
 
 const require = createRequire(import.meta.url);
@@ -81,7 +81,10 @@ async function main() {
 
   const {
     output: cliOutput,
-    appSecurityField: cliAppSecurityField = DEFAULT_SECURITY_FIELD
+    appSecurityRequirementsField:
+      cliAppSecurityRequirements = DEFAULT_SECURITY_REQUIREMENTS_FIELD,
+    appSecuritySchemesField:
+      cliAppSecuritySchemesField = DEFAULT_SECURITY_SCHEMES_FIELD
   } = cli.flags;
 
   const rootOutputFolder =
@@ -149,7 +152,8 @@ async function main() {
     controllerImportsPerController,
     allServerSecurityImports
   } = parsePaths({ paths: document.paths });
-  const securitySchemes = document.components?.securitySchemes || {};
+  const securitySchemes =
+    (document.components as any)?.[cliAppSecuritySchemesField] || {};
 
   const handlebars = getHandlebars();
   handlebars.registerHelper('capitalizeFirstLetter', function (...args: any[]) {
@@ -257,9 +261,11 @@ async function main() {
       endpointDefinitionRefiner: (defaultDefinition, operation) => {
         const newDefinition = defaultDefinition as any;
 
-        if (cliAppSecurityField !== DEFAULT_SECURITY_FIELD) {
+        if (
+          cliAppSecurityRequirements !== DEFAULT_SECURITY_REQUIREMENTS_FIELD
+        ) {
           // Force inject the security of the custom field.
-          newDefinition.security = operation[cliAppSecurityField as any];
+          newDefinition.security = operation[cliAppSecurityRequirements as any];
         }
 
         if (!operation.operationId) {

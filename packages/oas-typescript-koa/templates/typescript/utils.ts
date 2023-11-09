@@ -1,12 +1,9 @@
 import Koa from 'koa';
 import { z } from 'zod';
-import { OpenAPIV3 } from 'openapi-types';
 
-import {
-  MiddlewareHelpers,
-  SecurityMiddlewareError
-} from '../middleware-helpers.js';
+import { MiddlewareHelpers } from '../middleware-helpers.js';
 import { SecuritySchemes } from './security-schemes.js';
+import { SecurityMiddlewareError } from './types.js';
 
 interface OasParameter {
   name: string;
