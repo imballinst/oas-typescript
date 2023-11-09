@@ -35,7 +35,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           # Move Docusaurus static assets.
-          mv docs/build ../output
+          mv docs/build ./output
 
           # Move @oas-typescript/swagger-ui static assets.
           mkdir -p ./output/oas-swagger-ui
