@@ -30,11 +30,9 @@ Before we dive deeper into each parts, here is the general flow on how a request
 
 ```mermaid
 graph LR;
-    ((Server Receives Request))-->Router;
-    Router-->Security Middleware (optional);
-    Security Middleware (optional)-->Request Validator;
-    Request Validator-->Controller;
-    Controller-->((Return Response to Client));
+    Router-->Security-Middleware;
+    Security-Middleware-->Request-Validator;
+    Request-Validator-->Controller;
 ```
 
 The amazing thing about `@oas-typescript/koa` is that, you don't need to worry about most of the parts above. You only need to worry about "Security Middleware (optional)" and "Controller". The rest will be handled by the generated server stubs.
@@ -68,13 +66,12 @@ export class MiddlewareHelpers {
 
 The function receives `ctx` and `securityObject`, the former comes from Koa whereas the latter comes from the OpenAPI specification. The function returns a resolved Promise (if validation is successful) and a rejected Promise (if validation fails). A modified security middleware helper looks like this:
 
-```ts
+```ts {6-26}
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
     ctx: Koa.Context,
     securityObject: SecuritySchemes
   ): Promise<void> {
-    // highlight-start
     let isValid = true;
 
     if (securityObject.api_key) {
@@ -96,7 +93,6 @@ export class MiddlewareHelpers {
         })
       );
     }
-    // highlight-end
 
     return Promise.resolve();
   }
