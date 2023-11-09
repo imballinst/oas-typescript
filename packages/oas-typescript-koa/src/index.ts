@@ -287,14 +287,15 @@ async function main() {
   }
 
   // Output security schemes.
-  if (document.components?.securitySchemes) {
+  const securitySchemes = document.components?.securitySchemes;
+  if (securitySchemes) {
     await fs.writeFile(
       path.join(lockedGeneratedFilesFolder, 'security-schemes.ts'),
-      `export const securitySchemes = ${JSON.stringify(
-        document.components?.securitySchemes,
-        null,
-        2
-      )} as const`,
+      `
+const securitySchemes = ${JSON.stringify(securitySchemes, null, 2)} as const
+
+export type SecuritySchemes = Partial<typeof securitySchemes>
+      `.trim(),
       'utf-8'
     );
   }

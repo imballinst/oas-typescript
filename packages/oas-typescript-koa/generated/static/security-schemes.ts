@@ -1,4 +1,4 @@
-export const securitySchemes = {
+const securitySchemes = {
   petstore_auth: {
     type: 'oauth2',
     flows: {
@@ -17,3 +17,5 @@ export const securitySchemes = {
     in: 'header'
   }
 } as const;
+
+export type SecuritySchemes = Partial<typeof securitySchemes>;

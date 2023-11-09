@@ -1,10 +1,12 @@
 import Koa from 'koa';
+import { SecuritySchemes } from './static/security-schemes.js';
 
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
     ctx: Koa.Context,
-    scopes: string[] | undefined
+    securityObject: SecuritySchemes
   ) {
+    // FIXME: use securityObject info.
     if (!ctx.request.headers.helloworld) {
       return {
         status: 401
