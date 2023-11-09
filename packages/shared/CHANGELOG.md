@@ -1,5 +1,11 @@
 # @oas-typescript/shared
 
+## 0.1.0
+
+### Minor Changes
+
+- d46d8f4: feat: allow better DX with security middlewares, improve docs
+
 ## 0.0.4
 
 ### Patch Changes

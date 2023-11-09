@@ -1,5 +1,15 @@
 # @oas-typescript/koa
 
+## 0.7.0
+
+### Minor Changes
+
+- d46d8f4: feat: allow better DX with security middlewares, improve docs
+
+### Patch Changes
+
+- 6a9c04d: fix: fix app security related stuff not filtering properly
+
 ## 0.6.0
 
 ### Minor Changes
