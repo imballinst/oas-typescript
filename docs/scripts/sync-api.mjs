@@ -1,3 +1,4 @@
+// @ts-check
 import fs from 'fs';
 import path from 'path';
 
@@ -14,7 +15,7 @@ const helpTextJson = JSON.parse(helpTextContent);
 const rows = [];
 
 for (const key in helpTextJson) {
-  const val = helpTextInfo[key];
+  const val = helpTextJson[key];
   const aliases = [`--${key}`, ...val.aliases].join(', ');
   const columns = [
     aliases,
