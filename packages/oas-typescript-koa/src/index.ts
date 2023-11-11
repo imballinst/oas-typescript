@@ -38,7 +38,9 @@ let maxOptionTextLength = -1;
 
 for (const key in helpTextInfo) {
   const val = helpTextInfo[key as keyof typeof helpTextInfo];
-  const aliases = [`--${key}`, ...val.aliases].join(', ');
+  const aliases = [`--${key}`, ...val.aliases.map((alias) => `-${alias}`)].join(
+    ', '
+  );
   let helpText = val.helpText[0];
 
   if (val.defaultValue) {
