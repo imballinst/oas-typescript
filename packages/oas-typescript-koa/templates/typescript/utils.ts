@@ -157,7 +157,10 @@ export class KoaGeneratedUtils {
   static createSecurityMiddleware(security: SecuritySchemes) {
     return async (ctx: Koa.Context, next: Koa.Next) => {
       try {
-        await MiddlewareHelpers.doAdditionalSecurityValidation(ctx, security);
+        await MiddlewareHelpers.doAdditionalSecurityValidation(
+          ctx.headers,
+          security
+        );
 
         next();
       } catch (err) {
