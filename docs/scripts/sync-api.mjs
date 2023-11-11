@@ -16,12 +16,12 @@ const rows = [];
 
 for (const key in helpTextJson) {
   const val = helpTextJson[key];
-  const aliases = [`--${key}`, ...val.aliases].join(', ');
+  const aliases = [`--${key}`, ...val.aliases.map((item) => `-${item}`)]
+    .map(wrapInInlineCode)
+    .join(', ');
   const columns = [
     aliases,
-    `${val.defaultValue ? '' : '**[Required]** '}${val.helpText.join(
-      '<br />'
-    )}`,
+    `${val.defaultValue ? '' : '**[Required]** '}${val.helpText.join(' ')}`,
     val.defaultValue || '-'
   ];
 
@@ -32,7 +32,7 @@ for (const key in helpTextJson) {
 const table = `
 | Option | Description | Default value |
 | - | - | - |
-${rows}.join('\n')
+${rows.join('\n')}
 `;
 
 const quickStartFilePath = path.join(
@@ -52,7 +52,12 @@ const indexOfSyncApiEnd = quickStartFileContent.indexOf(
 
 const newContent = quickStartFileContent
   .slice(0, indexOfSyncApiStart + SYNCAPI_TOKEN_START.length)
-  .concat(`\n${table}\n`)
+  .concat(table)
   .concat(quickStartFileContent.slice(indexOfSyncApiEnd));
 
 fs.writeFileSync(quickStartFilePath, newContent, 'utf-8');
+
+// Helper functions.
+function wrapInInlineCode(str) {
+  return `\`${str}\``;
+}

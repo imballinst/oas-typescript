@@ -13,7 +13,8 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
-    "sync-api-reference": "node scripts/sync-api.mjs"
+    "sync-api-reference": "node scripts/sync-api.mjs",
+    "validate-api-reference": "node scripts/validate-sync-api.mjs"
   },
   "dependencies": {
     "@docusaurus/core": "3.0.0",

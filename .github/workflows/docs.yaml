@@ -24,6 +24,12 @@ jobs:
       - run: corepack enable
       - run: yarn set version 3.6.4
 
+      - name: Validate API reference
+        working-directory: ./docs
+        run: |
+          yarn sync-api-reference
+          yarn validate-api-reference
+
       - name: Build Docusaurus
         working-directory: ./docs
         run: |
