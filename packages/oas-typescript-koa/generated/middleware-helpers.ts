@@ -1,16 +1,17 @@
 import Koa from 'koa';
 import { SecuritySchemes } from './static/security-schemes.js';
 import { SecurityMiddlewareError } from './static/types.js';
+import { IncomingHttpHeaders } from 'http';
 
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
-    ctx: Koa.Context,
+    headers: IncomingHttpHeaders,
     securityObject: SecuritySchemes
   ): Promise<void> {
     let isValid = true;
 
     if (securityObject.api_key) {
-      const apiKeyInHeader = ctx.headers[securityObject.api_key.meta.name];
+      const apiKeyInHeader = headers[securityObject.api_key.meta.name];
 
       if (!apiKeyInHeader) {
         isValid = false;

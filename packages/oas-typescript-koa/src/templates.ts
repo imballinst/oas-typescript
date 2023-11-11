@@ -46,13 +46,13 @@ export const {{capitalizeFirstLetter operationId "Parameters"}} = [
 {{/each}}
 `
 
-export const middlewareHelpersTs = `import Koa from 'koa';
+export const middlewareHelpersTs = `import { IncomingHttpHeaders } from 'http';
 import { SecuritySchemes } from './static/security-schemes.js';
 import { SecurityMiddlewareError } from './static/types.js';
 
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
-    ctx: Koa.Context,
+    headers: IncomingHttpHeaders,
     securityObject: SecuritySchemes
   ): Promise<void> {
     return Promise.resolve();
@@ -219,7 +219,10 @@ export class KoaGeneratedUtils {
   static createSecurityMiddleware(security: SecuritySchemes) {
     return async (ctx: Koa.Context, next: Koa.Next) => {
       try {
-        await MiddlewareHelpers.doAdditionalSecurityValidation(ctx, security);
+        await MiddlewareHelpers.doAdditionalSecurityValidation(
+          ctx.headers,
+          security
+        );
 
         next();
       } catch (err) {
