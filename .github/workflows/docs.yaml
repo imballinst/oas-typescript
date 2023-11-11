@@ -27,14 +27,13 @@ jobs:
       - name: Validate API reference
         working-directory: ./docs
         run: |
+          yarn
           yarn sync-api-reference
           yarn validate-api-reference
 
       - name: Build Docusaurus
         working-directory: ./docs
-        run: |
-          yarn
-          yarn build
+        run: yarn build
 
       - name: Prepare publish docs
         working-directory: ./
