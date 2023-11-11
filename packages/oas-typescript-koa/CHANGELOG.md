@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.7.1
+
+### Patch Changes
+
+- 5ba11ca: chore: implement a centralized help text etc for API reference
+
 ## 0.7.0
 
 ### Minor Changes
