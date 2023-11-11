@@ -27,6 +27,7 @@ jobs:
       - name: Validate API reference
         working-directory: ./docs
         run: |
+          git --no-pager diff
           yarn
           yarn sync-api-reference
           yarn validate-api-reference
