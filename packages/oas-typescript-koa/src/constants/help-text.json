@@ -29,5 +29,16 @@
     "examples": [
       "generate openapi/api.json --app-security-requirements-field x-security"
     ]
+  },
+  "module": {
+    "aliases": [],
+    "helpText": [
+      "Specify the output module. Available values are `cjs` or `esm`."
+    ],
+    "required": false,
+    "defaultValue": "esm",
+    "examples": [
+      "generate openapi/api.json --module cjs"
+    ]
   }
 }

@@ -64,6 +64,11 @@ const examplesText = examples
   .map((example) => `$ openapi-to-koa ${example}`)
   .join('\n    ');
 
+const DEFAULT_OUTPUT = path.join(process.cwd(), 'oas-typescript');
+const DEFAULT_SECURITY_REQUIREMENTS_FIELD = 'security';
+const DEFAULT_SECURITY_SCHEMES_FIELD = 'securitySchemes';
+const VALID_COMMANDS = ['generate'];
+
 const cli = meow(
   `
   Usage
@@ -87,18 +92,21 @@ const cli = meow(
         shortFlag: 'o'
       },
       appSecuritySchemesField: {
-        type: 'string'
+        type: 'string',
+        default: DEFAULT_SECURITY_SCHEMES_FIELD
       },
       appSecurityRequirementsField: {
-        type: 'string'
+        type: 'string',
+        default: DEFAULT_SECURITY_REQUIREMENTS_FIELD
+      },
+      module: {
+        type: 'string',
+        choices: ['cjs', 'esm'],
+        default: 'esm'
       }
     }
   }
 );
-const DEFAULT_OUTPUT = path.join(process.cwd(), 'oas-typescript');
-const DEFAULT_SECURITY_REQUIREMENTS_FIELD = 'security';
-const DEFAULT_SECURITY_SCHEMES_FIELD = 'securitySchemes';
-const VALID_COMMANDS = ['generate'];
 
 const require = createRequire(import.meta.url);
 
@@ -115,10 +123,8 @@ async function main() {
 
   const {
     output: cliOutput,
-    appSecurityRequirementsField:
-      cliAppSecurityRequirements = DEFAULT_SECURITY_REQUIREMENTS_FIELD,
-    appSecuritySchemesField:
-      cliAppSecuritySchemesField = DEFAULT_SECURITY_SCHEMES_FIELD
+    appSecurityRequirementsField: cliAppSecurityRequirements,
+    appSecuritySchemesField: cliAppSecuritySchemesField
   } = cli.flags;
 
   const rootOutputFolder =
