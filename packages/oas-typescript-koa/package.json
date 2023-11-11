@@ -21,6 +21,7 @@
     "cli": "node cli.js",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:run:src": "vitest run src",
     "test:server:start": "pm2 start scripts/tests/ecosystem.config.cjs",
     "test:server:stop": "pm2 delete scripts/tests/ecosystem.config.cjs"
   },

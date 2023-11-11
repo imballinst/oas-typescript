@@ -126,7 +126,8 @@ async function main() {
   const {
     output: cliOutput,
     appSecurityRequirementsField: cliAppSecurityRequirements,
-    appSecuritySchemesField: cliAppSecuritySchemesField
+    appSecuritySchemesField: cliAppSecuritySchemesField,
+    module: cliTargetModule
   } = cli.flags;
 
   const rootOutputFolder =
