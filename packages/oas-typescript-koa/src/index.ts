@@ -81,6 +81,7 @@ const cli = meow(
     importMeta: import.meta,
 
     flags: {
+      // TODO: find a way to integrate the help text JSON with this.
       output: {
         type: 'string',
         shortFlag: 'o'
