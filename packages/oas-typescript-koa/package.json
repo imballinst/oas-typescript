@@ -18,6 +18,7 @@
     "gen:all": "yarn gen:templates && yarn gen",
     "build": "yarn test:run && yarn gen:templates && yarn build:entry",
     "build:entry": "node --loader ts-node/esm scripts/build-entry.ts",
+    "cli": "node cli.js",
     "test": "vitest",
     "test:run": "vitest run",
     "test:server:start": "pm2 start scripts/tests/ecosystem.config.cjs",

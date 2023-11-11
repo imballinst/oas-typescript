@@ -59,10 +59,12 @@ yarn openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-di
 
 The CLI has following options that can be passed as arguments.
 
-| Option                              | Shorthand | Description                                                                                                                                                                                                       |
-| ----------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--output`                          | `-o`      | Specify a place for output, defaults to `(pwd)/generated`.                                                                                                                                                        |
-| `--app-security-schemes-field`      | -         | Specify the security scheme field used in the backend application. Mostly useful when you have custom security values that are not supported by the specification. Defaults to `securitySchemes`.                 |
-| `--app-security-requirements-field` | -         | Specify the custom security field used in the backend application. Mostly useful when you want to customize your `security` field but don't want to "hack" the standard `security` field. Defaults to `security`. |
+{/* @@SYNCAPI-START */}
+| Option | Description | Default value |
+| - | - | - |
+|`--output`, `-o`|Specify a place for output.|`(pwd)/oas-typescript`|
+|`--app-security-schemes-field`|Specify the security scheme field used in the OpenAPI Specification. Mostly useful when you have custom `securitySchemes` that are not supported by the specification.|`securitySchemes`|
+|`--app-security-requirements-field`|Specify the custom security requirements field used in the OpenAPI Specification. Mostly useful when you have custom `security` that are not supported by the specification.|`security`|
+{/* @@SYNCAPI-END */}
 
 There's that! After running that command, you will have your generated files ready at the output directory.

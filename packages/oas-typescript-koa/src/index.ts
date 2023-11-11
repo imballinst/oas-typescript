@@ -30,24 +30,58 @@ import { parsePaths } from './core/paths-parser.js';
 import { convertOpenAPIHeadersToResponseSchemaHeaders } from './core/header-parser.js';
 import { PrebuildResponseSchema } from './core/core-types.js';
 
+import helpTextInfo from './constants/help-text.json';
+
+const options: Array<{ option: string; helpText: string }> = [];
+const examples: string[] = [];
+let maxOptionTextLength = -1;
+
+for (const key in helpTextInfo) {
+  const val = helpTextInfo[key as keyof typeof helpTextInfo];
+  const aliases = [`--${key}`, ...val.aliases].join(', ');
+  let helpText = val.helpText[0];
+
+  if (val.defaultValue) {
+    helpText += ` Defaults to ${val.defaultValue}.`;
+  }
+
+  options.push({
+    option: aliases,
+    helpText
+  });
+  examples.push(...val.examples);
+
+  maxOptionTextLength = Math.max(maxOptionTextLength, aliases.length);
+}
+
+const optionsText = options
+  .map(
+    (item) =>
+      `${item.option.padEnd(maxOptionTextLength, ' ')}  ${item.helpText}`
+  )
+  .join('\n    ');
+const examplesText = examples
+  .map((example) => `$ openapi-to-koa ${example}`)
+  .join('\n    ');
+
 const cli = meow(
   `
-	Usage
-	  $ openapi-to-koa generate <path-to-openapi-json>
+  Usage
+    $ openapi-to-koa generate <path-to-openapi-json> [...options]
 
-	Options
-	  --output, -o                        Specify a place for output, defaults to (pwd)/generated.
-	  --app-security-schemes-field        Specify the security requirements field used. Defaults to "security".
-	  --app-security-requirements-field   Specify the security scheme field used. Defaults to "securitySchemes".
+  Options
+    ${optionsText}
 
-	Examples
-	  $ openapi-to-koa generate ./openapi/api.json --output src/generated
-	  $ openapi-to-koa generate ./openapi/api.json --output src/generated --app-security-schemes-field x-security-schemes --app-security-requirements-field x-security
+  Examples
+    ${examplesText}
+
+  For more information, visit https://imballinst.github.io/oas-typescript for documentation.
 `,
   {
     importMeta: import.meta,
 
     flags: {
+      // TODO: find a way to integrate the help text JSON with this.
       output: {
         type: 'string',
         shortFlag: 'o'
@@ -61,7 +95,7 @@ const cli = meow(
     }
   }
 );
-const DEFAULT_OUTPUT = path.join(process.cwd(), 'generated');
+const DEFAULT_OUTPUT = path.join(process.cwd(), 'oas-typescript');
 const DEFAULT_SECURITY_REQUIREMENTS_FIELD = 'security';
 const DEFAULT_SECURITY_SCHEMES_FIELD = 'securitySchemes';
 const VALID_COMMANDS = ['generate'];

@@ -1,6 +1,6 @@
 {
   "extends": "../shared/tsconfig.json",
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "src/**/*.json"],
   "compilerOptions": {
     "paths": {
       "@oast/shared/*": ["../shared/src/*"]

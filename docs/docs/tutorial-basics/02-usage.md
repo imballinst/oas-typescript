@@ -43,7 +43,7 @@ The amazing thing about `@oas-typescript/koa` is that, you don't need to worry a
 This is part of the server stubs, so you don't have to do anything here.
 :::
 
-First things first, router will receive request from the client. These routers are generated from the `paths` object in the OpenAPI Specification. These routers will gather up information inside `ctx` and then pass it to the security middleware, depending on whether `security` field or the field that you specified in `--app-security-field` exist or not in the operation object.
+First things first, router will receive request from the client. These routers are generated from the `paths` object in the OpenAPI Specification. These routers will gather up information inside `ctx` and then pass it to the security middleware, depending on whether `security` field or the field that you specified in `--app-security-requirements-field` exist or not in the operation object.
 
 ## Security Middleware (optional)
 
