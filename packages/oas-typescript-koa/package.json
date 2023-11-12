@@ -13,7 +13,7 @@
   },
   "scripts": {
     "gen": "yarn build:entry && yarn gen:build",
-    "gen:cjs": "yarn build:entry && yarn gen:build",
+    "gen:cjs": "yarn build:entry && yarn gen:build:cjs",
     "gen:build": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated",
     "gen:build:cjs": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated-cjs --output cjs",
     "gen:templates": "node --loader ts-node/esm scripts/fill-templates.ts",
