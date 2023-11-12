@@ -9863,6 +9863,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"test-oas-typescript-koa-cjs@workspace:packages/test-oas-typescript-koa-cjs":
+  version: 0.0.0-use.local
+  resolution: "test-oas-typescript-koa-cjs@workspace:packages/test-oas-typescript-koa-cjs"
+  dependencies:
+    "@koa/bodyparser": 5.0.0
+    "@koa/router": 12.0.0
+    "@types/cookie-parser": 1.4.3
+    "@types/koa": 2.13.10
+    "@types/koa__router": 12.0.3
+    koa: 2.14.2
+    nanoid: 4.0.2
+    zod: 3.21.4
+  languageName: unknown
+  linkType: soft
+
 "through2@npm:^4.0.0":
   version: 4.0.2
   resolution: "through2@npm:4.0.2"
