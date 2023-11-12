@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.8.1
+
+### Patch Changes
+
+- 7afb101: chore: update docs
+
 ## 0.8.0
 
 ### Minor Changes
