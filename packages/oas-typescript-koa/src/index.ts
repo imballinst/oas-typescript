@@ -358,10 +358,13 @@ async function main() {
     const checksumKey = `controllers/${path.basename(controllerKey)}`;
     const fileChecksum = await createOrDuplicateFile({
       filePath: pathToController,
-      fileContent: generateTemplateController({
-        controllerName: controllerKey,
-        operations
-      }),
+      fileContent: updateImportBasedOnModule(
+        generateTemplateController({
+          controllerName: controllerKey,
+          operations
+        }),
+        cliTargetModule
+      ),
       previousChecksum: previousChecksum[checksumKey]
     });
     nextChecksum[checksumKey] = fileChecksum;

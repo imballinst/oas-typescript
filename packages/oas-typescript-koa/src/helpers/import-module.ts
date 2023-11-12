@@ -13,6 +13,6 @@ export function updateImportBasedOnModule(fileContent: string, module: string) {
     return fileContent;
   }
 
-  const regex = /(import .+ from '.+)\.js'/g;
+  const regex = /(from '.+)\.js'/g;
   return fileContent.replace(regex, "$1'");
 }
