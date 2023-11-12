@@ -12,14 +12,16 @@
     "oas-typescript-koa": "cli.js"
   },
   "scripts": {
-    "gen": "yarn build:entry && yarn gen:build",
+    "gen": "yarn build:entry && yarn gen:build && yarn gen:build:cjs",
     "gen:build": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated",
+    "gen:build:cjs": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output ../test-oas-typescript-koa-cjs/generated --module cjs",
     "gen:templates": "node --loader ts-node/esm scripts/fill-templates.ts",
     "gen:all": "yarn gen:templates && yarn gen",
     "build": "yarn test:run && yarn gen:templates && yarn build:entry",
     "build:entry": "node --loader ts-node/esm scripts/build-entry.ts",
     "cli": "node cli.js",
     "test": "vitest",
+    "test:src": "vitest src",
     "test:run": "vitest run",
     "test:server:start": "pm2 start scripts/tests/ecosystem.config.cjs",
     "test:server:stop": "pm2 delete scripts/tests/ecosystem.config.cjs"

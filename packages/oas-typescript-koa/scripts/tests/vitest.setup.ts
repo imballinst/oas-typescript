@@ -36,7 +36,10 @@ async function sleep(ms: number) {
 
 async function checkHealthz() {
   try {
-    await axios('http://localhost:3000/healthz');
+    await Promise.all([
+      axios('http://localhost:3000/healthz'),
+      axios('http://localhost:3001/healthz')
+    ]);
     return true;
   } catch (err) {
     return false;

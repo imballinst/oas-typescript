@@ -31,6 +31,7 @@ import { convertOpenAPIHeadersToResponseSchemaHeaders } from './core/header-pars
 import { PrebuildResponseSchema } from './core/core-types.js';
 
 import helpTextInfo from './constants/help-text.json';
+import { updateImportBasedOnModule } from './helpers/import-module.js';
 
 const options: Array<{ option: string; helpText: string }> = [];
 const examples: string[] = [];
@@ -38,7 +39,9 @@ let maxOptionTextLength = -1;
 
 for (const key in helpTextInfo) {
   const val = helpTextInfo[key as keyof typeof helpTextInfo];
-  const aliases = [`--${key}`, ...val.aliases].join(', ');
+  const aliases = [`--${key}`, ...val.aliases.map((alias) => `-${alias}`)].join(
+    ', '
+  );
   let helpText = val.helpText[0];
 
   if (val.defaultValue) {
@@ -64,6 +67,11 @@ const examplesText = examples
   .map((example) => `$ openapi-to-koa ${example}`)
   .join('\n    ');
 
+const DEFAULT_OUTPUT = path.join(process.cwd(), 'oas-typescript');
+const DEFAULT_SECURITY_REQUIREMENTS_FIELD = 'security';
+const DEFAULT_SECURITY_SCHEMES_FIELD = 'securitySchemes';
+const VALID_COMMANDS = ['generate'];
+
 const cli = meow(
   `
   Usage
@@ -87,18 +95,21 @@ const cli = meow(
         shortFlag: 'o'
       },
       appSecuritySchemesField: {
-        type: 'string'
+        type: 'string',
+        default: DEFAULT_SECURITY_SCHEMES_FIELD
       },
       appSecurityRequirementsField: {
-        type: 'string'
+        type: 'string',
+        default: DEFAULT_SECURITY_REQUIREMENTS_FIELD
+      },
+      module: {
+        type: 'string',
+        choices: ['cjs', 'esm'],
+        default: 'esm'
       }
     }
   }
 );
-const DEFAULT_OUTPUT = path.join(process.cwd(), 'oas-typescript');
-const DEFAULT_SECURITY_REQUIREMENTS_FIELD = 'security';
-const DEFAULT_SECURITY_SCHEMES_FIELD = 'securitySchemes';
-const VALID_COMMANDS = ['generate'];
 
 const require = createRequire(import.meta.url);
 
@@ -115,10 +126,9 @@ async function main() {
 
   const {
     output: cliOutput,
-    appSecurityRequirementsField:
-      cliAppSecurityRequirements = DEFAULT_SECURITY_REQUIREMENTS_FIELD,
-    appSecuritySchemesField:
-      cliAppSecuritySchemesField = DEFAULT_SECURITY_SCHEMES_FIELD
+    appSecurityRequirementsField: cliAppSecurityRequirements,
+    appSecuritySchemesField: cliAppSecuritySchemesField,
+    module: cliTargetModule
   } = cli.flags;
 
   const rootOutputFolder =
@@ -156,17 +166,20 @@ async function main() {
     fs.writeFile(handlebarsFilePath, defaultHandlebars, 'utf-8'),
     fs.writeFile(
       path.join(lockedGeneratedFilesFolder, 'utils.ts'),
-      utilsTs,
+      updateImportBasedOnModule(utilsTs, cliTargetModule),
       'utf-8'
     ),
     fs.writeFile(
       path.join(lockedGeneratedFilesFolder, 'types.ts'),
-      typesTs,
+      updateImportBasedOnModule(typesTs, cliTargetModule),
       'utf-8'
     ),
     createOrDuplicateFile({
       filePath: path.join(rootOutputFolder, 'middleware-helpers.ts'),
-      fileContent: middlewareHelpersTs,
+      fileContent: updateImportBasedOnModule(
+        middlewareHelpersTs,
+        cliTargetModule
+      ),
       previousChecksum: previousChecksum['middleware-helpers.ts']
     })
   ]);
@@ -345,16 +358,19 @@ async function main() {
     const checksumKey = `controllers/${path.basename(controllerKey)}`;
     const fileChecksum = await createOrDuplicateFile({
       filePath: pathToController,
-      fileContent: generateTemplateController({
-        controllerName: controllerKey,
-        operations
-      }),
+      fileContent: updateImportBasedOnModule(
+        generateTemplateController({
+          controllerName: controllerKey,
+          operations
+        }),
+        cliTargetModule
+      ),
       previousChecksum: previousChecksum[checksumKey]
     });
     nextChecksum[checksumKey] = fileChecksum;
   }
 
-  const template = generateTemplateRouter({
+  const renderedRouter = generateTemplateRouter({
     allServerSecurityImports,
     controllerToOperationsRecord,
     parametersImportsPerController,
@@ -363,7 +379,7 @@ async function main() {
 
   await fs.writeFile(
     path.join(lockedGeneratedFilesFolder, 'router.ts'),
-    template,
+    updateImportBasedOnModule(renderedRouter, cliTargetModule),
     'utf-8'
   );
 
@@ -388,10 +404,13 @@ async function main() {
           'controller-types',
           `${key}Types.ts`
         ),
-        generateTemplateControllerTypes({
-          imports: controllerImportsPerController[key],
-          operations: controllerToOperationsRecord[key]
-        }),
+        updateImportBasedOnModule(
+          generateTemplateControllerTypes({
+            imports: controllerImportsPerController[key],
+            operations: controllerToOperationsRecord[key]
+          }),
+          cliTargetModule
+        ),
         'utf-8'
       )
     ),
@@ -400,7 +419,11 @@ async function main() {
       JSON.stringify(nextChecksum, null, 2),
       'utf-8'
     ),
-    fs.writeFile(distClientPath, distClientContent, 'utf-8'),
+    fs.writeFile(
+      distClientPath,
+      updateImportBasedOnModule(distClientContent, cliTargetModule),
+      'utf-8'
+    ),
     fs.rm(tmpFolder, { recursive: true, force: true })
   ]);
 

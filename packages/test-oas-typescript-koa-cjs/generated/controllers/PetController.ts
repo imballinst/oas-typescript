@@ -1,4 +1,4 @@
-import { Pet } from '../static/client.js';
+import { Pet } from '../static/client';
 import {
   AddPetControllerFunction,
   UpdatePetControllerFunction,
@@ -8,7 +8,7 @@ import {
   UpdatePetWithFormControllerFunction,
   DeletePetControllerFunction,
   UploadFileControllerFunction
-} from '../static/controller-types/PetControllerTypes.js';
+} from '../static/controller-types/PetControllerTypes';
 
 const db: Pet[] = [];
 
@@ -31,43 +31,43 @@ export class PetController {
   };
   static updatePet: UpdatePetControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static findPetsByStatus: FindPetsByStatusControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static findPetsByTags: FindPetsByTagsControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static getPetById: GetPetByIdControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static updatePetWithForm: UpdatePetWithFormControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static deletePet: DeletePetControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static uploadFile: UploadFileControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
