@@ -31,6 +31,7 @@ import { convertOpenAPIHeadersToResponseSchemaHeaders } from './core/header-pars
 import { PrebuildResponseSchema } from './core/core-types.js';
 
 import helpTextInfo from './constants/help-text.json';
+import { updateImportBasedOnModule } from './helpers/import-module.js';
 
 const options: Array<{ option: string; helpText: string }> = [];
 const examples: string[] = [];
@@ -165,17 +166,20 @@ async function main() {
     fs.writeFile(handlebarsFilePath, defaultHandlebars, 'utf-8'),
     fs.writeFile(
       path.join(lockedGeneratedFilesFolder, 'utils.ts'),
-      utilsTs,
+      updateImportBasedOnModule(utilsTs, cliTargetModule),
       'utf-8'
     ),
     fs.writeFile(
       path.join(lockedGeneratedFilesFolder, 'types.ts'),
-      typesTs,
+      updateImportBasedOnModule(typesTs, cliTargetModule),
       'utf-8'
     ),
     createOrDuplicateFile({
       filePath: path.join(rootOutputFolder, 'middleware-helpers.ts'),
-      fileContent: middlewareHelpersTs,
+      fileContent: updateImportBasedOnModule(
+        middlewareHelpersTs,
+        cliTargetModule
+      ),
       previousChecksum: previousChecksum['middleware-helpers.ts']
     })
   ]);
@@ -363,7 +367,7 @@ async function main() {
     nextChecksum[checksumKey] = fileChecksum;
   }
 
-  const template = generateTemplateRouter({
+  const renderedRouter = generateTemplateRouter({
     allServerSecurityImports,
     controllerToOperationsRecord,
     parametersImportsPerController,
@@ -372,7 +376,7 @@ async function main() {
 
   await fs.writeFile(
     path.join(lockedGeneratedFilesFolder, 'router.ts'),
-    template,
+    updateImportBasedOnModule(renderedRouter, cliTargetModule),
     'utf-8'
   );
 
@@ -397,10 +401,13 @@ async function main() {
           'controller-types',
           `${key}Types.ts`
         ),
-        generateTemplateControllerTypes({
-          imports: controllerImportsPerController[key],
-          operations: controllerToOperationsRecord[key]
-        }),
+        updateImportBasedOnModule(
+          generateTemplateControllerTypes({
+            imports: controllerImportsPerController[key],
+            operations: controllerToOperationsRecord[key]
+          }),
+          cliTargetModule
+        ),
         'utf-8'
       )
     ),
@@ -409,7 +416,11 @@ async function main() {
       JSON.stringify(nextChecksum, null, 2),
       'utf-8'
     ),
-    fs.writeFile(distClientPath, distClientContent, 'utf-8'),
+    fs.writeFile(
+      distClientPath,
+      updateImportBasedOnModule(distClientContent, cliTargetModule),
+      'utf-8'
+    ),
     fs.rm(tmpFolder, { recursive: true, force: true })
   ]);
 
