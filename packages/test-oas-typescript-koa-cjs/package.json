@@ -1,6 +1,7 @@
 {
   "name": "test-oas-typescript-koa-cjs",
   "version": "0.0.1",
+  "private": "true",
   "devDependencies": {
     "@koa/bodyparser": "5.0.0",
     "@koa/router": "12.0.0",

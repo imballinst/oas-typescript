@@ -1,5 +1,12 @@
 # @oas-typescript/koa
 
+## 0.8.0
+
+### Minor Changes
+
+- 283c398: feat: directly pass headers instead of through ctx for security middleware
+- 0d34396: feat: implement esm/cjs feature output
+
 ## 0.7.1
 
 ### Patch Changes
