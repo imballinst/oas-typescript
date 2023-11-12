@@ -16,22 +16,14 @@ yarn add -D @oas-typescript/koa
 
 ## CLI guide
 
-```
-Usage
-  $ openapi-to-koa generate <path-to-openapi-json>
-
-Options
-  --output, -o                  Specify a place for output, defaults to (pwd)/generated.
-  --app-security-field, -a      Specify the custom security field used in the backend application.
-                                Mostly useful when you have role names in the application, in which
-                                these roles are required to do the operation. You might not need this
-                                parameter if you are using OpenAPI Specification v3.1.0. Reference:
-                                https://spec.openapis.org/oas/v3.1.0#patterned-fields-2.
-
-Examples
-  $ openapi-to-koa generate ./openapi/api.json --output src/generated
-  $ openapi-to-koa generate ./openapi/api.json --output src/generated --app-security-field x-security
-```
+<!-- @@SYNCAPI-START -->
+| Option | Description | Default value |
+| - | - | - |
+|`--output`, `-o`|The output directory.|`(pwd)/oas-typescript`|
+|`--app-security-schemes-field`|The security scheme field used in the OpenAPI Specification. Mostly useful when you have custom `securitySchemes` that are not supported by the specification.|`securitySchemes`|
+|`--app-security-requirements-field`|The custom security requirements field used in the OpenAPI Specification. Mostly useful when you have custom `security` that are not supported by the specification.|`security`|
+|`--module`|The output module. Available values are `cjs` or `esm`.|`esm`|
+<!-- @@SYNCAPI-END -->
 
 ## Generating server stubs
 
@@ -50,7 +42,7 @@ generated
 │   ├── PetController.ts
 │   ├── StoreController.ts
 │   └── UserController.ts
-├── generated
+├── static
 │   ├── checksum.json
 │   ├── client.ts
 │   ├── controller-types
@@ -58,11 +50,10 @@ generated
 │   │   ├── StoreControllerTypes.ts
 │   │   └── UserControllerTypes.ts
 │   ├── security-schemes.ts
-│   ├── server.ts
+│   ├── router.ts
 │   ├── types.ts
 │   └── utils.ts
-├── middleware-helpers.ts
-└── server.ts
+└── middleware-helpers.ts
 ```
 
 All files are stubs, except the ones in `controllers` folder and `middleware-helpers.ts`, where you will need to insert your own logic. The latter is mostly used for validating authorization from the incoming request.

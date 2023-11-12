@@ -22,8 +22,7 @@ generated
 │   ├── router.ts
 │   ├── types.ts
 │   └── utils.ts
-├── middleware-helpers.ts
-└── server.ts
+└── middleware-helpers.ts
 ```
 
 Before we dive deeper into each parts, here is the general flow on how a request is processed using the server stubs.
