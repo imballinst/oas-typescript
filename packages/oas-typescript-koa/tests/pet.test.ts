@@ -94,4 +94,23 @@ describe('pet', () => {
       expect(error.response?.status).toBe(405);
     }
   });
+
+  test('delete pet', async () => {
+    let response: any;
+    let error: unknown;
+
+    try {
+      response = await axios(`http://localhost:3000/pet/0`, {
+        method: 'delete',
+        headers: {
+          api_key: 'helloworld'
+        }
+      });
+    } catch (err) {
+      error = err;
+    }
+
+    expect(response.status).toBe(204);
+    expect(response.data).toBe(undefined);
+  });
 });
