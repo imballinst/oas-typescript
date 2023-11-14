@@ -2,6 +2,8 @@ import { z } from 'zod';
 import axios, { AxiosRequestConfig } from 'axios';
 import { getQueryParameterString } from './utils/query.js';
 
+import { ApiResponse } from './common';
+
 // Schemas.
 export const User = z
   .object({

@@ -16,14 +16,13 @@ export class PetController {
   static addPet: AddPetControllerFunction = (params) => {
     const existingPet = db.find((row) => row.name === params.body.name);
     if (existingPet) {
-      console.info('params.body existing', params.body);
       return {
         status: 405,
         body: {}
       };
     }
 
-    db.push(params.body);
+    db.push({ id: db.length + 1, ...params.body });
 
     return {
       body: params.body,
@@ -32,43 +31,50 @@ export class PetController {
   };
   static updatePet: UpdatePetControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static findPetsByStatus: FindPetsByStatusControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static findPetsByTags: FindPetsByTagsControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static getPetById: GetPetByIdControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static updatePetWithForm: UpdatePetWithFormControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };
   static deletePet: DeletePetControllerFunction = (params) => {
+    const existingPetIndex = db.findIndex(
+      (row) => row.id === params.pathParams.petId
+    );
+    if (existingPetIndex > -1) {
+      db.splice(existingPetIndex, 1);
+    }
+
     return {
-      data: undefined,
-      status: undefined
+      body: undefined,
+      status: 204
     };
   };
   static uploadFile: UploadFileControllerFunction = (params) => {
     return {
-      data: undefined,
+      body: undefined,
       status: undefined
     };
   };

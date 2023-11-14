@@ -1,24 +1,9 @@
 import Koa from 'koa';
-import Router from '@koa/router';
 import { z } from 'zod';
-import { OpenAPIV3 } from 'openapi-types';
 
-import { securitySchemes } from './security-schemes.js';
 import { MiddlewareHelpers } from '../middleware-helpers.js';
-
-type KoaCtx = Koa.ParameterizedContext<
-  Koa.DefaultState,
-  Koa.DefaultContext &
-    Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>,
-  unknown
->;
-
-const securitySchemeWithOauthScope =
-  findSecuritySchemeWithOauthScope(securitySchemes);
-
-interface OasSecurity {
-  [name: string]: string[] | undefined;
-}
+import { SecuritySchemes } from './security-schemes.js';
+import { SecurityMiddlewareError } from './types.js';
 
 interface OasParameter {
   name: string;
@@ -77,12 +62,7 @@ export class KoaGeneratedUtils {
     ctx,
     oasParameters
   }: {
-    ctx: Koa.ParameterizedContext<
-      Koa.DefaultState,
-      Koa.DefaultContext &
-        Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>,
-      unknown
-    >;
+    ctx: Koa.Context;
     oasParameters: OasParametersType;
   }): ParsedRequestInfo<OasParametersType> | undefined {
     const pathParams: Record<string, any> = {};
@@ -174,48 +154,38 @@ export class KoaGeneratedUtils {
     } as unknown as ParsedRequestInfo<OasParametersType>;
   }
 
-  static createSecurityMiddleware<EndpointParameter extends OasSecurity[]>(
-    security: EndpointParameter | undefined
-  ) {
-    const scopes = security?.find(
-      (item) => Object.keys(item)[0] === securitySchemeWithOauthScope
-    )?.[securitySchemeWithOauthScope];
+  static createSecurityMiddleware(security: SecuritySchemes) {
+    return async (ctx: Koa.Context, next: Koa.Next) => {
+      try {
+        await MiddlewareHelpers.doAdditionalSecurityValidation(
+          ctx.headers,
+          security
+        );
 
-    return async (ctx: KoaCtx, next: Koa.Next) => {
-      const { status } = await MiddlewareHelpers.doAdditionalSecurityValidation(
-        ctx,
-        scopes
-      );
+        next();
+      } catch (err) {
+        if (err instanceof SecurityMiddlewareError) {
+          const { content } = err;
 
-      if (status !== 200) {
-        ctx.status = status;
-        return;
+          ctx.body = content.body;
+          ctx.status = content.status;
+          return;
+        }
+
+        if (err instanceof Error) {
+          ctx.body = { message: err.stack || err.message };
+          ctx.status = 500;
+          return;
+        }
+
+        ctx.body = { message: 'Internal server error' };
+        ctx.status = 500;
       }
-
-      next();
     };
   }
 }
 
 // Helper functions.
-function findSecuritySchemeWithOauthScope(
-  securitySchemes: OpenAPIV3.ComponentsObject['securitySchemes']
-) {
-  if (!securitySchemes) return '';
-
-  for (const key in securitySchemes) {
-    const securityScheme = securitySchemes[
-      key
-    ] as OpenAPIV3.SecuritySchemeObject;
-
-    if (securityScheme.type === 'oauth2') {
-      return key;
-    }
-  }
-
-  return '';
-}
-
 function createErrorResponse({
   errorCode,
   zodError,

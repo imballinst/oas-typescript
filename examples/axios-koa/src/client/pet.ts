@@ -2,6 +2,8 @@ import { z } from 'zod';
 import axios, { AxiosRequestConfig } from 'axios';
 import { getQueryParameterString } from './utils/query.js';
 
+import { ApiResponse } from './common';
+
 // Schemas.
 export const Category = z
   .object({ id: z.number().int(), name: z.string() })
@@ -24,11 +26,6 @@ export const Pet = z
   })
   .passthrough();
 export interface Pet extends z.infer<typeof Pet> {}
-export const ApiResponse = z
-  .object({ code: z.number().int(), type: z.string(), message: z.string() })
-  .partial()
-  .passthrough();
-export interface ApiResponse extends z.infer<typeof ApiResponse> {}
 
 const UpdatePetParams = z.object({ body: Pet });
 
