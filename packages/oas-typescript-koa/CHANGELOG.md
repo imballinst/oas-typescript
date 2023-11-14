@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.8.3
+
+### Patch Changes
+
+- b2b3b02: fix: fix axios and koa generators silently requiring prettier
+
 ## 0.8.2
 
 ### Patch Changes
