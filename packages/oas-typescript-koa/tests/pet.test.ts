@@ -114,7 +114,7 @@ describe('pet', () => {
         }
 
         expect(response.status).toBe(204);
-        expect(response.data).toBe(undefined);
+        expect(response.data).toBe('');
       });
     });
   }
