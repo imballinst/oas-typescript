@@ -32,13 +32,9 @@
   },
   "module": {
     "aliases": [],
-    "helpText": [
-      "The output module. Available values are `cjs` or `esm`."
-    ],
+    "helpText": ["The output module. Available values are `cjs` or `esm`."],
     "required": false,
     "defaultValue": "`esm`",
-    "examples": [
-      "generate openapi/api.json --module cjs"
-    ]
+    "examples": ["generate openapi/api.json --module cjs"]
   }
 }

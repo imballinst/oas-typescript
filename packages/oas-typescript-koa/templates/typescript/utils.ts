@@ -167,19 +167,19 @@ export class KoaGeneratedUtils {
         if (err instanceof SecurityMiddlewareError) {
           const { content } = err;
 
-          ctx.status = content.status;
           ctx.body = content.body;
+          ctx.status = content.status;
           return;
         }
 
         if (err instanceof Error) {
-          ctx.status = 500;
           ctx.body = { message: err.stack || err.message };
+          ctx.status = 500;
           return;
         }
 
-        ctx.status = 500;
         ctx.body = { message: 'Internal server error' };
+        ctx.status = 500;
       }
     };
   }

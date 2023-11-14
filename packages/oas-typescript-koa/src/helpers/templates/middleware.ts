@@ -14,13 +14,12 @@ async (ctx) => {
     oasParameters: ${parametersName}
   })
   if (!parsedRequestInfo) {
-    ctx.status = 400
     return
   }
 
   const result = await ${controllerName}.${operationId}(parsedRequestInfo)
-  ctx.status = result.status
   ctx.body = result.body
+  ctx.status = result.status
 }
   `.trim();
 }

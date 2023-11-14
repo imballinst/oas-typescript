@@ -48,13 +48,12 @@ router.post(
       oasParameters: AddPetParameters
     });
     if (!parsedRequestInfo) {
-      ctx.status = 400;
       return;
     }
 
     const result = await PetController.addPet(parsedRequestInfo);
-    ctx.status = result.status;
     ctx.body = result.body;
+    ctx.status = result.status;
   }
 );
 
@@ -68,13 +67,12 @@ router.put(
       oasParameters: UpdatePetParameters
     });
     if (!parsedRequestInfo) {
-      ctx.status = 400;
       return;
     }
 
     const result = await PetController.updatePet(parsedRequestInfo);
-    ctx.status = result.status;
     ctx.body = result.body;
+    ctx.status = result.status;
   }
 );
 
@@ -87,13 +85,12 @@ router.get(
       oasParameters: FindPetsByStatusParameters
     });
     if (!parsedRequestInfo) {
-      ctx.status = 400;
       return;
     }
 
     const result = await PetController.findPetsByStatus(parsedRequestInfo);
-    ctx.status = result.status;
     ctx.body = result.body;
+    ctx.status = result.status;
   }
 );
 
@@ -106,13 +103,12 @@ router.get(
       oasParameters: FindPetsByTagsParameters
     });
     if (!parsedRequestInfo) {
-      ctx.status = 400;
       return;
     }
 
     const result = await PetController.findPetsByTags(parsedRequestInfo);
-    ctx.status = result.status;
     ctx.body = result.body;
+    ctx.status = result.status;
   }
 );
 
@@ -125,13 +121,12 @@ router.get(
       oasParameters: GetPetByIdParameters
     });
     if (!parsedRequestInfo) {
-      ctx.status = 400;
       return;
     }
 
     const result = await PetController.getPetById(parsedRequestInfo);
-    ctx.status = result.status;
     ctx.body = result.body;
+    ctx.status = result.status;
   }
 );
 
@@ -144,13 +139,12 @@ router.post(
       oasParameters: UpdatePetWithFormParameters
     });
     if (!parsedRequestInfo) {
-      ctx.status = 400;
       return;
     }
 
     const result = await PetController.updatePetWithForm(parsedRequestInfo);
-    ctx.status = result.status;
     ctx.body = result.body;
+    ctx.status = result.status;
   }
 );
 
@@ -163,13 +157,12 @@ router.delete(
       oasParameters: DeletePetParameters
     });
     if (!parsedRequestInfo) {
-      ctx.status = 400;
       return;
     }
 
     const result = await PetController.deletePet(parsedRequestInfo);
-    ctx.status = result.status;
     ctx.body = result.body;
+    ctx.status = result.status;
   }
 );
 
@@ -183,13 +176,12 @@ router.post(
       oasParameters: UploadFileParameters
     });
     if (!parsedRequestInfo) {
-      ctx.status = 400;
       return;
     }
 
     const result = await PetController.uploadFile(parsedRequestInfo);
-    ctx.status = result.status;
     ctx.body = result.body;
+    ctx.status = result.status;
   }
 );
 
@@ -202,13 +194,12 @@ router.get(
       oasParameters: GetInventoryParameters
     });
     if (!parsedRequestInfo) {
-      ctx.status = 400;
       return;
     }
 
     const result = await StoreController.getInventory(parsedRequestInfo);
-    ctx.status = result.status;
     ctx.body = result.body;
+    ctx.status = result.status;
   }
 );
 
@@ -218,13 +209,12 @@ router.post('/store/order', bodyParser(), async (ctx) => {
     oasParameters: PlaceOrderParameters
   });
   if (!parsedRequestInfo) {
-    ctx.status = 400;
     return;
   }
 
   const result = await StoreController.placeOrder(parsedRequestInfo);
-  ctx.status = result.status;
   ctx.body = result.body;
+  ctx.status = result.status;
 });
 
 router.get('/store/order/:orderId', async (ctx) => {
@@ -233,13 +223,12 @@ router.get('/store/order/:orderId', async (ctx) => {
     oasParameters: GetOrderByIdParameters
   });
   if (!parsedRequestInfo) {
-    ctx.status = 400;
     return;
   }
 
   const result = await StoreController.getOrderById(parsedRequestInfo);
-  ctx.status = result.status;
   ctx.body = result.body;
+  ctx.status = result.status;
 });
 
 router.delete('/store/order/:orderId', async (ctx) => {
@@ -248,13 +237,12 @@ router.delete('/store/order/:orderId', async (ctx) => {
     oasParameters: DeleteOrderParameters
   });
   if (!parsedRequestInfo) {
-    ctx.status = 400;
     return;
   }
 
   const result = await StoreController.deleteOrder(parsedRequestInfo);
-  ctx.status = result.status;
   ctx.body = result.body;
+  ctx.status = result.status;
 });
 
 router.post('/user', bodyParser(), async (ctx) => {
@@ -263,13 +251,12 @@ router.post('/user', bodyParser(), async (ctx) => {
     oasParameters: CreateUserParameters
   });
   if (!parsedRequestInfo) {
-    ctx.status = 400;
     return;
   }
 
   const result = await UserController.createUser(parsedRequestInfo);
-  ctx.status = result.status;
   ctx.body = result.body;
+  ctx.status = result.status;
 });
 
 router.post('/user/createWithList', bodyParser(), async (ctx) => {
@@ -278,14 +265,13 @@ router.post('/user/createWithList', bodyParser(), async (ctx) => {
     oasParameters: CreateUsersWithListInputParameters
   });
   if (!parsedRequestInfo) {
-    ctx.status = 400;
     return;
   }
 
   const result =
     await UserController.createUsersWithListInput(parsedRequestInfo);
-  ctx.status = result.status;
   ctx.body = result.body;
+  ctx.status = result.status;
 });
 
 router.get('/user/login', async (ctx) => {
@@ -294,13 +280,12 @@ router.get('/user/login', async (ctx) => {
     oasParameters: LoginUserParameters
   });
   if (!parsedRequestInfo) {
-    ctx.status = 400;
     return;
   }
 
   const result = await UserController.loginUser(parsedRequestInfo);
-  ctx.status = result.status;
   ctx.body = result.body;
+  ctx.status = result.status;
 });
 
 router.post('/user/logout', async (ctx) => {
@@ -309,13 +294,12 @@ router.post('/user/logout', async (ctx) => {
     oasParameters: LogoutUserParameters
   });
   if (!parsedRequestInfo) {
-    ctx.status = 400;
     return;
   }
 
   const result = await UserController.logoutUser(parsedRequestInfo);
-  ctx.status = result.status;
   ctx.body = result.body;
+  ctx.status = result.status;
 });
 
 router.get('/user/:username', async (ctx) => {
@@ -324,13 +308,12 @@ router.get('/user/:username', async (ctx) => {
     oasParameters: GetUserByNameParameters
   });
   if (!parsedRequestInfo) {
-    ctx.status = 400;
     return;
   }
 
   const result = await UserController.getUserByName(parsedRequestInfo);
-  ctx.status = result.status;
   ctx.body = result.body;
+  ctx.status = result.status;
 });
 
 router.put('/user/:username', bodyParser(), async (ctx) => {
@@ -339,13 +322,12 @@ router.put('/user/:username', bodyParser(), async (ctx) => {
     oasParameters: UpdateUserParameters
   });
   if (!parsedRequestInfo) {
-    ctx.status = 400;
     return;
   }
 
   const result = await UserController.updateUser(parsedRequestInfo);
-  ctx.status = result.status;
   ctx.body = result.body;
+  ctx.status = result.status;
 });
 
 router.delete('/user/:username', async (ctx) => {
@@ -354,13 +336,12 @@ router.delete('/user/:username', async (ctx) => {
     oasParameters: DeleteUserParameters
   });
   if (!parsedRequestInfo) {
-    ctx.status = 400;
     return;
   }
 
   const result = await UserController.deleteUser(parsedRequestInfo);
-  ctx.status = result.status;
   ctx.body = result.body;
+  ctx.status = result.status;
 });
 
 export const generatedRouter = router;
