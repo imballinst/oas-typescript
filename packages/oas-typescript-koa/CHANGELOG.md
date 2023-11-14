@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.8.2
+
+### Patch Changes
+
+- 6b7e4e4: refactor: re-order the order of ctx.status and ctx.body
+
 ## 0.8.1
 
 ### Patch Changes
