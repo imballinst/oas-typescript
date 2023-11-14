@@ -1,7 +1,7 @@
 export function generateRouteMiddleware({
   parametersName,
   controllerName,
-  operationId,
+  operationId
 }: {
   parametersName?: string;
   controllerName: string;

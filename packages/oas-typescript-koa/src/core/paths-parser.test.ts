@@ -73,13 +73,12 @@ router.get('/users/:user', async (ctx) => {
     oasParameters: GetUserParameters
   })
   if (!parsedRequestInfo) {
-    ctx.status = 400
     return
   }
 
   const result = await UsersController.getUser(parsedRequestInfo)
-  ctx.status = result.status
   ctx.body = result.body
+  ctx.status = result.status
 })`.trim()
     ]
   } satisfies ReturnType<typeof parsePaths>);
@@ -148,13 +147,12 @@ router.get('/users/:user', async (ctx) => {
     oasParameters: GetUserParameters
   })
   if (!parsedRequestInfo) {
-    ctx.status = 400
     return
   }
 
   const result = await UsersController.getUser(parsedRequestInfo)
-  ctx.status = result.status
   ctx.body = result.body
+  ctx.status = result.status
 })`.trim()
     ]
   } satisfies ReturnType<typeof parsePaths>);
