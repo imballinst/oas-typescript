@@ -453,13 +453,17 @@ export type SecuritySchemes = Partial<typeof securitySchemes>
   }
 
   // Prettify output.
-  const prettierPath = require.resolve('prettier');
-  const prettierCliPath = path.join(
-    path.dirname(prettierPath),
-    'bin/prettier.cjs'
-  );
+  try {
+    const prettierPath = require.resolve('prettier');
+    const prettierCliPath = path.join(
+      path.dirname(prettierPath),
+      'bin/prettier.cjs'
+    );
 
-  execSync(`node ${prettierCliPath} ${cliOutput} --write`);
+    execSync(`node ${prettierCliPath} ${cliOutput} --write`);
+  } catch (err) {
+    // No-op.
+  }
 }
 
 main();

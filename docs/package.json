@@ -30,6 +30,7 @@
     "@docusaurus/module-type-aliases": "3.0.0",
     "@docusaurus/tsconfig": "3.0.0",
     "@docusaurus/types": "3.0.0",
+    "esbuild": "0.19.5",
     "typescript": "~5.2.2"
   },
   "browserslist": {

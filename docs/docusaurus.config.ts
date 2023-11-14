@@ -1,6 +1,7 @@
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+import TerserPlugin from 'terser-webpack-plugin';
 
 const config: Config = {
   title: '@oas-typescript',
@@ -86,7 +87,43 @@ const config: Config = {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula
     }
-  } satisfies Preset.ThemeConfig
+  } satisfies Preset.ThemeConfig,
+
+  // @ts-ignore
+  plugins: [webpackDocusaurusPlugin]
 };
 
 export default config;
+
+// Custom plugins.
+// Source: https://github.com/facebook/docusaurus/issues/4765.
+function webpackDocusaurusPlugin() {
+  return {
+    name: 'webpack-docusaurus-plugin',
+    configureWebpack(config: any) {
+      // Disable cache in CI since it gets evicted too quickly from github actions limits
+      const isCI = process.env.CI;
+      const cacheOptions = isCI ? { cache: false } : {};
+
+      // Or compress the cache w/ gzip or brotli
+      // const cacheOptions = isCI ? { cache: { compression: 'brotli' } } : {};
+
+      // Replace terser with esbuild minify, but only if terser would have been used
+      // This still respects the --no-minify flag
+      const minimizer = new TerserPlugin({
+        minify: TerserPlugin.esbuildMinify
+      });
+      const minimizers = config.optimization.minimizer?.map((m) =>
+        m instanceof TerserPlugin ? minimizer : m
+      );
+
+      return {
+        mergeStrategy: { 'optimization.minimizer': 'replace' },
+        optimization: {
+          minimizer: minimizers
+        },
+        ...cacheOptions
+      };
+    }
+  };
+}

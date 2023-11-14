@@ -5,6 +5,7 @@ import { generateZodClientFromOpenAPI } from 'openapi-zod-client';
 import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
+import { createRequire } from 'node:module';
 import { execSync } from 'child_process';
 
 import { defaultHandlebars, defaultQueryUtils } from './templates.js';
@@ -48,6 +49,8 @@ const REQUEST_CONTENT_TYPE_PRIORITY = [
   'application/octet-stream'
 ];
 const METHOD_WITH_REQUEST_BODY = ['post', 'put', 'patch'];
+
+const require = createRequire(import.meta.url);
 
 async function main() {
   const [command, cliInput] = cli.input;
@@ -132,8 +135,18 @@ async function main() {
     }
   });
 
-  // Hijack the prettier because we want to use the prettier from the current node_modules rather than to install a new one.
-  execSync(`yarn prettier ${cliOutput} --write`);
+  // Prettify output.
+  try {
+    const prettierPath = require.resolve('prettier');
+    const prettierCliPath = path.join(
+      path.dirname(prettierPath),
+      'bin/prettier.cjs'
+    );
+
+    execSync(`node ${prettierCliPath} ${cliOutput} --write`);
+  } catch (err) {
+    // No-op.
+  }
 }
 
 main();

@@ -794,17 +794,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oas-typescript/koa@npm:0.5.8":
-  version: 0.5.8
-  resolution: "@oas-typescript/koa@npm:0.5.8"
+"@oas-typescript/koa@npm:0.8.2":
+  version: 0.8.2
+  resolution: "@oas-typescript/koa@npm:0.8.2"
   dependencies:
     meow: 12.0.1
-    openapi-zod-client: 1.13.0
+    openapi-zod-client: 1.13.1
     prettier: 3.0.3
     title-case: 3.0.3
   bin:
     oas-typescript-koa: cli.js
-  checksum: 67fc934b23d0332146345dfa3f7cabf1557cc9cf320a2159ed50338c2274c0590af778732345cf50bf60e27a7becc408b04e16c0ddd6720181094595c2f3b1f2
+  checksum: ee115e745686ea9dc8525a6369bbcedec2d39ee7268891e4a536a29ffe739c038be1f240b0107aeee7ee77e7f48d542a8345887e6b9ff8acf4ceb3a1f48c4f7c
   languageName: node
   linkType: hard
 
@@ -1688,7 +1688,7 @@ __metadata:
     "@koa/bodyparser": 5.0.0
     "@koa/router": 12.0.0
     "@oas-typescript/axios": 0.1.0
-    "@oas-typescript/koa": 0.5.8
+    "@oas-typescript/koa": 0.8.2
     "@swc/core": 1.3.66
     "@swc/helpers": 0.5.1
     "@types/koa": 2.13.10
@@ -1701,6 +1701,7 @@ __metadata:
     nanoid: 4.0.2
     openapi-types: 12.1.3
     pm2: 5.3.0
+    prettier: 3.0.3
     ts-node: 10.9.1
     typescript: 5.2.2
     vitest: 0.34.6
@@ -4078,9 +4079,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openapi-zod-client@npm:1.13.0":
-  version: 1.13.0
-  resolution: "openapi-zod-client@npm:1.13.0"
+"openapi-zod-client@npm:1.13.1":
+  version: 1.13.1
+  resolution: "openapi-zod-client@npm:1.13.1"
   dependencies:
     "@apidevtools/swagger-parser": ^10.1.0
     "@liuli-util/fs-extra": ^0.1.0
@@ -4098,7 +4099,7 @@ __metadata:
     zod: ^3.19.1
   bin:
     openapi-zod-client: bin.js
-  checksum: 10948d05fe9ceee0ae3d01bbf72493507cb53339c38d07b3558bead3d9ff59fa2496ea849bfffe38d86c21ae9c654149162090796f9c253952a810f65850fc61
+  checksum: 66e7f92cf3566a662876c9e6cef03acd52b6252a5d2050587b1597f352735a950f23f6fb67bcf369ed001522b9e404cc8afa1a218d82810fa757898955db3be7
   languageName: node
   linkType: hard
 

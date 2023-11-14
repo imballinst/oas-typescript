@@ -33,7 +33,7 @@ describe('pet', () => {
         { body: {} },
         {
           headers: {
-            helloworld: 'helloworld'
+            api_key: 'helloworld'
           }
         }
       );
@@ -60,7 +60,7 @@ describe('pet', () => {
         },
         {
           headers: {
-            helloworld: 'helloworld'
+            api_key: 'helloworld'
           }
         }
       );
@@ -86,7 +86,7 @@ describe('pet', () => {
         },
         {
           headers: {
-            helloworld: 'helloworld'
+            api_key: 'helloworld'
           }
         }
       );
