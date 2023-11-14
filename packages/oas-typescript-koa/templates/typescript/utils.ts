@@ -1,44 +1,44 @@
-import Koa from 'koa';
-import { z } from 'zod';
+import Koa from "koa";
+import { z } from "zod";
 
-import { MiddlewareHelpers } from '../middleware-helpers.js';
-import { SecuritySchemes } from './security-schemes.js';
-import { SecurityMiddlewareError } from './types.js';
+import { MiddlewareHelpers } from "../middleware-helpers.js";
+import { SecuritySchemes } from "./security-schemes.js";
+import { SecurityMiddlewareError } from "./types.js";
 
 interface OasParameter {
   name: string;
   description?: string;
-  type: 'Path' | 'Query' | 'Body' | 'Header';
+  type: "Path" | "Query" | "Body" | "Header";
   schema: z.ZodTypeAny;
 }
 
 type ExtractMatchingType<
   TArray extends readonly OasParameter[],
-  Type extends TArray[number]['type']
+  Type extends TArray[number]["type"]
 > = Extract<TArray[number], { type: Type }>;
 
 type ExtractFilteredRecordFromArray<
   TArray extends readonly OasParameter[],
-  Type extends TArray[number]['type']
+  Type extends TArray[number]["type"]
 > = ExtractMatchingType<TArray, Type> extends never
   ? never
   : {
-      [K in ExtractMatchingType<TArray, Type>['name']]: z.output<
-        ExtractMatchingType<TArray, Type>['schema']
+      [K in ExtractMatchingType<TArray, Type>["name"]]: z.output<
+        ExtractMatchingType<TArray, Type>["schema"]
       >;
     };
 
 enum ParseRequestErrors {
-  INVALID_PATH_PARAMETER = '10000',
-  INVALID_BODY = '10001',
-  INVALID_QUERY_PARAMETER = '10002',
-  INVALID_HTTP_HEADER = '10003'
+  INVALID_PATH_PARAMETER = "10000",
+  INVALID_BODY = "10001",
+  INVALID_QUERY_PARAMETER = "10002",
+  INVALID_HTTP_HEADER = "10003",
 }
 const ParseRequestErrorsMessage: Record<ParseRequestErrors, string> = {
-  [ParseRequestErrors.INVALID_PATH_PARAMETER]: 'invalid path parameter',
-  [ParseRequestErrors.INVALID_BODY]: 'invalid body',
-  [ParseRequestErrors.INVALID_QUERY_PARAMETER]: 'invalid query parameter',
-  [ParseRequestErrors.INVALID_HTTP_HEADER]: 'invalid http header'
+  [ParseRequestErrors.INVALID_PATH_PARAMETER]: "invalid path parameter",
+  [ParseRequestErrors.INVALID_BODY]: "invalid body",
+  [ParseRequestErrors.INVALID_QUERY_PARAMETER]: "invalid query parameter",
+  [ParseRequestErrors.INVALID_HTTP_HEADER]: "invalid http header",
 };
 
 type RemoveNeverKeys<T> = Pick<
@@ -51,16 +51,16 @@ type RemoveNeverKeys<T> = Pick<
 export type ParsedRequestInfo<
   OasParametersType extends readonly OasParameter[]
 > = RemoveNeverKeys<{
-  body: z.output<ExtractMatchingType<OasParametersType, 'Body'>['schema']>;
-  pathParams: ExtractFilteredRecordFromArray<OasParametersType, 'Path'>;
-  headerParams: ExtractFilteredRecordFromArray<OasParametersType, 'Header'>;
-  queryParams: ExtractFilteredRecordFromArray<OasParametersType, 'Query'>;
+  body: z.output<ExtractMatchingType<OasParametersType, "Body">["schema"]>;
+  pathParams: ExtractFilteredRecordFromArray<OasParametersType, "Path">;
+  headerParams: ExtractFilteredRecordFromArray<OasParametersType, "Header">;
+  queryParams: ExtractFilteredRecordFromArray<OasParametersType, "Query">;
 }>;
 
 export class KoaGeneratedUtils {
   static parseRequestInfo<OasParametersType extends readonly OasParameter[]>({
     ctx,
-    oasParameters
+    oasParameters,
   }: {
     ctx: Koa.Context;
     oasParameters: OasParametersType;
@@ -72,9 +72,9 @@ export class KoaGeneratedUtils {
 
     // Validate path parameters.
     for (const oasParameter of oasParameters) {
-      if (oasParameter.type === 'Path') {
+      if (oasParameter.type === "Path") {
         let param: string | number = ctx.params[oasParameter.name];
-        if (oasParameter.schema._def.typeName === 'ZodNumber') {
+        if (oasParameter.schema._def.typeName === "ZodNumber") {
           param = Number(param);
         }
 
@@ -84,7 +84,7 @@ export class KoaGeneratedUtils {
           ctx.body = createErrorResponse({
             errorCode: ParseRequestErrors.INVALID_PATH_PARAMETER,
             zodError: result.error,
-            additionalMessage: oasParameter.name
+            additionalMessage: oasParameter.name,
           });
           return;
         }
@@ -93,14 +93,14 @@ export class KoaGeneratedUtils {
         continue;
       }
 
-      if (oasParameter.type === 'Body') {
+      if (oasParameter.type === "Body") {
         const body = ctx.request.body as any;
         const result = oasParameter.schema.safeParse(body);
         if (!result.success) {
           ctx.status = 400;
           ctx.body = createErrorResponse({
             errorCode: ParseRequestErrors.INVALID_BODY,
-            zodError: result.error
+            zodError: result.error,
           });
           return;
         }
@@ -109,7 +109,7 @@ export class KoaGeneratedUtils {
         continue;
       }
 
-      if (oasParameter.type === 'Query') {
+      if (oasParameter.type === "Query") {
         const result = oasParameter.schema.safeParse(
           ctx.query[oasParameter.name]
         );
@@ -118,7 +118,7 @@ export class KoaGeneratedUtils {
           ctx.body = createErrorResponse({
             errorCode: ParseRequestErrors.INVALID_QUERY_PARAMETER,
             zodError: result.error,
-            additionalMessage: oasParameter.name
+            additionalMessage: oasParameter.name,
           });
           return;
         }
@@ -127,7 +127,7 @@ export class KoaGeneratedUtils {
         continue;
       }
 
-      if (oasParameter.type === 'Header') {
+      if (oasParameter.type === "Header") {
         const result = oasParameter.schema.safeParse(
           ctx.headers[oasParameter.name]
         );
@@ -136,7 +136,7 @@ export class KoaGeneratedUtils {
           ctx.body = createErrorResponse({
             errorCode: ParseRequestErrors.INVALID_HTTP_HEADER,
             zodError: result.error,
-            additionalMessage: oasParameter.name
+            additionalMessage: oasParameter.name,
           });
           return;
         }
@@ -150,7 +150,7 @@ export class KoaGeneratedUtils {
       pathParams,
       queryParams,
       headerParams,
-      body: bodyParams
+      body: bodyParams,
     } as unknown as ParsedRequestInfo<OasParametersType>;
   }
 
@@ -167,19 +167,19 @@ export class KoaGeneratedUtils {
         if (err instanceof SecurityMiddlewareError) {
           const { content } = err;
 
-          ctx.status = content.status;
           ctx.body = content.body;
+          ctx.status = content.status;
           return;
         }
 
         if (err instanceof Error) {
-          ctx.status = 500;
           ctx.body = { message: err.stack || err.message };
+          ctx.status = 500;
           return;
         }
 
+        ctx.body = { message: "Internal server error" };
         ctx.status = 500;
-        ctx.body = { message: 'Internal server error' };
       }
     };
   }
@@ -189,7 +189,7 @@ export class KoaGeneratedUtils {
 function createErrorResponse({
   errorCode,
   zodError,
-  additionalMessage
+  additionalMessage,
 }: {
   errorCode: ParseRequestErrors;
   zodError: z.ZodError;
@@ -203,6 +203,6 @@ function createErrorResponse({
   return {
     code: errorCode,
     message,
-    detail: zodError.errors
+    detail: zodError.errors,
   };
 }
