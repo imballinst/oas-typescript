@@ -13,6 +13,7 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
+    "sync-snippets": "yarn snipsync",
     "sync-api-reference": "node scripts/sync-api.mjs",
     "validate-api-reference": "node scripts/validate-sync-api.mjs"
   },
