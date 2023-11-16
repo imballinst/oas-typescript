@@ -21,6 +21,7 @@
         "astro-build.astro-vscode",
         "esbenp.prettier-vscode",
         "bradlc.vscode-tailwindcss",
+        "unifiedjs.vscode-mdx",
         "golang.go",
         "redhat.vscode-xml"
       ]

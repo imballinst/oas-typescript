@@ -29,9 +29,9 @@ Before we dive deeper into each parts, here is the general flow on how a request
 
 ```mermaid
 graph LR;
-    Router-->Security-Middleware;
-    Security-Middleware-->Request-Validator;
-    Request-Validator-->Controller;
+  Router-->Security-Middleware;
+  Security-Middleware-->Request-Validator;
+  Request-Validator-->Controller;
 ```
 
 The amazing thing about `@oas-typescript/koa` is that, you don't need to worry about most of the parts above. You only need to worry about "Security Middleware (optional)" and "Controller". The rest will be handled by the generated server stubs.
@@ -46,16 +46,18 @@ First things first, router will receive request from the client. These routers a
 
 ## Security Middleware (optional)
 
+:::info
+The security middleware is optional, because it's only required if there are endpoints with security requirements.
+:::
+
 The default security middleware looks like this.
 
-```ts
-import Koa from 'koa';
-import { SecuritySchemes } from './static/security-schemes.js';
-import { SecurityMiddlewareError } from './static/types.js';
+<!--SNIPSTART middleware-helpers-vanilla-->
 
+```ts
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
-    ctx: Koa.Context,
+    headers: IncomingHttpHeaders,
     securityObject: SecuritySchemes
   ): Promise<void> {
     return Promise.resolve();
@@ -63,18 +65,22 @@ export class MiddlewareHelpers {
 }
 ```
 
+<!--SNIPEND-->
+
 The function receives `ctx` and `securityObject`, the former comes from Koa whereas the latter comes from the OpenAPI specification. The function returns a resolved Promise (if validation is successful) and a rejected Promise (if validation fails). A modified security middleware helper looks like this:
+
+<!--SNIPSTART middleware-helpers {"highlightedLines": "6-26"}-->
 
 ```ts {6-26}
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
-    ctx: Koa.Context,
+    headers: IncomingHttpHeaders,
     securityObject: SecuritySchemes
   ): Promise<void> {
     let isValid = true;
 
     if (securityObject.api_key) {
-      const apiKeyInHeader = ctx.headers[securityObject.api_key.meta.name];
+      const apiKeyInHeader = headers[securityObject.api_key.meta.name];
 
       if (!apiKeyInHeader) {
         isValid = false;
@@ -97,6 +103,8 @@ export class MiddlewareHelpers {
   }
 }
 ```
+
+<!--SNIPEND-->
 
 If we look above, the added parts are related to validating the request. With the `securityObject` being type-safe, we can check if a request contains any available values defined in the top-level `components.securitySchemes` (or any field that's defined in your `--app-security-schemes-field`).
 

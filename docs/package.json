@@ -13,6 +13,7 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
+    "sync-snippets": "yarn snipsync && yarn prettier --write docs",
     "sync-api-reference": "node scripts/sync-api.mjs",
     "validate-api-reference": "node scripts/validate-sync-api.mjs"
   },
@@ -31,6 +32,8 @@
     "@docusaurus/tsconfig": "3.0.0",
     "@docusaurus/types": "3.0.0",
     "esbuild": "0.19.5",
+    "prettier": "3.0.3",
+    "snipsync": "1.8.0",
     "typescript": "~5.2.2"
   },
   "browserslist": {
