@@ -20,20 +20,20 @@ The requirements to use `@oas-typescript/koa` are as the following.
 To install `@oas-typescript/koa`, run the command below.
 
 <Tabs groupId="package-managers">
-  <TabItem value="npm" label="npm" default>
+<TabItem value="npm" label="npm" default>
 
 ```bash
 npm install -D @oas-typescript/koa
 ```
 
-  </TabItem>
-  <TabItem value="yarn" label="Yarn">
+</TabItem>
+<TabItem value="yarn" label="Yarn">
 
 ```bash
 yarn add -D @oas-typescript/koa
 ```
 
-  </TabItem>
+</TabItem>
 </Tabs>
 
 ## Usage
@@ -41,20 +41,20 @@ yarn add -D @oas-typescript/koa
 To use the CLI, use the following command.
 
 <Tabs groupId="package-managers">
-  <TabItem value="npm" label="npm" default>
+<TabItem value="npm" label="npm" default>
 
 ```bash
 npx openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
 ```
 
-  </TabItem>
-  <TabItem value="yarn" label="Yarn">
+</TabItem>
+<TabItem value="yarn" label="Yarn">
 
 ```bash
 yarn openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
 ```
 
-  </TabItem>
+</TabItem>
 </Tabs>
 
 The CLI has following options that can be passed as arguments.
@@ -87,13 +87,13 @@ app.use(generatedRouter.allowedMethods());
 
 const commonRouter = new Router();
 commonRouter.get('/healthz', (ctx) => {
-  ctx.body = { healthy: true };
+ctx.body = { healthy: true };
 });
 app.use(commonRouter.routes());
 app.use(commonRouter.allowedMethods());
 
 app.listen(3000, () => {
-  console.info('Server is running on port 3000');
+console.info('Server is running on port 3000');
 });
 ```
 

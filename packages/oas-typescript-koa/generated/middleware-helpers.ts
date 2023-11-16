@@ -2,7 +2,7 @@ import { SecuritySchemes } from './static/security-schemes.js';
 import { SecurityMiddlewareError } from './static/types.js';
 import { IncomingHttpHeaders } from 'http';
 
-// @@@SNIPSTART middleware-helpers
+// @@@SNIPSTART middleware-helpers {"highlightedLines": "{6-26}"}
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
     headers: IncomingHttpHeaders,

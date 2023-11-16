@@ -12,8 +12,9 @@
     "oas-typescript-koa": "cli.js"
   },
   "scripts": {
-    "gen": "yarn build:entry && yarn gen:build && yarn gen:build:cjs",
+    "gen": "yarn build:entry && yarn gen:build && yarn gen:build:cjs && yarn gen:build:vanilla",
     "gen:build": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated",
+    "gen:build:vanilla": "rimraf generated-vanilla && node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated-vanilla",
     "gen:build:cjs": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output ../test-oas-typescript-koa-cjs/generated --module cjs",
     "gen:templates": "node --loader ts-node/esm scripts/fill-templates.ts",
     "gen:all": "yarn gen:templates && yarn gen",
@@ -47,6 +48,7 @@
     "koa": "2.14.2",
     "nanoid": "4.0.2",
     "pm2": "5.3.0",
+    "rimraf": "5.0.5",
     "ts-node": "10.9.1",
     "vitest": "0.34.6",
     "zod": "3.21.4"
