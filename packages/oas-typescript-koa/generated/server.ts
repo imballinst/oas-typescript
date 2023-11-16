@@ -1,3 +1,4 @@
+// @@@SNIPSTART generated-server
 import Koa from 'koa';
 import { generatedRouter } from './static/router.js';
 import Router from '@koa/router';
@@ -17,3 +18,4 @@ app.use(commonRouter.allowedMethods());
 app.listen(3000, () => {
   console.info('Server is running on port 3000');
 });
+// @@@SNIPEND
