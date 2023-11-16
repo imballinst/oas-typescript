@@ -1,0 +1,12 @@
+origins:
+  - files:
+      - ../packages/oas-typescript-koa/generated/**/*.ts
+
+targets:
+  - docs
+
+features:
+  enable_source_link: false
+  enable_code_block: false
+  allowed_target_extensions: [.md, .mdx]
+  enable_code_dedenting: false
