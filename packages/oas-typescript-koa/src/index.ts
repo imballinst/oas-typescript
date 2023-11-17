@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { OpenAPIV3 } from 'openapi-types';
 import { tmpdir } from 'os';
+import yaml from 'yaml';
 import {
   generateZodClientFromOpenAPI,
   getHandlebars
@@ -32,6 +33,7 @@ import { PrebuildResponseSchema } from './core/core-types.js';
 
 import helpTextInfo from './constants/help-text.json';
 import { updateImportBasedOnModule } from './helpers/import-module.js';
+import { parseInput } from './helpers/input-parser.js';
 
 const options: Array<{ option: string; helpText: string }> = [];
 const examples: string[] = [];
@@ -75,7 +77,7 @@ const VALID_COMMANDS = ['generate'];
 const cli = meow(
   `
   Usage
-    $ openapi-to-koa generate <path-to-openapi-json> [...options]
+    $ openapi-to-koa generate <path-to-openapi-json-or-yaml> [...options]
 
   Options
     ${optionsText}
@@ -187,9 +189,8 @@ async function main() {
   nextChecksum['middleware-helpers.ts'] = middlewareHelpersChecksum;
 
   // Start the process.
-  const document: OpenAPIV3.Document = JSON.parse(
-    await fs.readFile(input, 'utf-8')
-  );
+  const inputContent = await fs.readFile(input, 'utf-8');
+  const document = parseInput(input, inputContent);
 
   // Parse paths and security schemes.
   const {
