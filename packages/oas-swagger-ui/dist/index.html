@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -6,11 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Swagger UI (Enhanced)</title>
     <script type="module" crossorigin src="./assets/index-edf6fad2.js"></script>
-    <link rel="stylesheet" href="./assets/index-17f026eb.css">
+    <link rel="stylesheet" href="./assets/index-17f026eb.css" />
   </head>
   <body>
     <div id="root"></div>
-    
 
     <script>
       window.onload = () => {
@@ -34,8 +33,7 @@
                 if (!security) return [];
 
                 const badges = [];
-                for (const key in security) {
-                  const val = security[key];
+                for (const val of security) {
                   badges.push({
                     label: AUTH_MAP_TO_STRING[securityKey],
                     value: val

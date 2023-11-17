@@ -20,8 +20,7 @@ function App() {
             if (!security) return [];
 
             const badges = [];
-            for (const key in security) {
-              const val = security[key];
+            for (const val of security) {
               badges.push({
                 label: AUTH_MAP_TO_STRING[securityKey],
                 value: val
