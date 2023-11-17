@@ -1,5 +1,11 @@
 # @oas-typescript/shared
 
+## 0.2.0
+
+### Minor Changes
+
+- c702df4: feat: allow parsing YAML in addition of JSON
+
 ## 0.1.0
 
 ### Minor Changes

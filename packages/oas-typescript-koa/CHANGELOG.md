@@ -1,5 +1,15 @@
 # @oas-typescript/koa
 
+## 0.9.0
+
+### Minor Changes
+
+- c702df4: feat: allow parsing YAML in addition of JSON
+
+### Patch Changes
+
+- 7f67203: chore: refactor handlebars
+
 ## 0.8.3
 
 ### Patch Changes
