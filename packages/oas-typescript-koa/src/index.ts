@@ -1,11 +1,6 @@
 #!/usr/bin/env node
-import { OpenAPIV3 } from 'openapi-types';
 import { tmpdir } from 'os';
-import yaml from 'yaml';
-import {
-  generateZodClientFromOpenAPI,
-  getHandlebars
-} from 'openapi-zod-client';
+import { generateZodClientFromOpenAPI } from 'openapi-zod-client';
 import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
@@ -22,18 +17,14 @@ import {
 } from './templates.js';
 import { generateTemplateController } from './helpers/templates/controller.js';
 import { generateTemplateRouter } from './helpers/templates/router.js';
-import {
-  generateTemplateControllerTypes,
-  stringifyControllerReturnTypeGenericType
-} from './helpers/templates/controller-types.js';
-import { capitalizeFirstCharacter } from './helpers/change-case.js';
+import { generateTemplateControllerTypes } from './helpers/templates/controller-types.js';
 import { parsePaths } from './core/paths-parser.js';
 import { convertOpenAPIHeadersToResponseSchemaHeaders } from './core/header-parser.js';
-import { PrebuildResponseSchema } from './core/core-types.js';
 
 import helpTextInfo from './constants/help-text.json';
 import { updateImportBasedOnModule } from './helpers/import-module.js';
 import { parseInput } from './helpers/input-parser.js';
+import { getHandlebarsInstance } from './core/handlebars.js';
 
 const options: Array<{ option: string; helpText: string }> = [];
 const examples: string[] = [];
@@ -203,105 +194,7 @@ async function main() {
   const securitySchemes =
     (document.components as any)?.[cliAppSecuritySchemesField] || {};
 
-  const handlebars = getHandlebars();
-  handlebars.registerHelper('capitalizeFirstLetter', function (...args: any[]) {
-    // Last argument is an object.
-    const [firstWord, ...rest] = args.slice(0, -1);
-    return capitalizeFirstCharacter(firstWord) + rest.join('');
-  });
-  handlebars.registerHelper('interfaceFromZod', function (...args: any[]) {
-    // Last argument is an object.
-    const [firstWord, ...rest] = args.slice(0, -1);
-    const interfaceName = capitalizeFirstCharacter(firstWord) + rest.join('');
-    return `export type ${interfaceName} = typeof ${interfaceName}`;
-  });
-  handlebars.registerHelper('interfaceFromObject', function (...args: any[]) {
-    // Last argument is an object.
-    const [firstWord, ...rest] = args.slice(0, -1);
-    const interfaceName = capitalizeFirstCharacter(firstWord) + rest.join('');
-    return `export type ${interfaceName} = typeof ${interfaceName}`;
-  });
-  handlebars.registerHelper('extractResponses', function (...args: any[]) {
-    // Last argument is an object.
-    const [operationId, responses] = args.slice(0, -1);
-
-    const successResponse: PrebuildResponseSchema['success'] = {
-      schema: '',
-      status: 0
-    };
-    const errorResponses: Record<string, PrebuildResponseSchema['error']> = {};
-    const declarations: string[] = [];
-
-    for (const response of responses) {
-      if (response.statusCode < 400) {
-        successResponse.schema = response.schema;
-        successResponse.status = response.statusCode;
-        successResponse.headers = response.headers;
-      } else {
-        errorResponses[response.statusCode] = {
-          status: response.statusCode,
-          schema: response.schema,
-          headers: response.headers
-        };
-      }
-    }
-
-    // Render the response string.
-    const responseVariableName = `${capitalizeFirstCharacter(
-      operationId
-    )}Response`;
-    const inferred = `typeof ${responseVariableName}`;
-
-    declarations.push(
-      `export const ${responseVariableName} = ${stringifyControllerReturnTypeGenericType(
-        successResponse
-      )} as const`,
-      successResponse.schema !== 'z.void()'
-        ? `export type ${responseVariableName} = ${inferred}`
-        : `export type ${responseVariableName} = ${inferred}`,
-      ''
-    );
-
-    // Render the errors string.
-    const errorsVariableName = `${capitalizeFirstCharacter(operationId)}Errors`;
-
-    declarations.push(
-      `export const ${errorsVariableName} = ${stringifyControllerReturnTypeGenericType(
-        errorResponses
-      )} as const`,
-      `export type ${errorsVariableName} = typeof ${errorsVariableName}`,
-      ''
-    );
-
-    return declarations.join('\n');
-  });
-  handlebars.registerHelper(
-    'extractOperationSecurity',
-    function (...args: any[]) {
-      // Last argument is an object.
-      const [operationId, securityArray] = args.slice(0, -1);
-      const securityRecord: Record<string, any> = {};
-      const titleCased = capitalizeFirstCharacter(operationId);
-
-      for (const securityObject of securityArray) {
-        const keyName = Object.keys(securityObject)[0];
-        const meta = securitySchemes[keyName];
-
-        if (meta) {
-          securityRecord[keyName] = {
-            meta,
-            value: securityObject[keyName]
-          };
-        }
-      }
-
-      return `export const ${titleCased}Security = ${JSON.stringify(
-        securityRecord,
-        null,
-        2
-      ).replace(/\]/g, '] as string[]')} as const`;
-    }
-  );
+  const handlebars = getHandlebarsInstance(securitySchemes);
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
