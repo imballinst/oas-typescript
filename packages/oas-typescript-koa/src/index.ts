@@ -33,6 +33,7 @@ import { PrebuildResponseSchema } from './core/core-types.js';
 
 import helpTextInfo from './constants/help-text.json';
 import { updateImportBasedOnModule } from './helpers/import-module.js';
+import { parseInput } from './helpers/input-parser.js';
 
 const options: Array<{ option: string; helpText: string }> = [];
 const examples: string[] = [];
@@ -189,17 +190,7 @@ async function main() {
 
   // Start the process.
   const inputContent = await fs.readFile(input, 'utf-8');
-  let document: OpenAPIV3.Document;
-
-  if (path.extname(input) === '.json') {
-    document = JSON.parse(inputContent);
-  } else if (path.extname(input) === '.yaml') {
-    document = yaml.parse(inputContent);
-  } else {
-    throw new Error(
-      'Invalid input supplied. Expected input to be JSON or YAML.'
-    );
-  }
+  const document = parseInput(input, inputContent);
 
   // Parse paths and security schemes.
   const {
