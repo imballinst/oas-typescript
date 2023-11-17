@@ -31,7 +31,8 @@
     "meow": "12.0.1",
     "openapi-zod-client": "1.13.1",
     "prettier": "3.0.3",
-    "title-case": "3.0.3"
+    "title-case": "3.0.3",
+    "yaml": "2.3.4"
   },
   "devDependencies": {
     "@koa/bodyparser": "5.0.0",

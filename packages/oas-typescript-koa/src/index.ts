@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { OpenAPIV3 } from 'openapi-types';
 import { tmpdir } from 'os';
+import yaml from 'yaml';
 import {
   generateZodClientFromOpenAPI,
   getHandlebars
@@ -75,7 +76,7 @@ const VALID_COMMANDS = ['generate'];
 const cli = meow(
   `
   Usage
-    $ openapi-to-koa generate <path-to-openapi-json> [...options]
+    $ openapi-to-koa generate <path-to-openapi-json-or-yaml> [...options]
 
   Options
     ${optionsText}
@@ -187,9 +188,18 @@ async function main() {
   nextChecksum['middleware-helpers.ts'] = middlewareHelpersChecksum;
 
   // Start the process.
-  const document: OpenAPIV3.Document = JSON.parse(
-    await fs.readFile(input, 'utf-8')
-  );
+  const inputContent = await fs.readFile(input, 'utf-8');
+  let document: OpenAPIV3.Document;
+
+  if (path.extname(input) === '.json') {
+    document = JSON.parse(inputContent);
+  } else if (path.extname(input) === '.yaml') {
+    document = yaml.parse(inputContent);
+  } else {
+    throw new Error(
+      'Invalid input supplied. Expected input to be JSON or YAML.'
+    );
+  }
 
   // Parse paths and security schemes.
   const {
