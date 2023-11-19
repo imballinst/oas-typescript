@@ -1,16 +1,15 @@
+export interface HelpTextEntry {
+  aliases: string[];
+  helpText: string[];
+  required: boolean;
+  defaultValue: string;
+  examples: string[];
+}
+
 export function generateHelpText({
   commandsRecord
 }: {
-  commandsRecord: Record<
-    string,
-    {
-      aliases: string[];
-      helpText: string[];
-      required: boolean;
-      defaultValue: string;
-      examples: string[];
-    }
-  >;
+  commandsRecord: Record<string, HelpTextEntry>;
 }) {
   const options: Array<{ option: string; helpText: string }> = [];
   const examples: string[] = [];

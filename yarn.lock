@@ -1400,6 +1400,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@oas-typescript/shared-cli-rest@workspace:packages/shared-cli-rest":
+  version: 0.0.0-use.local
+  resolution: "@oas-typescript/shared-cli-rest@workspace:packages/shared-cli-rest"
+  dependencies:
+    meow: 12.0.1
+    openapi-zod-client: 1.13.1
+  peerDependencies:
+    meow: 12.0.1
+    openapi-zod-client: 1.13.1
+  languageName: unknown
+  linkType: soft
+
 "@oas-typescript/shared-cli@workspace:packages/shared-cli":
   version: 0.0.0-use.local
   resolution: "@oas-typescript/shared-cli@workspace:packages/shared-cli"

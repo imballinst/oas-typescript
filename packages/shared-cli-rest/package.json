@@ -1,15 +1,17 @@
 {
-  "name": "@oas-typescript/shared-cli",
+  "name": "@oas-typescript/shared-cli-rest",
   "version": "0.0.1",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "meow": "12.0.1"
+    "meow": "12.0.1",
+    "openapi-zod-client": "1.13.1"
   },
   "peerDependencies": {
-    "meow": "12.0.1"
+    "meow": "12.0.1",
+    "openapi-zod-client": "1.13.1"
   },
   "private": true
 }
