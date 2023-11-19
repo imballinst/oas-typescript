@@ -3,12 +3,12 @@
   "include": ["**/*.ts", "src/**/*.json"],
   "compilerOptions": {
     "paths": {
-      "@oast/shared/*": ["../shared/src/*"]
+      "@oast/shared": ["../shared-cli/src/index.ts"]
     }
   },
   "references": [
     {
-      "path": "../shared"
+      "path": "../shared-cli"
     }
   ],
   "ts-node": {

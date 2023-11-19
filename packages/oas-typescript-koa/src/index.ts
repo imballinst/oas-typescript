@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 import { tmpdir } from 'os';
 import { generateZodClientFromOpenAPI } from 'openapi-zod-client';
-import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
 import { createRequire } from 'node:module';
 import { execSync } from 'child_process';
 
-import { createOrDuplicateFile } from '@oast/shared/utils/checksum.js';
+import {
+  createOrDuplicateFile,
+  createCli,
+  generateHelpText
+} from '@oast/shared';
 
 import {
   defaultHandlebars,
@@ -21,89 +24,44 @@ import { generateTemplateControllerTypes } from './helpers/templates/controller-
 import { parsePaths } from './core/paths-parser.js';
 import { convertOpenAPIHeadersToResponseSchemaHeaders } from './core/header-parser.js';
 
-import helpTextInfo from './constants/help-text.json';
+import commandsRecord from './constants/help-text.json';
 import { updateImportBasedOnModule } from './helpers/import-module.js';
 import { parseInput } from './helpers/input-parser.js';
 import { getHandlebarsInstance } from './core/handlebars.js';
 
-const options: Array<{ option: string; helpText: string }> = [];
-const examples: string[] = [];
-let maxOptionTextLength = -1;
-
-for (const key in helpTextInfo) {
-  const val = helpTextInfo[key as keyof typeof helpTextInfo];
-  const aliases = [`--${key}`, ...val.aliases.map((alias) => `-${alias}`)].join(
-    ', '
-  );
-  let helpText = val.helpText[0];
-
-  if (val.defaultValue) {
-    helpText += ` Defaults to ${val.defaultValue}.`;
-  }
-
-  options.push({
-    option: aliases,
-    helpText
-  });
-  examples.push(...val.examples);
-
-  maxOptionTextLength = Math.max(maxOptionTextLength, aliases.length);
-}
-
-const optionsText = options
-  .map(
-    (item) =>
-      `${item.option.padEnd(maxOptionTextLength, ' ')}  ${item.helpText}`
-  )
-  .join('\n    ');
-const examplesText = examples
-  .map((example) => `$ openapi-to-koa ${example}`)
-  .join('\n    ');
+const { examplesText, optionsText } = generateHelpText({ commandsRecord });
 
 const DEFAULT_OUTPUT = path.join(process.cwd(), 'oas-typescript');
 const DEFAULT_SECURITY_REQUIREMENTS_FIELD = 'security';
 const DEFAULT_SECURITY_SCHEMES_FIELD = 'securitySchemes';
 const VALID_COMMANDS = ['generate'];
 
-const cli = meow(
-  `
-  Usage
-    $ openapi-to-koa generate <path-to-openapi-json-or-yaml> [...options]
-
-  Options
-    ${optionsText}
-
-  Examples
-    ${examplesText}
-
-  For more information, visit https://imballinst.github.io/oas-typescript for documentation.
-`,
-  {
-    importMeta: import.meta,
-
-    flags: {
-      // TODO: find a way to integrate the help text JSON with this.
-      output: {
-        type: 'string',
-        shortFlag: 'o'
-      },
-      appSecuritySchemesField: {
-        type: 'string',
-        default: DEFAULT_SECURITY_SCHEMES_FIELD
-      },
-      appSecurityRequirementsField: {
-        type: 'string',
-        default: DEFAULT_SECURITY_REQUIREMENTS_FIELD
-      },
-      module: {
-        type: 'string',
-        choices: ['cjs', 'esm'],
-        default: 'esm'
-      }
+const cli = createCli({
+  usageText:
+    'openapi-to-koa generate <path-to-openapi-json-or-yaml> [...options]',
+  examplesText,
+  optionsText,
+  flags: {
+    // TODO: find a way to integrate the help text JSON with this.
+    output: {
+      type: 'string',
+      shortFlag: 'o'
+    },
+    appSecuritySchemesField: {
+      type: 'string',
+      default: DEFAULT_SECURITY_SCHEMES_FIELD
+    },
+    appSecurityRequirementsField: {
+      type: 'string',
+      default: DEFAULT_SECURITY_REQUIREMENTS_FIELD
+    },
+    module: {
+      type: 'string',
+      choices: ['cjs', 'esm'],
+      default: 'esm'
     }
   }
-);
-
+});
 const require = createRequire(import.meta.url);
 
 async function main() {

@@ -1400,6 +1400,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@oas-typescript/shared-cli@workspace:packages/shared-cli":
+  version: 0.0.0-use.local
+  resolution: "@oas-typescript/shared-cli@workspace:packages/shared-cli"
+  dependencies:
+    meow: 12.0.1
+  peerDependencies:
+    meow: 12.0.1
+  languageName: unknown
+  linkType: soft
+
 "@oas-typescript/shared@workspace:packages/shared":
   version: 0.0.0-use.local
   resolution: "@oas-typescript/shared@workspace:packages/shared"
