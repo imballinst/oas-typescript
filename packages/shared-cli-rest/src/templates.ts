@@ -44,7 +44,7 @@ export const {{capitalizeFirstLetter operationId "Parameters"}} = [
 {{{extractResponses operationId responses}}}
 
 {{/each}}
-`;
+`
 
 export const middlewareHelpersTs = `import { IncomingHttpHeaders } from 'http';
 import { SecuritySchemes } from './static/security-schemes.js';
@@ -58,7 +58,7 @@ export class MiddlewareHelpers {
     return Promise.resolve();
   }
 }
-`;
+`
 
 export const typesTs = `import { z } from 'zod';
 
@@ -224,4 +224,5 @@ export type DefaultHttpErrors =
   | 508
   | 510
   | 511;
-`;
+`
+  
