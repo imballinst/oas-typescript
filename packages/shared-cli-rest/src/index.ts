@@ -13,22 +13,19 @@ import {
   HelpTextEntry
 } from '@oast/shared-cli';
 
-import {
-  defaultHandlebars,
-  middlewareHelpersTs,
-  utilsTs,
-  typesTs
-} from './templates.js';
+import { defaultHandlebars } from './templates.js';
 import { generateTemplateController } from './helpers/templates/controller.js';
-import { generateTemplateRouter } from './helpers/templates/router.js';
 import { generateTemplateControllerTypes } from './helpers/templates/controller-types.js';
-import { parsePaths } from './core/paths-parser.js';
+import {
+  GenerateRouteMiddlewareType,
+  parsePaths
+} from './core/paths-parser.js';
 import { convertOpenAPIHeadersToResponseSchemaHeaders } from './core/header-parser.js';
 
 import { updateImportBasedOnModule } from './helpers/import-module.js';
 import { parseInput } from './helpers/input-parser.js';
 import { getHandlebarsInstance } from './core/handlebars.js';
-import { AnyFlags } from 'meow';
+import { OperationInfo } from './helpers/templates/types.js';
 
 const DEFAULT_SECURITY_REQUIREMENTS_FIELD = 'security';
 const DEFAULT_SECURITY_SCHEMES_FIELD = 'securitySchemes';
@@ -38,14 +35,28 @@ const require = createRequire(import.meta.url);
 
 export async function generateRestServerStubs({
   usageText,
-  commandsRecord
+  commandsRecord,
+  templates: { routeMiddlewareUtils, securityMiddlewareHelpers, typesTs },
+  templateFunctions: {
+    router: generateRouter,
+    routerMiddleware: generateRouterMiddleware
+  }
 }: {
   usageText: string;
   commandsRecord: Record<string, HelpTextEntry>;
   templates: {
     securityMiddlewareHelpers: string;
     routeMiddlewareUtils: string;
-    router: string;
+    typesTs: string;
+  };
+  templateFunctions: {
+    router: (param: {
+      allServerSecurityImports: string[];
+      parametersImportsPerController: Record<string, string[]>;
+      controllerToOperationsRecord: Record<string, OperationInfo[]>;
+      routers: string[];
+    }) => string;
+    routerMiddleware: GenerateRouteMiddlewareType;
   };
 }) {
   const defaultOutput = path.join(process.cwd(), 'oas-typescript');
@@ -129,7 +140,7 @@ export async function generateRestServerStubs({
     fs.writeFile(handlebarsFilePath, defaultHandlebars, 'utf-8'),
     fs.writeFile(
       path.join(lockedGeneratedFilesFolder, 'utils.ts'),
-      updateImportBasedOnModule(utilsTs, cliTargetModule),
+      updateImportBasedOnModule(routeMiddlewareUtils, cliTargetModule),
       'utf-8'
     ),
     fs.writeFile(
@@ -140,7 +151,7 @@ export async function generateRestServerStubs({
     createOrDuplicateFile({
       filePath: path.join(rootOutputFolder, 'middleware-helpers.ts'),
       fileContent: updateImportBasedOnModule(
-        middlewareHelpersTs,
+        securityMiddlewareHelpers,
         cliTargetModule
       ),
       previousChecksum: previousChecksum['middleware-helpers.ts']
@@ -160,7 +171,10 @@ export async function generateRestServerStubs({
     parametersImportsPerController,
     controllerImportsPerController,
     allServerSecurityImports
-  } = parsePaths({ paths: document.paths });
+  } = parsePaths({
+    paths: document.paths,
+    templateFunctions: { middleware: generateRouterMiddleware }
+  });
   const securitySchemes =
     (document.components as any)?.[cliAppSecuritySchemesField] || {};
 
@@ -234,7 +248,7 @@ export async function generateRestServerStubs({
     nextChecksum[checksumKey] = fileChecksum;
   }
 
-  const renderedRouter = generateTemplateRouter({
+  const renderedRouter = generateRouter({
     allServerSecurityImports,
     controllerToOperationsRecord,
     parametersImportsPerController,

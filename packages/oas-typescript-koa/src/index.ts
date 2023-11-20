@@ -10,7 +10,7 @@ import {
   createOrDuplicateFile,
   createCli,
   generateHelpText
-} from '@oast/shared';
+} from '@oast/shared-cli';
 
 import {
   defaultHandlebars,

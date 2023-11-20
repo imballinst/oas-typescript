@@ -1406,9 +1406,12 @@ __metadata:
   dependencies:
     meow: 12.0.1
     openapi-zod-client: 1.13.1
+    title-case: 3.0.3
+    zod: 3.21.4
   peerDependencies:
     meow: 12.0.1
     openapi-zod-client: 1.13.1
+    title-case: 3.0.3
   languageName: unknown
   linkType: soft
 
