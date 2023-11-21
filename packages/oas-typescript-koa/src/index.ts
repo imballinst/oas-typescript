@@ -2,7 +2,7 @@
 import { generateRestServerStubs } from '@oast/shared-cli-rest';
 
 import commandsRecord from './constants/help-text.json';
-import { middlewareHelpersTs, utilsTs, typesTs } from './templates.js';
+import { middlewareHelpersTs, utilsTs } from './templates.js';
 import { generateTemplateRouter } from './helpers/templates/router.js';
 import { generateRouteMiddleware } from './helpers/templates/middleware.js';
 
@@ -17,8 +17,7 @@ async function main() {
     },
     templates: {
       routeMiddlewareHelpersTs: utilsTs,
-      securityMiddlewareHelpersTs: middlewareHelpersTs,
-      typesTs
+      securityMiddlewareHelpersTs: middlewareHelpersTs
     }
   });
 }
