@@ -36,7 +36,7 @@ const require = createRequire(import.meta.url);
 export async function generateRestServerStubs({
   usageText,
   commandsRecord,
-  templates: { routeMiddlewareUtils, securityMiddlewareHelpers, typesTs },
+  templates: { routeMiddlewareHelpersTs, securityMiddlewareHelpersTs, typesTs },
   templateFunctions: {
     router: generateRouter,
     routerMiddleware: generateRouterMiddleware
@@ -45,8 +45,8 @@ export async function generateRestServerStubs({
   usageText: string;
   commandsRecord: Record<string, HelpTextEntry>;
   templates: {
-    securityMiddlewareHelpers: string;
-    routeMiddlewareUtils: string;
+    securityMiddlewareHelpersTs: string;
+    routeMiddlewareHelpersTs: string;
     typesTs: string;
   };
   templateFunctions: {
@@ -140,7 +140,7 @@ export async function generateRestServerStubs({
     fs.writeFile(handlebarsFilePath, defaultHandlebars, 'utf-8'),
     fs.writeFile(
       path.join(lockedGeneratedFilesFolder, 'utils.ts'),
-      updateImportBasedOnModule(routeMiddlewareUtils, cliTargetModule),
+      updateImportBasedOnModule(routeMiddlewareHelpersTs, cliTargetModule),
       'utf-8'
     ),
     fs.writeFile(
@@ -151,7 +151,7 @@ export async function generateRestServerStubs({
     createOrDuplicateFile({
       filePath: path.join(rootOutputFolder, 'middleware-helpers.ts'),
       fileContent: updateImportBasedOnModule(
-        securityMiddlewareHelpers,
+        securityMiddlewareHelpersTs,
         cliTargetModule
       ),
       previousChecksum: previousChecksum['middleware-helpers.ts']
