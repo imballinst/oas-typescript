@@ -13,7 +13,7 @@
     "title-case": "3.0.3",
     "ts-node": "10.9.1",
     "yaml": "2.3.4",
-    "zod": "3.21.4"
+    "zod": "3.22.3"
   },
   "peerDependencies": {
     "meow": "12.0.1",
