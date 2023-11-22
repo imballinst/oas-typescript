@@ -13,7 +13,11 @@ import {
   HelpTextEntry
 } from '@oast/shared-cli';
 
-import { defaultHandlebars, typesTs } from './templates.js';
+import {
+  defaultHandlebars,
+  securityMiddlewareHelpersTs,
+  typesTs
+} from './templates.js';
 import { generateTemplateController } from './helpers/templates/controller.js';
 import { generateTemplateControllerTypes } from './helpers/templates/controller-types.js';
 import {
@@ -36,7 +40,7 @@ const require = createRequire(import.meta.url);
 export async function generateRestServerStubs({
   usageText,
   commandsRecord,
-  templates: { routeMiddlewareHelpersTs, securityMiddlewareHelpersTs },
+  templates: { routeMiddlewareHelpersTs },
   templateFunctions: {
     router: generateRouter,
     routerMiddleware: generateRouterMiddleware
@@ -45,7 +49,6 @@ export async function generateRestServerStubs({
   usageText: string;
   commandsRecord: Record<string, HelpTextEntry>;
   templates: {
-    securityMiddlewareHelpersTs: string;
     routeMiddlewareHelpersTs: string;
   };
   templateFunctions: {

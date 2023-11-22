@@ -1,0 +1,40 @@
+{
+  "output": {
+    "aliases": ["o"],
+    "helpText": ["The output directory."],
+    "required": false,
+    "defaultValue": "`(pwd)/oas-typescript`",
+    "examples": ["generate openapi/api.json --output src"]
+  },
+  "app-security-schemes-field": {
+    "aliases": [],
+    "helpText": [
+      "The security scheme field used in the OpenAPI Specification.",
+      "Mostly useful when you have custom `securitySchemes` that are not supported by the specification."
+    ],
+    "required": false,
+    "defaultValue": "`securitySchemes`",
+    "examples": [
+      "generate openapi/api.json --app-security-schemes-field x-security-schemes"
+    ]
+  },
+  "app-security-requirements-field": {
+    "aliases": [],
+    "helpText": [
+      "The custom security requirements field used in the OpenAPI Specification.",
+      "Mostly useful when you have custom `security` that are not supported by the specification."
+    ],
+    "required": false,
+    "defaultValue": "`security`",
+    "examples": [
+      "generate openapi/api.json --app-security-requirements-field x-security"
+    ]
+  },
+  "module": {
+    "aliases": [],
+    "helpText": ["The output module. Available values are `cjs` or `esm`."],
+    "required": false,
+    "defaultValue": "`esm`",
+    "examples": ["generate openapi/api.json --module cjs"]
+  }
+}

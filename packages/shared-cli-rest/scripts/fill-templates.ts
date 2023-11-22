@@ -16,7 +16,9 @@ async function main() {
   const templatesContent = `
 export const defaultHandlebars = \`${escapeCharacters(defaultHandlebars)}\`
 
-export const middlewareHelpersTs = \`${escapeCharacters(middlewareHelpersTs)}\`
+export const securityMiddlewareHelpersTs = \`${escapeCharacters(
+    middlewareHelpersTs
+  )}\`
 
 export const typesTs = \`${escapeCharacters(typesTs)}\`
   `.trimStart();

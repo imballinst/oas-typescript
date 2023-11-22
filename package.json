@@ -13,6 +13,7 @@
     "test:koa": "yarn wkoa test",
     "gen:koa": "yarn wkoa gen",
     "waxios": "yarn workspace @oas-typescript/axios",
+    "wexpress": "yarn workspace @oas-typescript/express",
     "release": "node scripts/release.mjs"
   },
   "repository": {
