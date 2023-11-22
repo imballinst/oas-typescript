@@ -12,6 +12,7 @@ import { defaultHandlebars, defaultQueryUtils } from './templates.js';
 import { handlebarsInstance } from './helpers/handlebars.js';
 import { GLOBAL_VARS } from './global-vars.js';
 
+// TODO: use `createCli` from the `shared-cli` package.
 const cli = meow(
   `
 	Usage

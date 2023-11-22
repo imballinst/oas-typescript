@@ -1,0 +1,15 @@
+{
+  "name": "@oas-typescript/shared-cli",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "meow": "12.0.1"
+  },
+  "peerDependencies": {
+    "meow": "12.0.1"
+  },
+  "private": true
+}

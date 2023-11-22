@@ -2,12 +2,25 @@ import { titleCase } from 'title-case';
 import { OpenAPIV3 } from 'openapi-types';
 
 import { capitalizeFirstCharacter } from '../helpers/change-case.js';
-import { generateRouteMiddleware } from '../helpers/templates/middleware.js';
 import { OperationInfo } from '../helpers/templates/types.js';
 
 const PARSED_METHODS = ['get', 'post', 'put', 'delete', 'patch'] as const;
 
-export function parsePaths({ paths }: { paths: OpenAPIV3.PathsObject }) {
+export type GenerateRouteMiddlewareType = (param: {
+  parametersName?: string;
+  controllerName: string;
+  operationId: string;
+}) => string;
+
+export function parsePaths({
+  paths,
+  templateFunctions: { middleware: generateRouteMiddleware }
+}: {
+  paths: OpenAPIV3.PathsObject;
+  templateFunctions: {
+    middleware: GenerateRouteMiddlewareType;
+  };
+}) {
   const routers: string[] = [];
 
   const controllerToOperationsRecord: Record<string, OperationInfo[]> = {};
