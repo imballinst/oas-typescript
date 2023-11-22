@@ -22,6 +22,7 @@ import { generateTemplateController } from './helpers/templates/controller.js';
 import { generateTemplateControllerTypes } from './helpers/templates/controller-types.js';
 import {
   GenerateRouteMiddlewareType,
+  GenerateSecurityMiddlewareInvocationType,
   parsePaths
 } from './core/paths-parser.js';
 import { convertOpenAPIHeadersToResponseSchemaHeaders } from './core/header-parser.js';
@@ -43,7 +44,8 @@ export async function generateRestServerStubs({
   templates: { routeMiddlewareHelpersTs },
   templateFunctions: {
     router: generateRouter,
-    routerMiddleware: generateRouterMiddleware
+    routerMiddleware: generateRouterMiddleware,
+    securityMiddlewareInvocation: generateSecurityMiddlewareInvocation
   }
 }: {
   usageText: string;
@@ -59,6 +61,7 @@ export async function generateRestServerStubs({
       routers: string[];
     }) => string;
     routerMiddleware: GenerateRouteMiddlewareType;
+    securityMiddlewareInvocation: GenerateSecurityMiddlewareInvocationType;
   };
 }) {
   const defaultOutput = path.join(process.cwd(), 'oas-typescript');
@@ -175,7 +178,10 @@ export async function generateRestServerStubs({
     allServerSecurityImports
   } = parsePaths({
     paths: document.paths,
-    templateFunctions: { middleware: generateRouterMiddleware }
+    templateFunctions: {
+      middleware: generateRouterMiddleware,
+      securityMiddlewareInvocation: generateSecurityMiddlewareInvocation
+    }
   });
   const securitySchemes =
     (document.components as any)?.[cliAppSecuritySchemesField] || {};

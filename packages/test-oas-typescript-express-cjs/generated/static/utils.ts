@@ -1,9 +1,9 @@
-export const utilsTs = `import { Request, Response, NextFunction, response } from 'express';
+import { Request, Response, NextFunction, response } from 'express';
 import { z } from 'zod';
 
-import { MiddlewareHelpers } from '../middleware-helpers.js';
-import { SecuritySchemes } from './security-schemes.js';
-import { SecurityMiddlewareError } from './types.js';
+import { MiddlewareHelpers } from '../middleware-helpers';
+import { SecuritySchemes } from './security-schemes';
+import { SecurityMiddlewareError } from './types';
 
 interface OasParameter {
   name: string;
@@ -205,7 +205,7 @@ function createErrorResponse({
 }) {
   let message = ParseRequestErrorsMessage[errorCode];
   if (additionalMessage) {
-    message = \`\${message} \${additionalMessage}\`;
+    message = `${message} ${additionalMessage}`;
   }
 
   return {
@@ -214,5 +214,3 @@ function createErrorResponse({
     detail: zodError.errors
   };
 }
-`
-  

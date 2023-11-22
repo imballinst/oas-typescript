@@ -13,7 +13,9 @@ async function main() {
       'openapi-to-koa generate <path-to-openapi-json-or-yaml> [...options]',
     templateFunctions: {
       router: generateTemplateRouter,
-      routerMiddleware: generateRouteMiddleware
+      routerMiddleware: generateRouteMiddleware,
+      securityMiddlewareInvocation: (securityName) =>
+        `KoaGeneratedUtils.createSecurityMiddleware(${securityName})`
     },
     templates: {
       routeMiddlewareHelpersTs: utilsTs

@@ -12,13 +12,21 @@ export type GenerateRouteMiddlewareType = (param: {
   operationId: string;
 }) => string;
 
+export type GenerateSecurityMiddlewareInvocationType = (
+  securityName: string
+) => string;
+
 export function parsePaths({
   paths,
-  templateFunctions: { middleware: generateRouteMiddleware }
+  templateFunctions: {
+    middleware: generateRouteMiddleware,
+    securityMiddlewareInvocation: generateSecurityMiddlewareInvocation
+  }
 }: {
   paths: OpenAPIV3.PathsObject;
   templateFunctions: {
     middleware: GenerateRouteMiddlewareType;
+    securityMiddlewareInvocation: GenerateSecurityMiddlewareInvocationType;
   };
 }) {
   const routers: string[] = [];
@@ -99,9 +107,7 @@ export function parsePaths({
         const securityName = `${capitalizeFirstCharacter(operationId)}Security`;
         allServerSecurityImports.push(securityName);
 
-        middlewares.unshift(
-          `KoaGeneratedUtils.createSecurityMiddleware(${securityName})`
-        );
+        middlewares.unshift(generateSecurityMiddlewareInvocation(securityName));
       }
 
       if (requestBody) {

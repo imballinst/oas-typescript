@@ -8,9 +8,9 @@ export function generateRouteMiddleware({
   operationId: string;
 }) {
   return `
-async (ctx) => {
-  const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
-    ctx,
+async (request, response) => {
+  const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({ 
+    request,
     oasParameters: ${parametersName}
   })
   if (!parsedRequestInfo) {
@@ -18,8 +18,8 @@ async (ctx) => {
   }
 
   const result = await ${controllerName}.${operationId}(parsedRequestInfo)
-  ctx.body = result.body
-  ctx.status = result.status
+  response.status(result.status)
+  response.send(result.body)
 }
   `.trim();
 }

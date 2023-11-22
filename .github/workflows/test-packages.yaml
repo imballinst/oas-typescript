@@ -52,3 +52,26 @@ jobs:
         run: |
           yarn
           yarn test
+
+  express:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+      - run: corepack enable
+      - run: yarn set version 3.6.4
+
+      - name: Setup and run tests
+        working-directory: ./packages/oas-typescript-express
+        run: |
+          yarn
+          yarn test

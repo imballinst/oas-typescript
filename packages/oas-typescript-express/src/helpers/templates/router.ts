@@ -12,20 +12,20 @@ export function generateTemplateRouter({
   routers: string[];
 }) {
   return `
-import Router from '@koa/router'
-import bodyParser from '@koa/bodyparser';
+import { Router } from 'express'
+import { json as bodyParser } from 'body-parser';
 import { 
   ${allServerSecurityImports
     .concat(Object.values(parametersImportsPerController).flat())
     .join(',\n  ')}
 } from './client.js'
-import { KoaGeneratedUtils } from './utils.js'
+import { ExpressGeneratedUtils } from './utils.js'
 
 ${Object.keys(controllerToOperationsRecord)
   .map((c) => `import { ${c} } from '../controllers/${c}.js'`)
   .join('\n')}
 
-const router = new Router()
+const router: Router = Router()
 
 ${routers.join('\n\n')}
 

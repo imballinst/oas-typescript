@@ -1,65 +1,3 @@
-export const defaultHandlebars = `import { z } from 'zod';
-
-{{#if imports}}
-{{#each imports}}
-import { {{{@key}}} } from './{{{this}}}'
-{{/each}}
-{{/if}}
-
-
-{{#if types}}
-{{#each types}}
-{{{this}}};
-{{/each}}
-{{/if}}
-
-// Schemas.
-{{#each schemas}}
-export const {{@key}}{{#if (lookup ../circularTypeByName @key)}}: z.ZodType<{{@key}}>{{/if}} = {{{this}}};
-export interface {{@key}} extends z.infer<typeof {{@key}}> {}
-{{/each}}
-
-// Endpoints.
-{{#each endpoints}}
-export const {{capitalizeFirstLetter operationId "Parameters"}} = [
-  {{#if parameters}}
-  {{#each parameters}}
-  { 
-    name: '{{name}}',
-    {{#if description}}
-    description: \`{{description}}\`,
-    {{/if}}
-    {{#if type}}
-    type: '{{type}}',
-    {{/if}}
-    schema: {{{schema}}}
-  },
-  {{/each}}
-  {{/if}}
-] as const
-{{#if security}}
-{{{extractOperationSecurity operationId security}}}
-{{/if}}
-
-{{{extractResponses operationId responses}}}
-
-{{/each}}
-`;
-
-export const middlewareHelpersTs = `import { IncomingHttpHeaders } from 'http';
-import { SecuritySchemes } from './static/security-schemes.js';
-import { SecurityMiddlewareError } from './static/types.js';
-
-export class MiddlewareHelpers {
-  static async doAdditionalSecurityValidation(
-    headers: IncomingHttpHeaders,
-    securityObject: SecuritySchemes
-  ): Promise<void> {
-    return Promise.resolve();
-  }
-}
-`;
-
 export const utilsTs = `import Koa from 'koa';
 import { z } from 'zod';
 
@@ -268,4 +206,5 @@ function createErrorResponse({
     detail: zodError.errors
   };
 }
-`;
+`
+  

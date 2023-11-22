@@ -1,0 +1,24 @@
+{
+  "extends": "../shared/tsconfig.json",
+  "include": ["**/*.ts", "src/**/*.json"],
+  "compilerOptions": {
+    "paths": {
+      "@oast/shared/*": ["../shared/src/*"]
+    },
+    "lib": ["ES2021", "DOM"],
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "module": "CommonJS",
+    "resolveJsonModule": true,
+    "target": "ES2015"
+  },
+  "references": [
+    {
+      "path": "../shared"
+    }
+  ],
+  "ts-node": {
+    "swc": true
+  }
+}

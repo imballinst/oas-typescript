@@ -2,7 +2,7 @@
 import { generateRestServerStubs } from '@oast/shared-cli-rest';
 
 import commandsRecord from './constants/help-text.json';
-import { middlewareHelpersTs, utilsTs } from './templates.js';
+import { utilsTs } from './templates.js';
 import { generateTemplateRouter } from './helpers/templates/router.js';
 import { generateRouteMiddleware } from './helpers/templates/middleware.js';
 
@@ -13,7 +13,9 @@ async function main() {
       'openapi-to-express generate <path-to-openapi-json-or-yaml> [...options]',
     templateFunctions: {
       router: generateTemplateRouter,
-      routerMiddleware: generateRouteMiddleware
+      routerMiddleware: generateRouteMiddleware,
+      securityMiddlewareInvocation: (securityName) =>
+        `ExpressGeneratedUtils.createSecurityMiddleware(${securityName})`
     },
     templates: {
       routeMiddlewareHelpersTs: utilsTs
