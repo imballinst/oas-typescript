@@ -1391,7 +1391,7 @@ __metadata:
     ts-node: 10.9.1
     vitest: 0.34.6
     yaml: 2.3.4
-    zod: 3.21.4
+    zod: 3.22.3
   bin:
     oas-typescript-express: cli.js
   languageName: unknown
@@ -9862,7 +9862,7 @@ __metadata:
     body-parser: 1.20.2
     express: 4.18.2
     nanoid: 4.0.2
-    zod: 3.21.4
+    zod: 3.22.3
   languageName: unknown
   linkType: soft
 
