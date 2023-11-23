@@ -162,7 +162,7 @@ export class KoaGeneratedUtils {
           security
         );
 
-        next();
+        await next();
       } catch (err) {
         if (err instanceof SecurityMiddlewareError) {
           const { content } = err;
