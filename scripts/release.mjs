@@ -37,12 +37,15 @@ for (const workspaceGlob of WORKSPACES_GLOB) {
     if (isPackagePrivate) continue;
     numPublishablePackages++;
 
-    const output = execSync(`npm dist-tag ${name}`).toString();
-    const latestTag = output.match(/latest: (\d+\.\d+\.\d+)/);
+    try {
+      const output = execSync(`npm dist-tag ${name}`).toString();
+      const latestTag = output.match(/latest: (\d+\.\d+\.\d+)/);
 
-    if (version === latestTag[1]) {
-      excludedWorkspaces.push(name);
-      continue;
+      if (version === latestTag[1]) {
+        excludedWorkspaces.push(name);
+      }
+    } catch (err) {
+      // No-op.
     }
   }
 }
