@@ -60,9 +60,16 @@ export class PetController {
     };
   };
   static deletePet: DeletePetControllerFunction = (params) => {
+    const existingPetIndex = db.findIndex(
+      (row) => row.id === params.pathParams.petId
+    );
+    if (existingPetIndex > -1) {
+      db.splice(existingPetIndex, 1);
+    }
+
     return {
       body: undefined,
-      status: undefined
+      status: 204
     };
   };
   static uploadFile: UploadFileControllerFunction = (params) => {
