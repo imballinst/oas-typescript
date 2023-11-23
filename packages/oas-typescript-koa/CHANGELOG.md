@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.10.0
+
+### Minor Changes
+
+- 4bf3849: feat: implement express adapter, adjust other adapters
+
 ## 0.9.0
 
 ### Minor Changes
