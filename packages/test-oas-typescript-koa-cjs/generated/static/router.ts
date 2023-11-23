@@ -40,8 +40,8 @@ const router = new Router();
 
 router.post(
   '/pet',
-  bodyParser(),
   KoaGeneratedUtils.createSecurityMiddleware(AddPetSecurity),
+  bodyParser(),
   async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
@@ -59,8 +59,8 @@ router.post(
 
 router.put(
   '/pet',
-  bodyParser(),
   KoaGeneratedUtils.createSecurityMiddleware(UpdatePetSecurity),
+  bodyParser(),
   async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
@@ -168,8 +168,8 @@ router.delete(
 
 router.post(
   '/pet/:petId/uploadImage',
-  bodyParser(),
   KoaGeneratedUtils.createSecurityMiddleware(UploadFileSecurity),
+  bodyParser(),
   async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,

@@ -26,7 +26,7 @@
     "test:src": "vitest src",
     "test:run": "vitest run",
     "test:server:start": "pm2 start scripts/tests/ecosystem.config.cjs",
-    "test:server:stop": "pm2 delete scripts/tests/ecosystem.config.cjs"
+    "test:server:stop": "pm2 delete all"
   },
   "dependencies": {
     "meow": "12.0.1",

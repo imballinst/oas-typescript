@@ -12,8 +12,7 @@ export function generateTemplateRouter({
   routers: string[];
 }) {
   return `
-import { Router } from 'express'
-import { json as bodyParser } from 'body-parser';
+import { Router, json, urlencoded } from 'express'
 import { 
   ${allServerSecurityImports
     .concat(Object.values(parametersImportsPerController).flat())

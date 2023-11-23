@@ -1,5 +1,4 @@
-import { Router } from 'express';
-import { json as bodyParser } from 'body-parser';
+import { Router, json, urlencoded } from 'express';
 import {
   AddPetSecurity,
   UpdatePetSecurity,
@@ -40,8 +39,9 @@ const router: Router = Router();
 
 router.post(
   '/pet',
-  bodyParser(),
   ExpressGeneratedUtils.createSecurityMiddleware(AddPetSecurity),
+  json(),
+  urlencoded(),
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
@@ -59,8 +59,9 @@ router.post(
 
 router.put(
   '/pet',
-  bodyParser(),
   ExpressGeneratedUtils.createSecurityMiddleware(UpdatePetSecurity),
+  json(),
+  urlencoded(),
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
@@ -168,8 +169,9 @@ router.delete(
 
 router.post(
   '/pet/:petId/uploadImage',
-  bodyParser(),
   ExpressGeneratedUtils.createSecurityMiddleware(UploadFileSecurity),
+  json(),
+  urlencoded(),
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
@@ -203,7 +205,7 @@ router.get(
   }
 );
 
-router.post('/store/order', bodyParser(), async (request, response) => {
+router.post('/store/order', json(), urlencoded(), async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
     request,
     oasParameters: PlaceOrderParameters
@@ -245,7 +247,7 @@ router.delete('/store/order/:orderId', async (request, response) => {
   response.send(result.body);
 });
 
-router.post('/user', bodyParser(), async (request, response) => {
+router.post('/user', json(), urlencoded(), async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
     request,
     oasParameters: CreateUserParameters
@@ -259,20 +261,25 @@ router.post('/user', bodyParser(), async (request, response) => {
   response.send(result.body);
 });
 
-router.post('/user/createWithList', bodyParser(), async (request, response) => {
-  const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
-    request,
-    oasParameters: CreateUsersWithListInputParameters
-  });
-  if (!parsedRequestInfo) {
-    return;
-  }
+router.post(
+  '/user/createWithList',
+  json(),
+  urlencoded(),
+  async (request, response) => {
+    const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
+      request,
+      oasParameters: CreateUsersWithListInputParameters
+    });
+    if (!parsedRequestInfo) {
+      return;
+    }
 
-  const result =
-    await UserController.createUsersWithListInput(parsedRequestInfo);
-  response.status(result.status);
-  response.send(result.body);
-});
+    const result =
+      await UserController.createUsersWithListInput(parsedRequestInfo);
+    response.status(result.status);
+    response.send(result.body);
+  }
+);
 
 router.get('/user/login', async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
@@ -316,19 +323,24 @@ router.get('/user/:username', async (request, response) => {
   response.send(result.body);
 });
 
-router.put('/user/:username', bodyParser(), async (request, response) => {
-  const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
-    request,
-    oasParameters: UpdateUserParameters
-  });
-  if (!parsedRequestInfo) {
-    return;
-  }
+router.put(
+  '/user/:username',
+  json(),
+  urlencoded(),
+  async (request, response) => {
+    const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
+      request,
+      oasParameters: UpdateUserParameters
+    });
+    if (!parsedRequestInfo) {
+      return;
+    }
 
-  const result = await UserController.updateUser(parsedRequestInfo);
-  response.status(result.status);
-  response.send(result.body);
-});
+    const result = await UserController.updateUser(parsedRequestInfo);
+    response.status(result.status);
+    response.send(result.body);
+  }
+);
 
 router.delete('/user/:username', async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({

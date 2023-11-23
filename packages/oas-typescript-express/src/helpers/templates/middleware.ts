@@ -1,13 +1,16 @@
-export function generateRouteMiddleware({
+export function generateRouteMiddlewares({
   parametersName,
   controllerName,
-  operationId
+  operationId,
+  hasRequestBody
 }: {
   parametersName?: string;
   controllerName: string;
   operationId: string;
+  hasRequestBody: boolean;
 }) {
-  return `
+  const initialMiddlewares = [
+    `
 async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({ 
     request,
@@ -21,5 +24,12 @@ async (request, response) => {
   response.status(result.status)
   response.send(result.body)
 }
-  `.trim();
+  `.trim()
+  ];
+
+  if (hasRequestBody) {
+    initialMiddlewares.unshift('json()', 'urlencoded()');
+  }
+
+  return initialMiddlewares;
 }

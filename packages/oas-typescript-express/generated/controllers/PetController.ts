@@ -1,3 +1,4 @@
+import { Pet } from '../static/client.js';
 import {
   AddPetControllerFunction,
   UpdatePetControllerFunction,
@@ -9,11 +10,23 @@ import {
   UploadFileControllerFunction
 } from '../static/controller-types/PetControllerTypes.js';
 
+const db: Pet[] = [];
+
 export class PetController {
   static addPet: AddPetControllerFunction = (params) => {
+    const existingPet = db.find((row) => row.name === params.body.name);
+    if (existingPet) {
+      return {
+        status: 405,
+        body: {}
+      };
+    }
+
+    db.push({ id: db.length + 1, ...params.body });
+
     return {
-      body: undefined,
-      status: undefined
+      body: params.body,
+      status: 200
     };
   };
   static updatePet: UpdatePetControllerFunction = (params) => {
@@ -47,9 +60,16 @@ export class PetController {
     };
   };
   static deletePet: DeletePetControllerFunction = (params) => {
+    const existingPetIndex = db.findIndex(
+      (row) => row.id === params.pathParams.petId
+    );
+    if (existingPetIndex > -1) {
+      db.splice(existingPetIndex, 1);
+    }
+
     return {
       body: undefined,
-      status: undefined
+      status: 204
     };
   };
   static uploadFile: UploadFileControllerFunction = (params) => {

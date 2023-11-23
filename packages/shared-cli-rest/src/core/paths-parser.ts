@@ -10,7 +10,8 @@ export type GenerateRouteMiddlewareType = (param: {
   parametersName?: string;
   controllerName: string;
   operationId: string;
-}) => string;
+  hasRequestBody: boolean;
+}) => string[];
 
 export type GenerateSecurityMiddlewareInvocationType = (
   securityName: string
@@ -19,13 +20,13 @@ export type GenerateSecurityMiddlewareInvocationType = (
 export function parsePaths({
   paths,
   templateFunctions: {
-    middleware: generateRouteMiddleware,
+    middlewares: generateRouteMiddlewares,
     securityMiddlewareInvocation: generateSecurityMiddlewareInvocation
   }
 }: {
   paths: OpenAPIV3.PathsObject;
   templateFunctions: {
-    middleware: GenerateRouteMiddlewareType;
+    middlewares: GenerateRouteMiddlewareType;
     securityMiddlewareInvocation: GenerateSecurityMiddlewareInvocationType;
   };
 }) {
@@ -95,23 +96,18 @@ export function parsePaths({
       controllerImportsPerController[controllerName].push(errorType);
       controllerImportsPerController[controllerName].push(responseName);
 
-      const middlewares: string[] = [
-        generateRouteMiddleware({
-          controllerName,
-          operationId,
-          parametersName
-        })
-      ];
+      const middlewares: string[] = generateRouteMiddlewares({
+        controllerName,
+        operationId,
+        parametersName,
+        hasRequestBody: !!requestBody
+      });
 
       if (security) {
         const securityName = `${capitalizeFirstCharacter(operationId)}Security`;
         allServerSecurityImports.push(securityName);
 
         middlewares.unshift(generateSecurityMiddlewareInvocation(securityName));
-      }
-
-      if (requestBody) {
-        middlewares.unshift('bodyParser()');
       }
 
       const koaPath = pathKey

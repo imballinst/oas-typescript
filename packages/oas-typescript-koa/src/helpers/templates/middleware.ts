@@ -1,13 +1,16 @@
-export function generateRouteMiddleware({
+export function generateRouteMiddlewares({
   parametersName,
   controllerName,
-  operationId
+  operationId,
+  hasRequestBody
 }: {
   parametersName?: string;
   controllerName: string;
   operationId: string;
+  hasRequestBody: boolean;
 }) {
-  return `
+  const middlewares = [
+    `
 async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({ 
     ctx,
@@ -21,5 +24,12 @@ async (ctx) => {
   ctx.body = result.body
   ctx.status = result.status
 }
-  `.trim();
+  `.trim()
+  ];
+
+  if (hasRequestBody) {
+    middlewares.unshift('bodyParser()');
+  }
+
+  return middlewares;
 }

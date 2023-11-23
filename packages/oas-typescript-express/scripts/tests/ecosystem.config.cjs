@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'oas-typescript-koa-test-server',
+      name: 'oas-typescript-express-test-server',
       script: 'generated/server.ts',
       watch: ['generated'],
       interpreter: 'node',
@@ -11,9 +11,9 @@ module.exports = {
       ignore_watch: ['node_modules']
     },
     {
-      name: 'oas-typescript-koa-test-server-cjs',
-      script: '../test-oas-typescript-koa-cjs/generated/server.ts',
-      watch: ['../test-oas-typescript-koa-cjs/generated'],
+      name: 'oas-typescript-express-test-server-cjs',
+      script: '../test-oas-typescript-express-cjs/generated/server.ts',
+      watch: ['../test-oas-typescript-express-cjs/generated'],
       interpreter: 'yarn',
       interpreter_args: 'ts-node',
       env_development: {
@@ -21,7 +21,7 @@ module.exports = {
       },
       cwd: process.cwd(),
       watch_delay: 1000,
-      ignore_watch: ['../test-oas-typescript-koa-cjs/node_modules']
+      ignore_watch: ['../test-oas-typescript-express-cjs/node_modules']
     }
   ]
 };

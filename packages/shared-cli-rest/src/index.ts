@@ -44,7 +44,7 @@ export async function generateRestServerStubs({
   templates: { routeMiddlewareHelpersTs },
   templateFunctions: {
     router: generateRouter,
-    routerMiddleware: generateRouterMiddleware,
+    routerMiddlewares: generateRouterMiddlewares,
     securityMiddlewareInvocation: generateSecurityMiddlewareInvocation
   }
 }: {
@@ -60,7 +60,7 @@ export async function generateRestServerStubs({
       controllerToOperationsRecord: Record<string, OperationInfo[]>;
       routers: string[];
     }) => string;
-    routerMiddleware: GenerateRouteMiddlewareType;
+    routerMiddlewares: GenerateRouteMiddlewareType;
     securityMiddlewareInvocation: GenerateSecurityMiddlewareInvocationType;
   };
 }) {
@@ -179,7 +179,7 @@ export async function generateRestServerStubs({
   } = parsePaths({
     paths: document.paths,
     templateFunctions: {
-      middleware: generateRouterMiddleware,
+      middlewares: generateRouterMiddlewares,
       securityMiddlewareInvocation: generateSecurityMiddlewareInvocation
     }
   });
