@@ -2,18 +2,19 @@ export function generateRouteMiddlewares({
   parametersName,
   controllerName,
   operationId,
-  hasRequestBody
+  requestBodyType
 }: {
   parametersName?: string;
   controllerName: string;
   operationId: string;
-  hasRequestBody: boolean;
+  requestBodyType?: string;
 }) {
   const initialMiddlewares = [
     `
 async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({ 
     request,
+    response,
     oasParameters: ${parametersName}
   })
   if (!parsedRequestInfo) {
@@ -21,14 +22,20 @@ async (request, response) => {
   }
 
   const result = await ${controllerName}.${operationId}(parsedRequestInfo)
-  response.status(result.status)
-  response.send(result.body)
+  response.status(result.status).send(result.body)
 }
   `.trim()
   ];
 
-  if (hasRequestBody) {
-    initialMiddlewares.unshift('json()', 'urlencoded()');
+  switch (requestBodyType) {
+    case 'application/json': {
+      initialMiddlewares.unshift('json()');
+      break;
+    }
+    case 'application/x-www-form-urlencoded': {
+      initialMiddlewares.unshift('urlencoded({ extended: true })');
+      break;
+    }
   }
 
   return initialMiddlewares;

@@ -41,10 +41,10 @@ router.post(
   '/pet',
   ExpressGeneratedUtils.createSecurityMiddleware(AddPetSecurity),
   json(),
-  urlencoded(),
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
+      response,
       oasParameters: AddPetParameters
     });
     if (!parsedRequestInfo) {
@@ -52,8 +52,7 @@ router.post(
     }
 
     const result = await PetController.addPet(parsedRequestInfo);
-    response.status(result.status);
-    response.send(result.body);
+    response.status(result.status).send(result.body);
   }
 );
 
@@ -61,10 +60,10 @@ router.put(
   '/pet',
   ExpressGeneratedUtils.createSecurityMiddleware(UpdatePetSecurity),
   json(),
-  urlencoded(),
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
+      response,
       oasParameters: UpdatePetParameters
     });
     if (!parsedRequestInfo) {
@@ -72,8 +71,7 @@ router.put(
     }
 
     const result = await PetController.updatePet(parsedRequestInfo);
-    response.status(result.status);
-    response.send(result.body);
+    response.status(result.status).send(result.body);
   }
 );
 
@@ -83,6 +81,7 @@ router.get(
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
+      response,
       oasParameters: FindPetsByStatusParameters
     });
     if (!parsedRequestInfo) {
@@ -90,8 +89,7 @@ router.get(
     }
 
     const result = await PetController.findPetsByStatus(parsedRequestInfo);
-    response.status(result.status);
-    response.send(result.body);
+    response.status(result.status).send(result.body);
   }
 );
 
@@ -101,6 +99,7 @@ router.get(
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
+      response,
       oasParameters: FindPetsByTagsParameters
     });
     if (!parsedRequestInfo) {
@@ -108,8 +107,7 @@ router.get(
     }
 
     const result = await PetController.findPetsByTags(parsedRequestInfo);
-    response.status(result.status);
-    response.send(result.body);
+    response.status(result.status).send(result.body);
   }
 );
 
@@ -119,6 +117,7 @@ router.get(
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
+      response,
       oasParameters: GetPetByIdParameters
     });
     if (!parsedRequestInfo) {
@@ -126,8 +125,7 @@ router.get(
     }
 
     const result = await PetController.getPetById(parsedRequestInfo);
-    response.status(result.status);
-    response.send(result.body);
+    response.status(result.status).send(result.body);
   }
 );
 
@@ -137,6 +135,7 @@ router.post(
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
+      response,
       oasParameters: UpdatePetWithFormParameters
     });
     if (!parsedRequestInfo) {
@@ -144,8 +143,7 @@ router.post(
     }
 
     const result = await PetController.updatePetWithForm(parsedRequestInfo);
-    response.status(result.status);
-    response.send(result.body);
+    response.status(result.status).send(result.body);
   }
 );
 
@@ -155,6 +153,7 @@ router.delete(
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
+      response,
       oasParameters: DeletePetParameters
     });
     if (!parsedRequestInfo) {
@@ -162,19 +161,17 @@ router.delete(
     }
 
     const result = await PetController.deletePet(parsedRequestInfo);
-    response.status(result.status);
-    response.send(result.body);
+    response.status(result.status).send(result.body);
   }
 );
 
 router.post(
   '/pet/:petId/uploadImage',
   ExpressGeneratedUtils.createSecurityMiddleware(UploadFileSecurity),
-  json(),
-  urlencoded(),
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
+      response,
       oasParameters: UploadFileParameters
     });
     if (!parsedRequestInfo) {
@@ -182,8 +179,7 @@ router.post(
     }
 
     const result = await PetController.uploadFile(parsedRequestInfo);
-    response.status(result.status);
-    response.send(result.body);
+    response.status(result.status).send(result.body);
   }
 );
 
@@ -193,6 +189,7 @@ router.get(
   async (request, response) => {
     const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
       request,
+      response,
       oasParameters: GetInventoryParameters
     });
     if (!parsedRequestInfo) {
@@ -200,14 +197,14 @@ router.get(
     }
 
     const result = await StoreController.getInventory(parsedRequestInfo);
-    response.status(result.status);
-    response.send(result.body);
+    response.status(result.status).send(result.body);
   }
 );
 
-router.post('/store/order', json(), urlencoded(), async (request, response) => {
+router.post('/store/order', json(), async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
     request,
+    response,
     oasParameters: PlaceOrderParameters
   });
   if (!parsedRequestInfo) {
@@ -215,13 +212,13 @@ router.post('/store/order', json(), urlencoded(), async (request, response) => {
   }
 
   const result = await StoreController.placeOrder(parsedRequestInfo);
-  response.status(result.status);
-  response.send(result.body);
+  response.status(result.status).send(result.body);
 });
 
 router.get('/store/order/:orderId', async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
     request,
+    response,
     oasParameters: GetOrderByIdParameters
   });
   if (!parsedRequestInfo) {
@@ -229,13 +226,13 @@ router.get('/store/order/:orderId', async (request, response) => {
   }
 
   const result = await StoreController.getOrderById(parsedRequestInfo);
-  response.status(result.status);
-  response.send(result.body);
+  response.status(result.status).send(result.body);
 });
 
 router.delete('/store/order/:orderId', async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
     request,
+    response,
     oasParameters: DeleteOrderParameters
   });
   if (!parsedRequestInfo) {
@@ -243,13 +240,13 @@ router.delete('/store/order/:orderId', async (request, response) => {
   }
 
   const result = await StoreController.deleteOrder(parsedRequestInfo);
-  response.status(result.status);
-  response.send(result.body);
+  response.status(result.status).send(result.body);
 });
 
-router.post('/user', json(), urlencoded(), async (request, response) => {
+router.post('/user', json(), async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
     request,
+    response,
     oasParameters: CreateUserParameters
   });
   if (!parsedRequestInfo) {
@@ -257,33 +254,28 @@ router.post('/user', json(), urlencoded(), async (request, response) => {
   }
 
   const result = await UserController.createUser(parsedRequestInfo);
-  response.status(result.status);
-  response.send(result.body);
+  response.status(result.status).send(result.body);
 });
 
-router.post(
-  '/user/createWithList',
-  json(),
-  urlencoded(),
-  async (request, response) => {
-    const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
-      request,
-      oasParameters: CreateUsersWithListInputParameters
-    });
-    if (!parsedRequestInfo) {
-      return;
-    }
-
-    const result =
-      await UserController.createUsersWithListInput(parsedRequestInfo);
-    response.status(result.status);
-    response.send(result.body);
+router.post('/user/createWithList', json(), async (request, response) => {
+  const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
+    request,
+    response,
+    oasParameters: CreateUsersWithListInputParameters
+  });
+  if (!parsedRequestInfo) {
+    return;
   }
-);
+
+  const result =
+    await UserController.createUsersWithListInput(parsedRequestInfo);
+  response.status(result.status).send(result.body);
+});
 
 router.get('/user/login', async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
     request,
+    response,
     oasParameters: LoginUserParameters
   });
   if (!parsedRequestInfo) {
@@ -291,13 +283,13 @@ router.get('/user/login', async (request, response) => {
   }
 
   const result = await UserController.loginUser(parsedRequestInfo);
-  response.status(result.status);
-  response.send(result.body);
+  response.status(result.status).send(result.body);
 });
 
 router.post('/user/logout', async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
     request,
+    response,
     oasParameters: LogoutUserParameters
   });
   if (!parsedRequestInfo) {
@@ -305,13 +297,13 @@ router.post('/user/logout', async (request, response) => {
   }
 
   const result = await UserController.logoutUser(parsedRequestInfo);
-  response.status(result.status);
-  response.send(result.body);
+  response.status(result.status).send(result.body);
 });
 
 router.get('/user/:username', async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
     request,
+    response,
     oasParameters: GetUserByNameParameters
   });
   if (!parsedRequestInfo) {
@@ -319,32 +311,27 @@ router.get('/user/:username', async (request, response) => {
   }
 
   const result = await UserController.getUserByName(parsedRequestInfo);
-  response.status(result.status);
-  response.send(result.body);
+  response.status(result.status).send(result.body);
 });
 
-router.put(
-  '/user/:username',
-  json(),
-  urlencoded(),
-  async (request, response) => {
-    const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
-      request,
-      oasParameters: UpdateUserParameters
-    });
-    if (!parsedRequestInfo) {
-      return;
-    }
-
-    const result = await UserController.updateUser(parsedRequestInfo);
-    response.status(result.status);
-    response.send(result.body);
+router.put('/user/:username', json(), async (request, response) => {
+  const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
+    request,
+    response,
+    oasParameters: UpdateUserParameters
+  });
+  if (!parsedRequestInfo) {
+    return;
   }
-);
+
+  const result = await UserController.updateUser(parsedRequestInfo);
+  response.status(result.status).send(result.body);
+});
 
 router.delete('/user/:username', async (request, response) => {
   const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
     request,
+    response,
     oasParameters: DeleteUserParameters
   });
   if (!parsedRequestInfo) {
@@ -352,8 +339,7 @@ router.delete('/user/:username', async (request, response) => {
   }
 
   const result = await UserController.deleteUser(parsedRequestInfo);
-  response.status(result.status);
-  response.send(result.body);
+  response.status(result.status).send(result.body);
 });
 
 export const generatedRouter = router;

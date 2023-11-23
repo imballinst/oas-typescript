@@ -60,9 +60,11 @@ export type ParsedRequestInfo<
 export class ExpressGeneratedUtils {
   static parseRequestInfo<OasParametersType extends readonly OasParameter[]>({
     request,
+    response,
     oasParameters
   }: {
     request: Request;
+    response: Response;
     oasParameters: OasParametersType;
   }): ParsedRequestInfo<OasParametersType> | undefined {
     const pathParams: Record<string, any> = {};
@@ -80,8 +82,7 @@ export class ExpressGeneratedUtils {
 
         const result = oasParameter.schema.safeParse(param);
         if (!result.success) {
-          response.status(400);
-          response.send(
+          response.status(400).send(
             createErrorResponse({
               errorCode: ParseRequestErrors.INVALID_PATH_PARAMETER,
               zodError: result.error,
@@ -99,8 +100,7 @@ export class ExpressGeneratedUtils {
         const body = request.body;
         const result = oasParameter.schema.safeParse(body);
         if (!result.success) {
-          response.status(400);
-          response.send(
+          response.status(400).send(
             createErrorResponse({
               errorCode: ParseRequestErrors.INVALID_BODY,
               zodError: result.error
@@ -118,8 +118,7 @@ export class ExpressGeneratedUtils {
           request.query[oasParameter.name]
         );
         if (!result.success) {
-          response.status(400);
-          response.send(
+          response.status(400).send(
             createErrorResponse({
               errorCode: ParseRequestErrors.INVALID_QUERY_PARAMETER,
               zodError: result.error,
@@ -138,8 +137,7 @@ export class ExpressGeneratedUtils {
           request.headers[oasParameter.name]
         );
         if (!result.success) {
-          response.status(400);
-          response.send(
+          response.status(400).send(
             createErrorResponse({
               errorCode: ParseRequestErrors.INVALID_HTTP_HEADER,
               zodError: result.error,
@@ -175,19 +173,16 @@ export class ExpressGeneratedUtils {
         if (err instanceof SecurityMiddlewareError) {
           const { content } = err;
 
-          response.send(content.body);
-          response.status(content.status);
+          response.status(content.status).send(content.body);
           return;
         }
 
         if (err instanceof Error) {
-          response.send({ message: err.stack || err.message });
-          response.status(500);
+          response.status(500).send({ message: err.stack || err.message });
           return;
         }
 
-        response.send({ message: 'Internal server error' });
-        response.status(500);
+        response.status(500).send({ message: 'Internal server error' });
       }
     };
   }

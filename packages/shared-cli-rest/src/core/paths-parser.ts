@@ -5,12 +5,16 @@ import { capitalizeFirstCharacter } from '../helpers/change-case.js';
 import { OperationInfo } from '../helpers/templates/types.js';
 
 const PARSED_METHODS = ['get', 'post', 'put', 'delete', 'patch'] as const;
+const MIME_TYPE_ORDER = [
+  'application/json',
+  'application/x-www-form-urlencoded'
+];
 
 export type GenerateRouteMiddlewareType = (param: {
   parametersName?: string;
   controllerName: string;
   operationId: string;
-  hasRequestBody: boolean;
+  requestBodyType?: string;
 }) => string[];
 
 export type GenerateSecurityMiddlewareInvocationType = (
@@ -45,7 +49,15 @@ export function parsePaths({
       const operation = pathItem[methodKey];
       if (!operation) continue;
 
-      const { tags = [], operationId, security, requestBody } = operation;
+      const {
+        tags = [],
+        operationId,
+        security,
+        requestBody: requestBodyRaw
+      } = operation;
+      const requestBody = requestBodyRaw as
+        | OpenAPIV3.RequestBodyObject
+        | undefined;
       const [tag] = tags;
 
       if (!tag) {
@@ -96,11 +108,14 @@ export function parsePaths({
       controllerImportsPerController[controllerName].push(errorType);
       controllerImportsPerController[controllerName].push(responseName);
 
+      const requestBodyType = Object.keys(requestBody?.content ?? {}).find(
+        (mimeType) => MIME_TYPE_ORDER.includes(mimeType)
+      );
       const middlewares: string[] = generateRouteMiddlewares({
         controllerName,
         operationId,
         parametersName,
-        hasRequestBody: !!requestBody
+        requestBodyType
       });
 
       if (security) {

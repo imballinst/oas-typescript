@@ -1,6 +1,6 @@
-import { IncomingHttpHeaders } from 'http';
 import { SecuritySchemes } from './static/security-schemes';
 import { SecurityMiddlewareError } from './static/types';
+import { IncomingHttpHeaders } from 'http';
 
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(

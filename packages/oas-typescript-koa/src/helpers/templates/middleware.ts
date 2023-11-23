@@ -2,12 +2,12 @@ export function generateRouteMiddlewares({
   parametersName,
   controllerName,
   operationId,
-  hasRequestBody
+  requestBodyType
 }: {
   parametersName?: string;
   controllerName: string;
   operationId: string;
-  hasRequestBody: boolean;
+  requestBodyType?: string;
 }) {
   const middlewares = [
     `
@@ -27,7 +27,7 @@ async (ctx) => {
   `.trim()
   ];
 
-  if (hasRequestBody) {
+  if (!!requestBodyType) {
     middlewares.unshift('bodyParser()');
   }
 
