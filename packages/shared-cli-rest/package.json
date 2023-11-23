@@ -1,6 +1,6 @@
 {
   "name": "@oas-typescript/shared-cli-rest",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "gen:templates": "node --loader ts-node/esm scripts/fill-templates.ts"
