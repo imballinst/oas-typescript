@@ -5,20 +5,33 @@ import { capitalizeFirstCharacter } from '../helpers/change-case.js';
 import { OperationInfo } from '../helpers/templates/types.js';
 
 const PARSED_METHODS = ['get', 'post', 'put', 'delete', 'patch'] as const;
+const MIME_TYPE_ORDER = [
+  'application/json',
+  'application/x-www-form-urlencoded'
+];
 
 export type GenerateRouteMiddlewareType = (param: {
   parametersName?: string;
   controllerName: string;
   operationId: string;
-}) => string;
+  requestBodyType?: string;
+}) => string[];
+
+export type GenerateSecurityMiddlewareInvocationType = (
+  securityName: string
+) => string;
 
 export function parsePaths({
   paths,
-  templateFunctions: { middleware: generateRouteMiddleware }
+  templateFunctions: {
+    middlewares: generateRouteMiddlewares,
+    securityMiddlewareInvocation: generateSecurityMiddlewareInvocation
+  }
 }: {
   paths: OpenAPIV3.PathsObject;
   templateFunctions: {
-    middleware: GenerateRouteMiddlewareType;
+    middlewares: GenerateRouteMiddlewareType;
+    securityMiddlewareInvocation: GenerateSecurityMiddlewareInvocationType;
   };
 }) {
   const routers: string[] = [];
@@ -36,7 +49,15 @@ export function parsePaths({
       const operation = pathItem[methodKey];
       if (!operation) continue;
 
-      const { tags = [], operationId, security, requestBody } = operation;
+      const {
+        tags = [],
+        operationId,
+        security,
+        requestBody: requestBodyRaw
+      } = operation;
+      const requestBody = requestBodyRaw as
+        | OpenAPIV3.RequestBodyObject
+        | undefined;
       const [tag] = tags;
 
       if (!tag) {
@@ -87,25 +108,21 @@ export function parsePaths({
       controllerImportsPerController[controllerName].push(errorType);
       controllerImportsPerController[controllerName].push(responseName);
 
-      const middlewares: string[] = [
-        generateRouteMiddleware({
-          controllerName,
-          operationId,
-          parametersName
-        })
-      ];
+      const requestBodyType = Object.keys(requestBody?.content ?? {}).find(
+        (mimeType) => MIME_TYPE_ORDER.includes(mimeType)
+      );
+      const middlewares: string[] = generateRouteMiddlewares({
+        controllerName,
+        operationId,
+        parametersName,
+        requestBodyType
+      });
 
       if (security) {
         const securityName = `${capitalizeFirstCharacter(operationId)}Security`;
         allServerSecurityImports.push(securityName);
 
-        middlewares.unshift(
-          `KoaGeneratedUtils.createSecurityMiddleware(${securityName})`
-        );
-      }
-
-      if (requestBody) {
-        middlewares.unshift('bodyParser()');
+        middlewares.unshift(generateSecurityMiddlewareInvocation(securityName));
       }
 
       const koaPath = pathKey

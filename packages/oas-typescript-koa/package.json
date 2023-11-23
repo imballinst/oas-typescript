@@ -16,7 +16,8 @@
     "gen:build": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated",
     "gen:build:vanilla": "rimraf generated-vanilla && node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated-vanilla",
     "gen:build:cjs": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output ../test-oas-typescript-koa-cjs/generated --module cjs",
-    "gen:templates": "yarn workspace @oas-typescript/shared-cli-rest gen:templates",
+    "gen:templates:currentpackage": "node --loader ts-node/esm scripts/fill-templates.ts",
+    "gen:templates": "yarn workspace @oas-typescript/shared-cli-rest gen:templates && yarn gen:templates:currentpackage",
     "gen:all": "yarn gen:templates && yarn gen",
     "build": "yarn test:run && yarn gen:templates && yarn build:entry",
     "build:entry": "node --loader ts-node/esm scripts/build-entry.ts",
@@ -25,7 +26,7 @@
     "test:src": "vitest src",
     "test:run": "vitest run",
     "test:server:start": "pm2 start scripts/tests/ecosystem.config.cjs",
-    "test:server:stop": "pm2 delete scripts/tests/ecosystem.config.cjs"
+    "test:server:stop": "pm2 delete all"
   },
   "dependencies": {
     "meow": "12.0.1",
@@ -39,11 +40,9 @@
     "@koa/router": "12.0.0",
     "@swc/core": "1.3.66",
     "@swc/helpers": "0.5.1",
-    "@types/cookie-parser": "1.4.3",
     "@types/koa": "2.13.10",
     "@types/koa__router": "12.0.3",
     "axios": "1.6.0",
-    "cookie-parser": "1.4.6",
     "esbuild": "0.18.11",
     "esbuild-node-externals": "1.8.0",
     "koa": "2.14.2",

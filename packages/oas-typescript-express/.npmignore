@@ -1,0 +1,8 @@
+generated/
+scripts/
+src/
+templates/
+tests/
+
+tsconfig.json
+vitest.config.*

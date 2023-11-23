@@ -13,11 +13,16 @@ import {
   HelpTextEntry
 } from '@oast/shared-cli';
 
-import { defaultHandlebars, typesTs } from './templates.js';
+import {
+  defaultHandlebars,
+  securityMiddlewareHelpersTs,
+  typesTs
+} from './templates.js';
 import { generateTemplateController } from './helpers/templates/controller.js';
 import { generateTemplateControllerTypes } from './helpers/templates/controller-types.js';
 import {
   GenerateRouteMiddlewareType,
+  GenerateSecurityMiddlewareInvocationType,
   parsePaths
 } from './core/paths-parser.js';
 import { convertOpenAPIHeadersToResponseSchemaHeaders } from './core/header-parser.js';
@@ -36,16 +41,16 @@ const require = createRequire(import.meta.url);
 export async function generateRestServerStubs({
   usageText,
   commandsRecord,
-  templates: { routeMiddlewareHelpersTs, securityMiddlewareHelpersTs },
+  templates: { routeMiddlewareHelpersTs },
   templateFunctions: {
     router: generateRouter,
-    routerMiddleware: generateRouterMiddleware
+    routerMiddlewares: generateRouterMiddlewares,
+    securityMiddlewareInvocation: generateSecurityMiddlewareInvocation
   }
 }: {
   usageText: string;
   commandsRecord: Record<string, HelpTextEntry>;
   templates: {
-    securityMiddlewareHelpersTs: string;
     routeMiddlewareHelpersTs: string;
   };
   templateFunctions: {
@@ -55,7 +60,8 @@ export async function generateRestServerStubs({
       controllerToOperationsRecord: Record<string, OperationInfo[]>;
       routers: string[];
     }) => string;
-    routerMiddleware: GenerateRouteMiddlewareType;
+    routerMiddlewares: GenerateRouteMiddlewareType;
+    securityMiddlewareInvocation: GenerateSecurityMiddlewareInvocationType;
   };
 }) {
   const defaultOutput = path.join(process.cwd(), 'oas-typescript');
@@ -172,7 +178,10 @@ export async function generateRestServerStubs({
     allServerSecurityImports
   } = parsePaths({
     paths: document.paths,
-    templateFunctions: { middleware: generateRouterMiddleware }
+    templateFunctions: {
+      middlewares: generateRouterMiddlewares,
+      securityMiddlewareInvocation: generateSecurityMiddlewareInvocation
+    }
   });
   const securitySchemes =
     (document.components as any)?.[cliAppSecuritySchemesField] || {};
