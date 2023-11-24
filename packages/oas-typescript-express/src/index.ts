@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { generateRestServerStubs } from '@oas-typescript/shared-cli-http';
+import { generateRestServerStubs } from '@oas-typescript/shared-cli-http-server';
 
 import commandsRecord from './constants/help-text.json';
 import { utilsTs } from './templates.js';

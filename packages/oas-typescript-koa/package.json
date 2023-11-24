@@ -17,7 +17,7 @@
     "gen:build:vanilla": "rimraf generated-vanilla && node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated-vanilla",
     "gen:build:cjs": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output ../test-oas-typescript-koa-cjs/generated --module cjs",
     "gen:templates:currentpackage": "node --loader ts-node/esm scripts/fill-templates.ts",
-    "gen:templates": "yarn workspace @oas-typescript/shared-cli-http gen:templates && yarn gen:templates:currentpackage",
+    "gen:templates": "yarn workspace @oas-typescript/shared-cli-http-server gen:templates && yarn gen:templates:currentpackage",
     "gen:all": "yarn gen:templates && yarn gen",
     "build": "yarn test:run && yarn gen:templates && yarn build:entry",
     "build:entry": "node --loader ts-node/esm scripts/build-entry.ts",
