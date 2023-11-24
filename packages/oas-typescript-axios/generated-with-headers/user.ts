@@ -1,6 +1,8 @@
 import { z } from 'zod';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { getQueryParameterString } from './utils/query.js';
+
+import { ApiResponse } from './common';
 
 // Schemas.
 export const User = z
@@ -52,7 +54,7 @@ export function UserApi({
   async function createUser(
     fnParam: z.infer<typeof CreateUserParams>,
     axiosConfig?: AxiosRequestConfig
-  ): Promise<AxiosResponse<User>> {
+  ): Promise<User> {
     let url = `/user`;
 
     const config = {
@@ -65,13 +67,12 @@ export function UserApi({
       method: 'post'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
-    response.data = User.parse(response.data);
-    return response;
+    return User.parse(response.data);
   }
   async function createUsersWithListInput(
     fnParam: z.infer<typeof CreateUsersWithListInputParams>,
     axiosConfig?: AxiosRequestConfig
-  ): Promise<AxiosResponse<User>> {
+  ): Promise<User> {
     let url = `/user/createWithList`;
 
     const config = {
@@ -84,13 +85,12 @@ export function UserApi({
       method: 'post'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
-    response.data = User.parse(response.data);
-    return response;
+    return User.parse(response.data);
   }
   async function loginUser(
     fnParam: z.infer<typeof LoginUserParams>,
     axiosConfig?: AxiosRequestConfig
-  ): Promise<AxiosResponse<LoginUserResponse>> {
+  ): Promise<LoginUserResponse> {
     let url = `/user/login`;
     url += getQueryParameterString(fnParam.query);
 
@@ -104,12 +104,9 @@ export function UserApi({
       method: 'get'
     };
     const response = await axios(url, config);
-    response.data = z.string().parse(response.data);
-    return response;
+    return z.string().parse(response.data);
   }
-  async function logoutUser(
-    axiosConfig?: AxiosRequestConfig
-  ): Promise<AxiosResponse<void>> {
+  async function logoutUser(axiosConfig?: AxiosRequestConfig): Promise<void> {
     let url = `/user/logout`;
 
     const config = {
@@ -122,13 +119,12 @@ export function UserApi({
       method: 'post'
     };
     const response = await axios(url, config);
-    response.data = z.void().parse(response.data);
-    return response;
+    return z.void().parse(response.data);
   }
   async function getUserByName(
     fnParam: z.infer<typeof GetUserByNameParams>,
     axiosConfig?: AxiosRequestConfig
-  ): Promise<AxiosResponse<User>> {
+  ): Promise<User> {
     let url = `/user/${fnParam.params.username}`;
 
     const config = {
@@ -141,13 +137,12 @@ export function UserApi({
       method: 'get'
     };
     const response = await axios(url, config);
-    response.data = User.parse(response.data);
-    return response;
+    return User.parse(response.data);
   }
   async function updateUser(
     fnParam: z.infer<typeof UpdateUserParams>,
     axiosConfig?: AxiosRequestConfig
-  ): Promise<AxiosResponse<User>> {
+  ): Promise<User> {
     let url = `/user/${fnParam.params.username}`;
 
     const config = {
@@ -160,13 +155,12 @@ export function UserApi({
       method: 'put'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
-    response.data = User.parse(response.data);
-    return response;
+    return User.parse(response.data);
   }
   async function deleteUser(
     fnParam: z.infer<typeof DeleteUserParams>,
     axiosConfig?: AxiosRequestConfig
-  ): Promise<AxiosResponse<void>> {
+  ): Promise<void> {
     let url = `/user/${fnParam.params.username}`;
 
     const config = {
@@ -179,8 +173,7 @@ export function UserApi({
       method: 'delete'
     };
     const response = await axios(url, config);
-    response.data = z.void().parse(response.data);
-    return response;
+    return z.void().parse(response.data);
   }
 
   return {

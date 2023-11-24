@@ -4,5 +4,6 @@ src/
 templates/
 tests/
 
+CHANGELOG.md
 tsconfig.json
 vitest.config.*

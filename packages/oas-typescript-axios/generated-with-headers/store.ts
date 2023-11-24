@@ -1,5 +1,7 @@
 import { z } from 'zod';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
+
+import { ApiResponse } from './common';
 
 // Schemas.
 export const Order = z
@@ -35,7 +37,7 @@ export function StoreApi({
 }) {
   async function getInventory(
     axiosConfig?: AxiosRequestConfig
-  ): Promise<AxiosResponse<GetInventoryResponse>> {
+  ): Promise<GetInventoryResponse> {
     let url = `/store/inventory`;
 
     const config = {
@@ -48,13 +50,12 @@ export function StoreApi({
       method: 'get'
     };
     const response = await axios(url, config);
-    response.data = z.record(z.number().int()).parse(response.data);
-    return response;
+    return z.record(z.number().int()).parse(response.data);
   }
   async function placeOrder(
     fnParam: z.infer<typeof PlaceOrderParams>,
     axiosConfig?: AxiosRequestConfig
-  ): Promise<AxiosResponse<Order>> {
+  ): Promise<Order> {
     let url = `/store/order`;
 
     const config = {
@@ -67,13 +68,12 @@ export function StoreApi({
       method: 'post'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
-    response.data = Order.parse(response.data);
-    return response;
+    return Order.parse(response.data);
   }
   async function getOrderById(
     fnParam: z.infer<typeof GetOrderByIdParams>,
     axiosConfig?: AxiosRequestConfig
-  ): Promise<AxiosResponse<Order>> {
+  ): Promise<Order> {
     let url = `/store/order/${fnParam.params.orderId}`;
 
     const config = {
@@ -86,13 +86,12 @@ export function StoreApi({
       method: 'get'
     };
     const response = await axios(url, config);
-    response.data = Order.parse(response.data);
-    return response;
+    return Order.parse(response.data);
   }
   async function deleteOrder(
     fnParam: z.infer<typeof DeleteOrderParams>,
     axiosConfig?: AxiosRequestConfig
-  ): Promise<AxiosResponse<void>> {
+  ): Promise<void> {
     let url = `/store/order/${fnParam.params.orderId}`;
 
     const config = {
@@ -105,8 +104,7 @@ export function StoreApi({
       method: 'delete'
     };
     const response = await axios(url, config);
-    response.data = z.void().parse(response.data);
-    return response;
+    return z.void().parse(response.data);
   }
 
   return {

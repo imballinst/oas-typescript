@@ -2,45 +2,17 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { tmpdir } from 'os';
 import { generateZodClientFromOpenAPI } from 'openapi-zod-client';
-import meow from 'meow';
 import fs from 'fs/promises';
 import path from 'path';
 import { createRequire } from 'node:module';
 import { execSync } from 'child_process';
+import { createCli, generateHelpText } from '@oas-typescript/shared-cli';
 
 import { defaultHandlebars, defaultQueryUtils } from './templates.js';
-import { handlebarsInstance } from './helpers/handlebars.js';
-import { GLOBAL_VARS } from './global-vars.js';
+import { getHandlebarsInstance } from './helpers/handlebars.js';
 
-// TODO: use `createCli` from the `shared-cli` package.
-const cli = meow(
-  `
-	Usage
-	  $ openapi-to-axios generate <path-to-openapi-json>
+import commandsRecord from './constants/help-text.json';
 
-	Options
-	  --output, -o                  Specify a place for output, defaults to (pwd)/generated.
-	  --headers, -h                 When this flag is set, response will be in the form of AxiosResponse.
-
-	Examples
-	  $ openapi-to-axios generate ./openapi/api.json --output src/generated
-	  $ openapi-to-axios generate ./openapi/api.json --output src/generated --headers
-`,
-  {
-    importMeta: import.meta,
-
-    flags: {
-      output: {
-        type: 'string',
-        shortFlag: 'o'
-      },
-      headers: {
-        type: 'boolean',
-        shortFlag: 'h'
-      }
-    }
-  }
-);
 const DEFAULT_OUTPUT = path.join(process.cwd(), 'generated');
 const VALID_COMMANDS = ['generate'];
 const REQUEST_CONTENT_TYPE_PRIORITY = [
@@ -54,6 +26,22 @@ const METHOD_WITH_REQUEST_BODY = ['post', 'put', 'patch'];
 const require = createRequire(import.meta.url);
 
 async function main() {
+  const { examplesText, optionsText } = generateHelpText({ commandsRecord });
+  const cli = createCli({
+    usageText: 'openapi-to-axios generate <path-to-openapi-json>',
+    examplesText,
+    optionsText,
+    flags: {
+      output: {
+        type: 'string',
+        shortFlag: 'o'
+      },
+      headers: {
+        type: 'boolean'
+      }
+    }
+  });
+
   const [command, cliInput] = cli.input;
   if (!cliInput || !VALID_COMMANDS.includes(command)) {
     cli.showHelp();
@@ -65,9 +53,6 @@ async function main() {
     : path.join(process.cwd(), cliInput);
 
   const { output: cliOutput, headers: isWithHeaders = false } = cli.flags;
-
-  // Set global flags.
-  GLOBAL_VARS.IS_WITH_HEADERS = isWithHeaders;
 
   const rootOutputFolder =
     cliOutput && path.isAbsolute(cliOutput)
@@ -104,7 +89,7 @@ async function main() {
     openApiDoc: document as any,
     distPath: rootOutputFolder,
     templatePath: handlebarsFilePath,
-    handlebars: handlebarsInstance,
+    handlebars: getHandlebarsInstance({ isWithHeaders }),
     options: {
       groupStrategy: 'tag-file',
       endpointDefinitionRefiner: (defaultDefinition, operation) => {
