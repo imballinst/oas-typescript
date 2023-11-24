@@ -1,5 +1,11 @@
 # @oas-typescript/shared-cli-http-server
 
+## 0.1.1
+
+### Patch Changes
+
+- 92d1912: fix: fix CLI indentation not being right
+
 ## 0.1.0
 
 ### Minor Changes

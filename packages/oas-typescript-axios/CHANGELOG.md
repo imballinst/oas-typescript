@@ -1,5 +1,12 @@
 # @oas-typescript/axios
 
+## 0.1.5
+
+### Patch Changes
+
+- 042e3f5: chore: rename package names from rest to http
+- 92d1912: fix: fix CLI indentation not being right
+
 ## 0.1.4
 
 ### Patch Changes
