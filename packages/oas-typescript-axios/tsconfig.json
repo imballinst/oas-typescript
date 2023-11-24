@@ -1,11 +1,16 @@
 {
   "extends": "../shared/tsconfig.json",
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "src/**/*.json"],
   "compilerOptions": {
     "paths": {
-      "@oas-typescript/shared/*": ["../shared/src/*"]
+      "@oas-typescript/shared-cli": ["../shared-cli/src/index.ts"]
     }
   },
+  "references": [
+    {
+      "path": "../shared-cli"
+    }
+  ],
   "ts-node": {
     "swc": true
   }

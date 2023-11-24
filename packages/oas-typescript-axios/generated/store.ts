@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import axios, { AxiosRequestConfig } from 'axios';
 
+import { ApiResponse } from './common';
+
 // Schemas.
 export const Order = z
   .object({

@@ -1,5 +1,5 @@
 {
-  "name": "@oas-typescript/shared-cli-http",
+  "name": "@oas-typescript/shared-cli-http-server",
   "version": "0.1.0",
   "type": "module",
   "scripts": {

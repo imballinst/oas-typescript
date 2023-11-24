@@ -4,7 +4,9 @@
   "compilerOptions": {
     "paths": {
       "@oas-typescript/shared-cli": ["../shared-cli/src/index.ts"],
-      "@oas-typescript/shared-cli-http": ["../shared-cli-http/src/index.ts"]
+      "@oas-typescript/shared-cli-http-server": [
+        "../shared-cli-http-server/src/index.ts"
+      ]
     }
   },
   "references": [
@@ -12,7 +14,7 @@
       "path": "../shared-cli"
     },
     {
-      "path": "../shared-cli-http"
+      "path": "../shared-cli-http-server"
     }
   ],
   "ts-node": {

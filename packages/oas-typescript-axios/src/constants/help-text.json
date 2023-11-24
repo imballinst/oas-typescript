@@ -1,0 +1,18 @@
+{
+  "output": {
+    "aliases": ["o"],
+    "helpText": ["The output directory."],
+    "required": false,
+    "defaultValue": "`(pwd)/oas-typescript`",
+    "examples": ["generate openapi/api.json --output src"]
+  },
+  "headers": {
+    "aliases": [""],
+    "helpText": [
+      "Specify whether you want to override headers in each of the endpoint calls or not."
+    ],
+    "required": false,
+    "defaultValue": "",
+    "examples": ["generate openapi/api.json --headers"]
+  }
+}
