@@ -1,4 +1,4 @@
-# @oas-typescript/shared-cli-rest
+# @oas-typescript/shared-cli-http
 
 ## 0.1.0
 
