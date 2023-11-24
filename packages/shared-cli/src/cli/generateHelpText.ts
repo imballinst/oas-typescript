@@ -6,6 +6,8 @@ export interface HelpTextEntry {
   examples: string[];
 }
 
+const NEWLINE_PLUS_INDENTATION = '\n      ';
+
 export function generateHelpText({
   commandsRecord
 }: {
@@ -41,10 +43,10 @@ export function generateHelpText({
       (item) =>
         `${item.option.padEnd(maxOptionTextLength, ' ')}  ${item.helpText}`
     )
-    .join('\n    ');
+    .join(NEWLINE_PLUS_INDENTATION);
   const examplesText = examples
     .map((example) => `$ openapi-to-koa ${example}`)
-    .join('\n    ');
+    .join(NEWLINE_PLUS_INDENTATION);
 
   return { optionsText, examplesText };
 }

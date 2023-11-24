@@ -7,7 +7,7 @@
     "examples": ["generate openapi/api.json --output src"]
   },
   "headers": {
-    "aliases": [""],
+    "aliases": [],
     "helpText": [
       "Specify whether you want to override headers in each of the endpoint calls or not."
     ],
