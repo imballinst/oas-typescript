@@ -3,7 +3,7 @@
   "include": ["**/*.ts"],
   "compilerOptions": {
     "paths": {
-      "@oast/shared/*": ["../shared/src/*"]
+      "@oas-typescript/shared/*": ["../shared/src/*"]
     }
   },
   "ts-node": {

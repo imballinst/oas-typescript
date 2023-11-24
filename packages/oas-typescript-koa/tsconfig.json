@@ -3,8 +3,8 @@
   "include": ["**/*.ts", "src/**/*.json"],
   "compilerOptions": {
     "paths": {
-      "@oast/shared-cli": ["../shared-cli/src/index.ts"],
-      "@oast/shared-cli-rest": ["../shared-cli-rest/src/index.ts"]
+      "@oas-typescript/shared-cli": ["../shared-cli/src/index.ts"],
+      "@oas-typescript/shared-cli-http": ["../shared-cli-rest/src/index.ts"]
     }
   },
   "references": [

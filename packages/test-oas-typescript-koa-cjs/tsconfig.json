@@ -3,7 +3,7 @@
   "include": ["**/*.ts", "src/**/*.json"],
   "compilerOptions": {
     "paths": {
-      "@oast/shared/*": ["../shared/src/*"]
+      "@oas-typescript/shared/*": ["../shared/src/*"]
     },
     "lib": ["ES2021", "DOM"],
     "isolatedModules": true,
