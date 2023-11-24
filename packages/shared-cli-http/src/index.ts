@@ -11,7 +11,7 @@ import {
   createCli,
   generateHelpText,
   HelpTextEntry
-} from '@oast/shared-cli';
+} from '@oas-typescript/shared-cli';
 
 import {
   defaultHandlebars,

@@ -1427,9 +1427,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@oas-typescript/shared-cli-rest@workspace:packages/shared-cli-rest":
+"@oas-typescript/shared-cli-http@workspace:packages/shared-cli-http":
   version: 0.0.0-use.local
-  resolution: "@oas-typescript/shared-cli-rest@workspace:packages/shared-cli-rest"
+  resolution: "@oas-typescript/shared-cli-http@workspace:packages/shared-cli-http"
   dependencies:
     "@swc/core": 1.3.66
     "@swc/helpers": 0.5.1

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { generateRestServerStubs } from '@oast/shared-cli-rest';
+import { generateRestServerStubs } from '@oas-typescript/shared-cli-http';
 
 import commandsRecord from './constants/help-text.json';
 import { utilsTs } from './templates.js';
@@ -10,12 +10,12 @@ async function main() {
   await generateRestServerStubs({
     commandsRecord,
     usageText:
-      'openapi-to-express generate <path-to-openapi-json-or-yaml> [...options]',
+      'openapi-to-koa generate <path-to-openapi-json-or-yaml> [...options]',
     templateFunctions: {
       router: generateTemplateRouter,
       routerMiddlewares: generateRouteMiddlewares,
       securityMiddlewareInvocation: (securityName) =>
-        `ExpressGeneratedUtils.createSecurityMiddleware(${securityName})`
+        `KoaGeneratedUtils.createSecurityMiddleware(${securityName})`
     },
     templates: {
       routeMiddlewareHelpersTs: utilsTs
