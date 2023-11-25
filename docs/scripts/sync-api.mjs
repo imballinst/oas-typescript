@@ -8,6 +8,10 @@ const SYNCAPI_TOKEN_END = '@@SYNCAPI-END';
 function main() {
   const targetFilePaths = [
     path.join(process.cwd(), 'docs/nodejs-server-stubs/adapters/00-koa.mdx'),
+    path.join(
+      process.cwd(),
+      'docs/nodejs-server-stubs/adapters/01-express.mdx'
+    ),
     path.join(process.cwd(), '../packages/oas-typescript-koa/README.md'),
     path.join(process.cwd(), '../packages/oas-typescript-express/README.md')
   ];
