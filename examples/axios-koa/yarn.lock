@@ -779,9 +779,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oas-typescript/axios@npm:0.1.0":
-  version: 0.1.0
-  resolution: "@oas-typescript/axios@npm:0.1.0"
+"@oas-typescript/axios@npm:0.1.4":
+  version: 0.1.4
+  resolution: "@oas-typescript/axios@npm:0.1.4"
   dependencies:
     meow: 12.0.1
     openapi-zod-client: 1.10.0
@@ -790,21 +790,22 @@ __metadata:
     axios: ">=1.0.0"
   bin:
     oas-typescript-axios: cli.js
-  checksum: a1a5180dfbf8cbf36d87e82e461cc1520a525b59a8c9e7ce7854f1af4ee3152a2fc3328193ee5ad606982011006ffb8df8508c0e189232651ee60b7ef4a37999
+  checksum: 5b6ebf8a95403dcdd5ede8477464170c4eaba38d61e4ac118744cfa4af2abd78a07df69ca4beb3330f0615f775ac037041cffb8845e80f9ed54495304780250b
   languageName: node
   linkType: hard
 
-"@oas-typescript/koa@npm:0.8.2":
-  version: 0.8.2
-  resolution: "@oas-typescript/koa@npm:0.8.2"
+"@oas-typescript/koa@npm:0.10.0":
+  version: 0.10.0
+  resolution: "@oas-typescript/koa@npm:0.10.0"
   dependencies:
     meow: 12.0.1
     openapi-zod-client: 1.13.1
     prettier: 3.0.3
     title-case: 3.0.3
+    yaml: 2.3.4
   bin:
     oas-typescript-koa: cli.js
-  checksum: ee115e745686ea9dc8525a6369bbcedec2d39ee7268891e4a536a29ffe739c038be1f240b0107aeee7ee77e7f48d542a8345887e6b9ff8acf4ceb3a1f48c4f7c
+  checksum: fe1a6b11c44b1b9c8f8d42fc463dff46d1d3c04c024da7438274aa8c6a42084bf87ca00ed4de953050b9b56536b7e41f779e957abc9816ab6f74733772586989
   languageName: node
   linkType: hard
 
@@ -1687,8 +1688,8 @@ __metadata:
   dependencies:
     "@koa/bodyparser": 5.0.0
     "@koa/router": 12.0.0
-    "@oas-typescript/axios": 0.1.0
-    "@oas-typescript/koa": 0.8.2
+    "@oas-typescript/axios": 0.1.4
+    "@oas-typescript/koa": 0.10.0
     "@swc/core": 1.3.66
     "@swc/helpers": 0.5.1
     "@types/koa": 2.13.10
@@ -5785,6 +5786,13 @@ __metadata:
   version: 4.0.0
   resolution: "yallist@npm:4.0.0"
   checksum: 343617202af32df2a15a3be36a5a8c0c8545208f3d3dfbc6bb7c3e3b7e8c6f8e7485432e4f3b88da3031a6e20afa7c711eded32ddfb122896ac5d914e75848d5
+  languageName: node
+  linkType: hard
+
+"yaml@npm:2.3.4":
+  version: 2.3.4
+  resolution: "yaml@npm:2.3.4"
+  checksum: e6d1dae1c6383bcc8ba11796eef3b8c02d5082911c6723efeeb5ba50fc8e881df18d645e64de68e421b577296000bea9c75d6d9097c2f6699da3ae0406c030d8
   languageName: node
   linkType: hard
 
