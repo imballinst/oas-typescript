@@ -17,12 +17,14 @@ yarn add -D @oas-typescript/koa
 ## CLI guide
 
 <!-- @@SYNCAPI-START nodejs-http-server-cli-options -->
+
 | Option | Description | Default value |
 | - | - | - |
 |`--output`, `-o`|The output directory.|`(pwd)/oas-typescript`|
 |`--app-security-schemes-field`|The security scheme field used in the OpenAPI Specification. Mostly useful when you have custom `securitySchemes` that are not supported by the specification.|`securitySchemes`|
 |`--app-security-requirements-field`|The custom security requirements field used in the OpenAPI Specification. Mostly useful when you have custom `security` that are not supported by the specification.|`security`|
 |`--module`|The output module. Available values are `cjs` or `esm`.|`esm`|
+
 <!-- @@SYNCAPI-END -->
 
 ## Generating server stubs

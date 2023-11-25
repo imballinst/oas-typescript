@@ -25,11 +25,15 @@ function main() {
 
     if (indexOfSyncApiStart > -1 && indexOfSyncApiEnd > -1) {
       const newContent = fileContentArray
-        .slice(0, indexOfSyncApiStart - 1)
+        .slice(0, indexOfSyncApiStart + 1)
         .concat(`\n${createTable()}\n`)
         .concat(fileContentArray.slice(indexOfSyncApiEnd));
 
-      fs.writeFileSync(targetFilePath, newContent.join('\n') + '\n', 'utf-8');
+      fs.writeFileSync(
+        targetFilePath,
+        newContent.join('\n').trim() + '\n',
+        'utf-8'
+      );
     }
   }
 }
