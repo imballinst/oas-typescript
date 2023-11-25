@@ -1,6 +1,6 @@
 {
   "name": "test-oas-typescript-express-cjs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "devDependencies": {
     "@types/body-parser": "1.19.5",
