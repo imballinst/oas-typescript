@@ -1,0 +1,103 @@
+---
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# @oas-typescript/koa
+
+This section contains the quick start on how to use `@oas-typescript/koa`.
+
+## Requirements
+
+The requirements to use `@oas-typescript/koa` are as the following.
+
+- Node.js installation, along with Working package manager, such as `npm` or `yarn`.
+- OpenAPI 3.0 specification file. If you are still using Swagger 2.0, you might need to [migrate](https://swagger.io/blog/news/whats-new-in-openapi-3-0/) or convert your Swagger 2.0 specification into OpenAPI 3.0.
+
+## Installation
+
+To install `@oas-typescript/koa`, run the command below.
+
+<Tabs groupId="package-managers">
+<TabItem value="npm" label="npm" default>
+
+```bash
+npm install -D @oas-typescript/koa
+```
+
+</TabItem>
+<TabItem value="yarn" label="Yarn">
+
+```bash
+yarn add -D @oas-typescript/koa
+```
+
+</TabItem>
+</Tabs>
+
+## Usage
+
+To use the CLI, use the following command.
+
+<Tabs groupId="package-managers">
+<TabItem value="npm" label="npm" default>
+
+```bash
+npx oas-typescript-koa generate ./path/to/openapi.json --output ./path-to-output-directory
+```
+
+</TabItem>
+<TabItem value="yarn" label="Yarn">
+
+```bash
+yarn oas-typescript-koa generate ./path/to/openapi.json --output ./path-to-output-directory
+```
+
+</TabItem>
+</Tabs>
+
+The CLI has following options that can be passed as arguments.
+
+{/* @@SYNCAPI-START nodejs-http-server-cli-options */}
+
+| Option | Description | Default value |
+| - | - | - |
+|`--output`, `-o`|The output directory.|`(pwd)/oas-typescript`|
+|`--app-security-schemes-field`|The security scheme field used in the OpenAPI Specification. Mostly useful when you have custom `securitySchemes` that are not supported by the specification.|`securitySchemes`|
+|`--app-security-requirements-field`|The custom security requirements field used in the OpenAPI Specification. Mostly useful when you have custom `security` that are not supported by the specification.|`security`|
+|`--module`|The output module. Available values are `cjs` or `esm`.|`esm`|
+
+{/* @@SYNCAPI-END */}
+
+There's that! After running that command, you will have your generated files ready at the output directory.
+
+## Create a server file
+
+The CLI does not automatically generate a server file, so you will need you create it yourselves. You could create a file, say, `server.ts` outside of the `output` folder.
+
+<!--SNIPSTART generated-server-->
+```ts
+import Koa from 'koa';
+import { generatedRouter } from './static/router.js';
+import Router from '@koa/router';
+
+const app = new Koa();
+
+app.use(generatedRouter.routes());
+app.use(generatedRouter.allowedMethods());
+
+const commonRouter = new Router();
+commonRouter.get('/healthz', (ctx) => {
+  ctx.body = { healthy: true };
+});
+app.use(commonRouter.routes());
+app.use(commonRouter.allowedMethods());
+
+app.listen(3000, () => {
+  console.info('Server is running on port 3000');
+});
+```
+<!--SNIPEND-->
+
+So, what we are doing above is, we define the Koa application, in which we use the `generatedRouter` as well as the common router (in the case above we are defining `/healthz` endpoint which is used to indicate if the server is already running).

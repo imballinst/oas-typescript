@@ -28,7 +28,7 @@ jobs:
         working-directory: ./docs
         run: |
           yarn
-          yarn sync-snippets && yarn sync-api-reference
+          yarn sync
           yarn validate-api-reference
 
       - name: Build Docusaurus

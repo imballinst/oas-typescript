@@ -3,7 +3,7 @@
 
 # Motivation
 
-The motivation behind `@oas-typescript/koa` was consistency. There are probably 3 ways to produce an OpenAPI/Swagger specification:
+The motivation behind generating server stubs was consistency. There are probably 3 ways to produce an OpenAPI/Swagger specification:
 
 1. Generate it from implementation code (e.g. using JSDoc),
 2. Write it manually, or

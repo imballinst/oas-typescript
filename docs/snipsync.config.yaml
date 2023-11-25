@@ -2,6 +2,7 @@ origins:
   - files:
       - ../packages/oas-typescript-koa/generated/**/*.ts
       - ../packages/oas-typescript-koa/generated-vanilla/**/*.ts
+      - ../packages/oas-typescript-express/generated/**/*.ts
 
 targets:
   - docs
