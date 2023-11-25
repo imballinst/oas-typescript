@@ -70,7 +70,6 @@ export class MiddlewareHelpers {
 The function receives `headers` and `securityObject`, the former comes from request whereas the latter comes from the OpenAPI specification. The function returns a resolved Promise (if validation is successful) and a rejected Promise (if validation fails). A modified security middleware helper looks like this:
 
 <!--SNIPSTART middleware-helpers {"highlightedLines": "6-26"}-->
-
 ```ts {6-26}
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
@@ -103,7 +102,6 @@ export class MiddlewareHelpers {
   }
 }
 ```
-
 <!--SNIPEND-->
 
 If we look above, the added parts are related to validating the request. With the `securityObject` being type-safe, we can check if a request contains any available values defined in the top-level `components.securitySchemes` (or any field that's defined in your `--app-security-schemes-field`).
