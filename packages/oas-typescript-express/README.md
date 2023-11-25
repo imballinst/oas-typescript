@@ -16,7 +16,7 @@ yarn add -D @oas-typescript/express
 
 ## CLI guide
 
-<!-- @@SYNCAPI-START -->
+<!-- @@SYNCAPI-START nodejs-http-server-cli-options -->
 | Option | Description | Default value |
 | - | - | - |
 |`--output`, `-o`|The output directory.|`(pwd)/oas-typescript`|
