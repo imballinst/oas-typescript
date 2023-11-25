@@ -34,7 +34,10 @@ for (const workspaceGlob of WORKSPACES_GLOB) {
       private: isPackagePrivate
     } = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
-    if (isPackagePrivate) continue;
+    if (isPackagePrivate) {
+      excludedWorkspaces.push(name);
+      continue;
+    }
     numPublishablePackages++;
 
     try {
