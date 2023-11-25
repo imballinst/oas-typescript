@@ -24,12 +24,12 @@ function main() {
     );
 
     if (indexOfSyncApiStart > -1 && indexOfSyncApiEnd > -1) {
-      const newContent = fileContent
-        .slice(0, indexOfSyncApiStart + SYNCAPI_TOKEN_START.length)
+      const newContent = fileContentArray
+        .slice(0, indexOfSyncApiStart)
         .concat(`\n${createTable()}\n`)
-        .concat(fileContent.slice(indexOfSyncApiEnd));
+        .concat(fileContentArray.slice(indexOfSyncApiEnd));
 
-      fs.writeFileSync(targetFilePath, newContent, 'utf-8');
+      fs.writeFileSync(targetFilePath, newContent.join('\n') + '\n', 'utf-8');
     }
   }
 }
