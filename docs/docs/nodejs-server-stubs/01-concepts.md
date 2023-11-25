@@ -34,7 +34,7 @@ graph LR;
   Request-Validator-->Controller;
 ```
 
-The amazing thing about `@oas-typescript/koa` is that, you don't need to worry about most of the parts above. You only need to worry about "Security Middleware (optional)" and "Controller". The rest will be handled by the generated server stubs.
+The amazing thing about `@oas-typescript` server stubs is that, you don't need to worry about most of the parts above. You only need to worry about "Security Middleware (optional)" and "Controller". The rest will be handled by the generated server stubs.
 
 ## Router
 
@@ -42,7 +42,7 @@ The amazing thing about `@oas-typescript/koa` is that, you don't need to worry a
 This is part of the server stubs, so you don't have to do anything here.
 :::
 
-First things first, router will receive request from the client. These routers are generated from the `paths` object in the OpenAPI Specification. These routers will gather up information inside `ctx` and then pass it to the security middleware, depending on whether `security` field or the field that you specified in `--app-security-requirements-field` exist or not in the operation object.
+First things first, router will receive request from the client. These routers are generated from the `paths` object in the OpenAPI Specification. These routers will gather up information from the request and then pass it to the security middleware, depending on whether `security` field or the field that you specified in `--app-security-requirements-field` exist or not in the operation object.
 
 ## Security Middleware (optional)
 
@@ -67,7 +67,7 @@ export class MiddlewareHelpers {
 
 <!--SNIPEND-->
 
-The function receives `ctx` and `securityObject`, the former comes from Koa whereas the latter comes from the OpenAPI specification. The function returns a resolved Promise (if validation is successful) and a rejected Promise (if validation fails). A modified security middleware helper looks like this:
+The function receives `headers` and `securityObject`, the former comes from request whereas the latter comes from the OpenAPI specification. The function returns a resolved Promise (if validation is successful) and a rejected Promise (if validation fails). A modified security middleware helper looks like this:
 
 <!--SNIPSTART middleware-helpers {"highlightedLines": "6-26"}-->
 
@@ -161,6 +161,6 @@ export class PetController {
 }
 ```
 
-So, what we're doing here is that, we specify an in-memory database for a list of pets. Then, when someone wants to add a pet, we check first in the database if there's a pet with an existing pet or not. If it exists, then return a response with status `405` an empty object. We need to return an empty object because otherwise, Koa will deduce it as `204 No Content` instead.
+So, what we're doing here is that, we specify an in-memory database for a list of pets. Then, when someone wants to add a pet, we check first in the database if there's a pet with an existing pet or not. If it exists, then return a response with status `405` and an error object. In the OpenAPI specification used, all fields of the error objects are optional, so we can pass an empty object instead.
 
-There's that! With `@oas-typescript/koa`, you will cut a lot of time implementing a server. With an OpenAPI 3.0 Specification, all you need are only implementing the security process and the controllers. By going design-first, we also prevent specification and actual server response mismatch.
+There's that! With `@oas-typescript` server stubs, you will cut a lot of time implementing a server. Given an OpenAPI 3.0 Specification, all you need are only implementing the security middleware, controllers, and a simplified entry server. On top of that, by going design-first, we also prevent specification and actual server response mismatch.

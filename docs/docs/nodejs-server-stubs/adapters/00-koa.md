@@ -1,12 +1,9 @@
 ---
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# @oas-typescript/koa
 
-# Quick start
-
-This section contains the quick start on how to use `@oas-typescript/koa`.
+oas-typescript-koa is a generator for [OpenAPI Specification 3](https://swagger.io/specification/v3/) to [koa](https://koajs.com/). This tool is powered by [openapi-zod-client](https://github.com/astahmer/openapi-zod-client) for the OAS parsing.
 
 ## Requirements
 
@@ -17,45 +14,25 @@ The requirements to use `@oas-typescript/koa` are as the following.
 
 ## Installation
 
-To install `@oas-typescript/koa`, run the command below.
-
-<Tabs groupId="package-managers">
-<TabItem value="npm" label="npm" default>
+To install `@oas-typescript/koa`, run the command below. It is recommended to install this as a project dependency so that it can be used in CI consistently.
 
 ```bash
 npm install -D @oas-typescript/koa
-```
 
-</TabItem>
-<TabItem value="yarn" label="Yarn">
-
-```bash
+# Or, with yarn:
 yarn add -D @oas-typescript/koa
 ```
-
-</TabItem>
-</Tabs>
 
 ## Usage
 
 To use the CLI, use the following command.
 
-<Tabs groupId="package-managers">
-<TabItem value="npm" label="npm" default>
-
 ```bash
 npx openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
-```
 
-</TabItem>
-<TabItem value="yarn" label="Yarn">
-
-```bash
+# Or, with yarn:
 yarn openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
 ```
-
-</TabItem>
-</Tabs>
 
 The CLI has following options that can be passed as arguments.
 
@@ -72,7 +49,7 @@ There's that! After running that command, you will have your generated files rea
 
 ## Create a server file
 
-The CLI does not automatically generate a server file, so you will need you create it yourselves. You could create a file, say, `server.ts` outside of the `output` folder.
+The CLI does not automatically generate a server file, so you will need you create it yourselves. You could create a file, say, `server.ts` inside of the `output` folder.
 
 <!--SNIPSTART generated-server-->
 
