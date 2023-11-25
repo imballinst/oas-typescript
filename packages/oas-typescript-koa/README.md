@@ -1,80 +1,68 @@
----
----
-
-# @oas-typescript/koa
+# oas-typescript-koa
 
 oas-typescript-koa is a generator for [OpenAPI Specification 3](https://swagger.io/specification/v3/) to [koa](https://koajs.com/). This tool is powered by [openapi-zod-client](https://github.com/astahmer/openapi-zod-client) for the OAS parsing.
 
-## Requirements
-
-The requirements to use `@oas-typescript/koa` are as the following.
-
-- Node.js installation, along with Working package manager, such as `npm` or `yarn`.
-- OpenAPI 3.0 specification file. If you are still using Swagger 2.0, you might need to [migrate](https://swagger.io/blog/news/whats-new-in-openapi-3-0/) or convert your Swagger 2.0 specification into OpenAPI 3.0.
-
 ## Installation
 
-To install `@oas-typescript/koa`, run the command below. It is recommended to install this as a project dependency so that it can be used in CI consistently.
+It is recommended to install this as a project dependency so that it can be used in CI consistently.
 
 ```bash
-npm install -D @oas-typescript/koa
+# With npm.
+npm install --save-dev @oas-typescript/koa
 
-# Or, with yarn:
+# With yarn.
 yarn add -D @oas-typescript/koa
 ```
 
-## Usage
+## CLI guide
 
-To use the CLI, use the following command.
-
-```bash
-npx openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
-
-# Or, with yarn:
-yarn openapi-to-koa generate ./path/to/openapi.json --output ./path-to-output-directory
-```
-
-The CLI has following options that can be passed as arguments.
-
-{/* @@SYNCAPI-START */}
+<!-- @@SYNCAPI-START -->
 | Option | Description | Default value |
 | - | - | - |
 |`--output`, `-o`|The output directory.|`(pwd)/oas-typescript`|
 |`--app-security-schemes-field`|The security scheme field used in the OpenAPI Specification. Mostly useful when you have custom `securitySchemes` that are not supported by the specification.|`securitySchemes`|
 |`--app-security-requirements-field`|The custom security requirements field used in the OpenAPI Specification. Mostly useful when you have custom `security` that are not supported by the specification.|`security`|
 |`--module`|The output module. Available values are `cjs` or `esm`.|`esm`|
-{/* @@SYNCAPI-END */}
+<!-- @@SYNCAPI-END -->
 
-There's that! After running that command, you will have your generated files ready at the output directory.
+## Generating server stubs
 
-## Create a server file
+To generate the server stubs, do this command:
 
-The CLI does not automatically generate a server file, so you will need you create it yourselves. You could create a file, say, `server.ts` inside of the `output` folder.
+```bash
+npx oas-typescript-koa generate ./api.json --output generated
 
-<!--SNIPSTART generated-server-->
+# Or, using yarn:
+yarn oas-typescript-koa generate ./api.json --output generated
 
-```ts
-import Koa from 'koa';
-import { generatedRouter } from './static/router.js';
-import Router from '@koa/router';
-
-const app = new Koa();
-
-app.use(generatedRouter.routes());
-app.use(generatedRouter.allowedMethods());
-
-const commonRouter = new Router();
-commonRouter.get('/healthz', (ctx) => {
-  ctx.body = { healthy: true };
-});
-app.use(commonRouter.routes());
-app.use(commonRouter.allowedMethods());
-
-app.listen(3000, () => {
-  console.info('Server is running on port 3000');
-});
+# Or, inside the `scripts` in package.json.
+oas-typescript-koa generate ./api.json --output generated
 ```
 
-<!--SNIPEND-->
+The command above will read the Open API Specification `api.json` and output them to the `generated` folder. The result will be as the following.
 
-So, what we are doing above is, we define the Koa application, in which we use the `generatedRouter` as well as the common router (in the case above we are defining `/healthz` endpoint which is used to indicate if the server is already running).
+```
+generated
+├── controllers
+│   ├── PetController.ts
+│   ├── StoreController.ts
+│   └── UserController.ts
+├── static
+│   ├── checksum.json
+│   ├── client.ts
+│   ├── controller-types
+│   │   ├── PetControllerTypes.ts
+│   │   ├── StoreControllerTypes.ts
+│   │   └── UserControllerTypes.ts
+│   ├── security-schemes.ts
+│   ├── router.ts
+│   ├── types.ts
+│   └── utils.ts
+└── middleware-helpers.ts
+```
+
+All files are stubs, except the ones in `controllers` folder and `middleware-helpers.ts`, where you will need to insert your own logic. The latter is mostly used for validating authorization from the incoming request.
+
+## More information
+
+For further documentation, please visit the documentation: https://imballinst.github.io/oas-typescript/docs/nodejs-server-stubs/adapters/koa.

@@ -1,5 +1,2 @@
 label: 'Adapters'
 position: 0
-link:
-  type: generated-index
-  description: Learn more on available adapters for the Node.js server stubs.
