@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.10.2
+
+### Patch Changes
+
+- fdcdacf: docs: update README, docs, etc.
+
 ## 0.10.1
 
 ### Patch Changes

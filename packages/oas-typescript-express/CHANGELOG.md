@@ -1,5 +1,11 @@
 # @oas-typescript/express
 
+## 0.1.2
+
+### Patch Changes
+
+- fdcdacf: docs: update README, docs, etc.
+
 ## 0.1.1
 
 ### Patch Changes
