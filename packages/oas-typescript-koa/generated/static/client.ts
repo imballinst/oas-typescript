@@ -339,6 +339,50 @@ export type UploadFileResponse = typeof UploadFileResponse;
 export const UploadFileErrors = {} as const;
 export type UploadFileErrors = typeof UploadFileErrors;
 
+export const UploadFileMultipartParameters = [
+  {
+    name: 'body',
+    type: 'Body',
+    schema: z.object({ profileImage: z.any() }).partial().passthrough()
+  },
+  {
+    name: 'petId',
+    type: 'Path',
+    schema: z.number().int()
+  },
+  {
+    name: 'additionalMetadata',
+    type: 'Query',
+    schema: z.string().optional()
+  }
+] as const;
+export const UploadFileMultipartSecurity = {
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  }
+} as const;
+
+export const UploadFileMultipartResponse = {
+  schema: ApiResponse,
+  status: 200
+} as const;
+export type UploadFileMultipartResponse = typeof UploadFileMultipartResponse;
+
+export const UploadFileMultipartErrors = {} as const;
+export type UploadFileMultipartErrors = typeof UploadFileMultipartErrors;
+
 export const FindPetsByStatusParameters = [
   {
     name: 'status',

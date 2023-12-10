@@ -387,7 +387,11 @@
         "requestBody": {
           "content": {
             "application/octet-stream": {
-              "schema": { "type": "string", "format": "binary" }
+              "schema": {
+                "type": "string",
+                "format": "binary",
+                "x-field-name": "profileImage"
+              }
             }
           }
         },
@@ -409,7 +413,7 @@
         "tags": ["pet"],
         "summary": "uploads an image",
         "description": "",
-        "operationId": "uploadFile",
+        "operationId": "uploadFileMultipart",
         "parameters": [
           {
             "name": "petId",

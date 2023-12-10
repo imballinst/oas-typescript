@@ -1,5 +1,7 @@
 import Router from '@koa/router';
 import bodyParser from '@koa/bodyparser';
+import multer from '@koa/multer';
+
 import {
   AddPetSecurity,
   UpdatePetSecurity,
@@ -9,6 +11,7 @@ import {
   UpdatePetWithFormSecurity,
   DeletePetSecurity,
   UploadFileSecurity,
+  UploadFileMultipartSecurity,
   GetInventorySecurity,
   AddPetParameters,
   UpdatePetParameters,
@@ -18,6 +21,7 @@ import {
   UpdatePetWithFormParameters,
   DeletePetParameters,
   UploadFileParameters,
+  UploadFileMultipartParameters,
   GetInventoryParameters,
   PlaceOrderParameters,
   GetOrderByIdParameters,
@@ -31,6 +35,8 @@ import {
   DeleteUserParameters
 } from './client.js';
 import { KoaGeneratedUtils } from './utils.js';
+
+const upload = multer();
 
 import { PetController } from '../controllers/PetController.js';
 import { StoreController } from '../controllers/StoreController.js';
@@ -169,6 +175,7 @@ router.delete(
 router.post(
   '/pet/:petId/uploadImage',
   KoaGeneratedUtils.createSecurityMiddleware(UploadFileSecurity),
+  upload.single('profileImage'),
   async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
@@ -179,6 +186,29 @@ router.post(
     }
 
     const result = await PetController.uploadFile(parsedRequestInfo);
+    ctx.body = result.body;
+    ctx.status = result.status;
+  }
+);
+
+router.post(
+  '/pet/:petId/uploadImageMultipart',
+  KoaGeneratedUtils.createSecurityMiddleware(UploadFileMultipartSecurity),
+  upload.fields([
+    {
+      name: 'profileImage'
+    }
+  ]),
+  async (ctx) => {
+    const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
+      ctx,
+      oasParameters: UploadFileMultipartParameters
+    });
+    if (!parsedRequestInfo) {
+      return;
+    }
+
+    const result = await PetController.uploadFileMultipart(parsedRequestInfo);
     ctx.body = result.body;
     ctx.status = result.status;
   }

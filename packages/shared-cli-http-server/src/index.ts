@@ -5,6 +5,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { createRequire } from 'node:module';
 import { execSync } from 'child_process';
+import OpenAPIParser from '@readme/openapi-parser';
 
 import {
   createOrDuplicateFile,
@@ -28,15 +29,18 @@ import {
 import { convertOpenAPIHeadersToResponseSchemaHeaders } from './core/header-parser.js';
 
 import { updateImportBasedOnModule } from './helpers/import-module.js';
-import { parseInput } from './helpers/input-parser.js';
 import { getHandlebarsInstance } from './core/handlebars.js';
 import { OperationInfo } from './helpers/templates/types.js';
+import { OpenAPIV3 } from 'openapi-types';
 
 const DEFAULT_SECURITY_REQUIREMENTS_FIELD = 'security';
 const DEFAULT_SECURITY_SCHEMES_FIELD = 'securitySchemes';
 const VALID_COMMANDS = ['generate'];
 
 const require = createRequire(import.meta.url);
+
+export type * from './types.js';
+export type { GenerateRouteMiddlewareType };
 
 export async function generateRestServerStubs({
   usageText,
@@ -59,6 +63,7 @@ export async function generateRestServerStubs({
       parametersImportsPerController: Record<string, string[]>;
       controllerToOperationsRecord: Record<string, OperationInfo[]>;
       routers: string[];
+      isRequireFileUploads: boolean;
     }) => string;
     routerMiddlewares: GenerateRouteMiddlewareType;
     securityMiddlewareInvocation: GenerateSecurityMiddlewareInvocationType;
@@ -166,8 +171,10 @@ export async function generateRestServerStubs({
   nextChecksum['middleware-helpers.ts'] = middlewareHelpersChecksum;
 
   // Start the process.
-  const inputContent = await fs.readFile(input, 'utf-8');
-  const document = parseInput(input, inputContent);
+  const document = (await OpenAPIParser.bundle(input)) as OpenAPIV3.Document;
+  const dereferenced = (await OpenAPIParser.dereference(
+    JSON.parse(JSON.stringify(document))
+  )) as OpenAPIV3.Document;
 
   // Parse paths and security schemes.
   const {
@@ -175,9 +182,10 @@ export async function generateRestServerStubs({
     controllerToOperationsRecord,
     parametersImportsPerController,
     controllerImportsPerController,
-    allServerSecurityImports
+    allServerSecurityImports,
+    isRequireFileUploads
   } = parsePaths({
-    paths: document.paths,
+    paths: dereferenced.paths,
     templateFunctions: {
       middlewares: generateRouterMiddlewares,
       securityMiddlewareInvocation: generateSecurityMiddlewareInvocation
@@ -260,7 +268,8 @@ export async function generateRestServerStubs({
     allServerSecurityImports,
     controllerToOperationsRecord,
     parametersImportsPerController,
-    routers
+    routers,
+    isRequireFileUploads
   });
 
   await fs.writeFile(

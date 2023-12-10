@@ -8,7 +8,7 @@ import {
   DeletePetControllerFunction,
   UploadFileControllerFunction,
   UploadFileMultipartControllerFunction
-} from '../static/controller-types/PetControllerTypes.js';
+} from '../static/controller-types/PetControllerTypes';
 
 export class PetController {
   static addPet: AddPetControllerFunction = (params) => {

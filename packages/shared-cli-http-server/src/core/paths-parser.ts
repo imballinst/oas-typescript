@@ -1,20 +1,28 @@
 import { titleCase } from 'title-case';
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPI, OpenAPIV3 } from 'openapi-types';
 
 import { capitalizeFirstCharacter } from '../helpers/change-case.js';
 import { OperationInfo } from '../helpers/templates/types.js';
 
 const PARSED_METHODS = ['get', 'post', 'put', 'delete', 'patch'] as const;
+
+const UPLOAD_MIME_TYPES = ['multipart/form-data', 'application/octet-stream'];
 const MIME_TYPE_ORDER = [
   'application/json',
-  'application/x-www-form-urlencoded'
+  'application/x-www-form-urlencoded',
+  ...UPLOAD_MIME_TYPES
 ];
+
+interface RequestBodyInfo {
+  type: string;
+  content: OpenAPIV3.MediaTypeObject;
+}
 
 export type GenerateRouteMiddlewareType = (param: {
   parametersName?: string;
   controllerName: string;
   operationId: string;
-  requestBodyType?: string;
+  requestBody?: RequestBodyInfo;
 }) => string[];
 
 export type GenerateSecurityMiddlewareInvocationType = (
@@ -28,7 +36,7 @@ export function parsePaths({
     securityMiddlewareInvocation: generateSecurityMiddlewareInvocation
   }
 }: {
-  paths: OpenAPIV3.PathsObject;
+  paths: OpenAPI.Document['paths'];
   templateFunctions: {
     middlewares: GenerateRouteMiddlewareType;
     securityMiddlewareInvocation: GenerateSecurityMiddlewareInvocationType;
@@ -41,12 +49,14 @@ export function parsePaths({
   const controllerImportsPerController: Record<string, string[]> = {};
   const allServerSecurityImports: string[] = [];
 
+  let isRequireFileUploads = false;
+
   for (const pathKey in paths) {
     const pathItem = paths[pathKey];
     if (!pathItem) continue;
 
     for (const methodKey of PARSED_METHODS) {
-      const operation = pathItem[methodKey];
+      const operation = pathItem[methodKey] as OpenAPIV3.OperationObject;
       if (!operation) continue;
 
       const {
@@ -108,14 +118,27 @@ export function parsePaths({
       controllerImportsPerController[controllerName].push(errorType);
       controllerImportsPerController[controllerName].push(responseName);
 
-      const requestBodyType = Object.keys(requestBody?.content ?? {}).find(
-        (mimeType) => MIME_TYPE_ORDER.includes(mimeType)
+      const requestBodyContent = requestBody?.content ?? {};
+
+      const requestBodyType = Object.keys(requestBodyContent).find((mimeType) =>
+        MIME_TYPE_ORDER.includes(mimeType)
       );
+      let requestBodyInfo: RequestBodyInfo | undefined;
+
+      if (requestBodyType) {
+        isRequireFileUploads =
+          isRequireFileUploads || UPLOAD_MIME_TYPES.includes(requestBodyType);
+        requestBodyInfo = {
+          type: requestBodyType,
+          content: requestBodyContent[requestBodyType]
+        };
+      }
+
       const middlewares: string[] = generateRouteMiddlewares({
         controllerName,
         operationId,
         parametersName,
-        requestBodyType
+        requestBody: requestBodyInfo
       });
 
       if (security) {
@@ -143,7 +166,8 @@ router.${methodKey}('${koaPath}', ${middlewares.join(', ')})
     controllerToOperationsRecord,
     parametersImportsPerController,
     controllerImportsPerController,
-    allServerSecurityImports
+    allServerSecurityImports,
+    isRequireFileUploads
   };
 }
 
