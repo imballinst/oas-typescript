@@ -100,6 +100,29 @@ export class MiddlewareHelpers {
 
     return Promise.resolve();
   }
+
+  static async processZodErrorValidation({
+    zodError,
+    oasParameter
+  }: {
+    zodError: z.ZodError;
+    oasParameter: OasParameter;
+  }) {
+    const errorCode =
+      oasParameter.type === 'Body'
+        ? ParseRequestErrors.INVALID_BODY
+        : oasParameter.type === 'Header'
+        ? ParseRequestErrors.INVALID_HTTP_HEADER
+        : oasParameter.type === 'Query'
+        ? ParseRequestErrors.INVALID_QUERY_PARAMETER
+        : ParseRequestErrors.INVALID_PATH_PARAMETER;
+
+    return {
+      code: errorCode,
+      message: ParseRequestErrorsMessage[errorCode],
+      detail: zodError.errors
+    };
+  }
 }
 ```
 <!--SNIPEND-->
