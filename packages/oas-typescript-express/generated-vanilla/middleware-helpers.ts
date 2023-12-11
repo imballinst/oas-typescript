@@ -14,11 +14,14 @@ export class MiddlewareHelpers {
   }
 
   static async processZodErrorValidation({
-    zodError,
-    oasParameter
+    path,
+    errors
   }: {
-    zodError: z.ZodError;
-    oasParameter: OasParameter;
+    path: string;
+    errors: Array<{
+      zodError: z.ZodError;
+      oasParameter: OasParameter;
+    }>;
   }) {
     return {};
   }

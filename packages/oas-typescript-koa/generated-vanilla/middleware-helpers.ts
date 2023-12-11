@@ -5,7 +5,6 @@ import { SecuritySchemes } from './static/security-schemes.js';
 import { OasParameter } from './static/utils.js';
 import { SecurityMiddlewareError } from './static/types.js';
 
-// @@@SNIPSTART middleware-helpers-vanilla
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
     headers: IncomingHttpHeaders,
@@ -15,13 +14,15 @@ export class MiddlewareHelpers {
   }
 
   static async processZodErrorValidation({
-    zodError,
-    oasParameter
+    path,
+    errors
   }: {
-    zodError: z.ZodError;
-    oasParameter: OasParameter;
+    path: string;
+    errors: Array<{
+      zodError: z.ZodError;
+      oasParameter: OasParameter;
+    }>;
   }) {
     return {};
   }
 }
-// @@@SNIPEND

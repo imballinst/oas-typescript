@@ -49,12 +49,17 @@ export class MiddlewareHelpers {
   }
 
   static async processZodErrorValidation({
-    zodError,
-    oasParameter
+    errors
   }: {
-    zodError: z.ZodError;
-    oasParameter: OasParameter;
+    path: string;
+    errors: Array<{
+      zodError: z.ZodError;
+      oasParameter: OasParameter;
+    }>;
   }) {
+    // Take only the first one.
+    const error = errors[0];
+    const oasParameter = errors[0].oasParameter;
     const errorCode =
       oasParameter.type === 'Body'
         ? ParseRequestErrors.INVALID_BODY
@@ -67,7 +72,7 @@ export class MiddlewareHelpers {
     return {
       code: errorCode,
       message: ParseRequestErrorsMessage[errorCode],
-      detail: zodError.errors
+      detail: error.zodError.errors
     };
   }
 }

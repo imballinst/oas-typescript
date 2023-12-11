@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 
 import { MiddlewareHelpers } from '../middleware-helpers';
@@ -59,6 +59,11 @@ export class ExpressGeneratedUtils {
     const headerParams: Record<string, any> = {};
     let bodyParams: any | undefined = undefined;
 
+    const errors: Array<{
+      zodError: z.ZodError;
+      oasParameter: OasParameter;
+    }> = [];
+
     // Validate path parameters.
     for (const oasParameter of oasParameters) {
       if (oasParameter.type === 'Path') {
@@ -69,13 +74,8 @@ export class ExpressGeneratedUtils {
 
         const result = oasParameter.schema.safeParse(param);
         if (!result.success) {
-          response.status(400).send(
-            MiddlewareHelpers.processZodErrorValidation({
-              zodError: result.error,
-              oasParameter
-            })
-          );
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         pathParams[oasParameter.name] = request.params[oasParameter.name];
@@ -86,13 +86,8 @@ export class ExpressGeneratedUtils {
         const body = request.body;
         const result = oasParameter.schema.safeParse(body);
         if (!result.success) {
-          response.status(400).send(
-            MiddlewareHelpers.processZodErrorValidation({
-              zodError: result.error,
-              oasParameter
-            })
-          );
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         bodyParams = body;
@@ -104,13 +99,8 @@ export class ExpressGeneratedUtils {
           request.query[oasParameter.name]
         );
         if (!result.success) {
-          response.status(400).send(
-            MiddlewareHelpers.processZodErrorValidation({
-              zodError: result.error,
-              oasParameter
-            })
-          );
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         queryParams[oasParameter.name] = request.query[oasParameter.name];
@@ -122,18 +112,23 @@ export class ExpressGeneratedUtils {
           request.headers[oasParameter.name]
         );
         if (!result.success) {
-          response.status(400).send(
-            MiddlewareHelpers.processZodErrorValidation({
-              zodError: result.error,
-              oasParameter
-            })
-          );
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         headerParams[oasParameter.name] = request.headers[oasParameter.name];
         continue;
       }
+    }
+
+    if (errors.length > 0) {
+      response.status(400).send(
+        MiddlewareHelpers.processZodErrorValidation({
+          path: request.path,
+          errors
+        })
+      );
+      return;
     }
 
     return {

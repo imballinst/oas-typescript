@@ -57,6 +57,11 @@ export class KoaGeneratedUtils {
     const headerParams: Record<string, any> = {};
     let bodyParams: any | undefined = undefined;
 
+    const errors: Array<{
+      zodError: z.ZodError;
+      oasParameter: OasParameter;
+    }> = [];
+
     // Validate path parameters.
     for (const oasParameter of oasParameters) {
       if (oasParameter.type === 'Path') {
@@ -67,12 +72,8 @@ export class KoaGeneratedUtils {
 
         const result = oasParameter.schema.safeParse(param);
         if (!result.success) {
-          ctx.status = 400;
-          ctx.body = MiddlewareHelpers.processZodErrorValidation({
-            zodError: result.error,
-            oasParameter
-          });
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         pathParams[oasParameter.name] = ctx.params[oasParameter.name];
@@ -83,12 +84,8 @@ export class KoaGeneratedUtils {
         const body = ctx.request.body as any;
         const result = oasParameter.schema.safeParse(body);
         if (!result.success) {
-          ctx.status = 400;
-          ctx.body = MiddlewareHelpers.processZodErrorValidation({
-            zodError: result.error,
-            oasParameter
-          });
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         bodyParams = body;
@@ -100,12 +97,8 @@ export class KoaGeneratedUtils {
           ctx.query[oasParameter.name]
         );
         if (!result.success) {
-          ctx.status = 400;
-          ctx.body = MiddlewareHelpers.processZodErrorValidation({
-            zodError: result.error,
-            oasParameter
-          });
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         queryParams[oasParameter.name] = ctx.query[oasParameter.name];
@@ -117,17 +110,22 @@ export class KoaGeneratedUtils {
           ctx.headers[oasParameter.name]
         );
         if (!result.success) {
-          ctx.status = 400;
-          ctx.body = MiddlewareHelpers.processZodErrorValidation({
-            zodError: result.error,
-            oasParameter
-          });
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         headerParams[oasParameter.name] = ctx.headers[oasParameter.name];
         continue;
       }
+    }
+
+    if (errors.length > 0) {
+      ctx.status = 400;
+      ctx.body = MiddlewareHelpers.processZodErrorValidation({
+        path: ctx.path,
+        errors
+      });
+      return;
     }
 
     return {
