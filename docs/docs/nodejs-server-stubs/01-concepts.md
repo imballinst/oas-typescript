@@ -54,6 +54,7 @@ The default security middleware looks like this.
 
 <!--SNIPSTART middleware-helpers-vanilla-->
 ```ts
+// Base class of MiddlewareHelpers.
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
     headers: IncomingHttpHeaders,
@@ -63,11 +64,14 @@ export class MiddlewareHelpers {
   }
 
   static async processZodErrorValidation({
-    zodError,
-    oasParameter
+    path,
+    errors
   }: {
-    zodError: z.ZodError;
-    oasParameter: OasParameter;
+    path: string;
+    errors: Array<{
+      zodError: z.ZodError;
+      oasParameter: OasParameter;
+    }>;
   }) {
     return {};
   }
@@ -110,12 +114,17 @@ export class MiddlewareHelpers {
   }
 
   static async processZodErrorValidation({
-    zodError,
-    oasParameter
+    errors
   }: {
-    zodError: z.ZodError;
-    oasParameter: OasParameter;
+    path: string;
+    errors: Array<{
+      zodError: z.ZodError;
+      oasParameter: OasParameter;
+    }>;
   }) {
+    // Take only the first one.
+    const error = errors[0];
+    const oasParameter = errors[0].oasParameter;
     const errorCode =
       oasParameter.type === 'Body'
         ? ParseRequestErrors.INVALID_BODY
@@ -128,7 +137,7 @@ export class MiddlewareHelpers {
     return {
       code: errorCode,
       message: ParseRequestErrorsMessage[errorCode],
-      detail: zodError.errors
+      detail: error.zodError.errors
     };
   }
 }
