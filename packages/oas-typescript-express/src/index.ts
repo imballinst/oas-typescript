@@ -15,7 +15,7 @@ async function main() {
       router: generateTemplateRouter,
       routerMiddlewares: generateRouteMiddlewares,
       securityMiddlewareInvocation: (securityName) =>
-        `KoaGeneratedUtils.createSecurityMiddleware(${securityName})`
+        `ExpressGeneratedUtils.createSecurityMiddleware(${securityName})`
     },
     templates: {
       routeMiddlewareHelpersTs: utilsTs

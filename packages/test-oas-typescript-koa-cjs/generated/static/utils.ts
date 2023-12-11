@@ -5,7 +5,7 @@ import { MiddlewareHelpers } from '../middleware-helpers';
 import { SecuritySchemes } from './security-schemes';
 import { SecurityMiddlewareError } from './types';
 
-interface OasParameter {
+export interface OasParameter {
   name: string;
   description?: string;
   type: 'Path' | 'Query' | 'Body' | 'Header';
@@ -27,19 +27,6 @@ type ExtractFilteredRecordFromArray<
         ExtractMatchingType<TArray, Type>['schema']
       >;
     };
-
-enum ParseRequestErrors {
-  INVALID_PATH_PARAMETER = '10000',
-  INVALID_BODY = '10001',
-  INVALID_QUERY_PARAMETER = '10002',
-  INVALID_HTTP_HEADER = '10003'
-}
-const ParseRequestErrorsMessage: Record<ParseRequestErrors, string> = {
-  [ParseRequestErrors.INVALID_PATH_PARAMETER]: 'invalid path parameter',
-  [ParseRequestErrors.INVALID_BODY]: 'invalid body',
-  [ParseRequestErrors.INVALID_QUERY_PARAMETER]: 'invalid query parameter',
-  [ParseRequestErrors.INVALID_HTTP_HEADER]: 'invalid http header'
-};
 
 type RemoveNeverKeys<T> = Pick<
   T,
@@ -81,10 +68,9 @@ export class KoaGeneratedUtils {
         const result = oasParameter.schema.safeParse(param);
         if (!result.success) {
           ctx.status = 400;
-          ctx.body = createErrorResponse({
-            errorCode: ParseRequestErrors.INVALID_PATH_PARAMETER,
+          ctx.body = MiddlewareHelpers.processZodErrorValidation({
             zodError: result.error,
-            additionalMessage: oasParameter.name
+            oasParameter
           });
           return;
         }
@@ -98,9 +84,9 @@ export class KoaGeneratedUtils {
         const result = oasParameter.schema.safeParse(body);
         if (!result.success) {
           ctx.status = 400;
-          ctx.body = createErrorResponse({
-            errorCode: ParseRequestErrors.INVALID_BODY,
-            zodError: result.error
+          ctx.body = MiddlewareHelpers.processZodErrorValidation({
+            zodError: result.error,
+            oasParameter
           });
           return;
         }
@@ -115,10 +101,9 @@ export class KoaGeneratedUtils {
         );
         if (!result.success) {
           ctx.status = 400;
-          ctx.body = createErrorResponse({
-            errorCode: ParseRequestErrors.INVALID_QUERY_PARAMETER,
+          ctx.body = MiddlewareHelpers.processZodErrorValidation({
             zodError: result.error,
-            additionalMessage: oasParameter.name
+            oasParameter
           });
           return;
         }
@@ -133,10 +118,9 @@ export class KoaGeneratedUtils {
         );
         if (!result.success) {
           ctx.status = 400;
-          ctx.body = createErrorResponse({
-            errorCode: ParseRequestErrors.INVALID_HTTP_HEADER,
+          ctx.body = MiddlewareHelpers.processZodErrorValidation({
             zodError: result.error,
-            additionalMessage: oasParameter.name
+            oasParameter
           });
           return;
         }
@@ -183,26 +167,4 @@ export class KoaGeneratedUtils {
       }
     };
   }
-}
-
-// Helper functions.
-function createErrorResponse({
-  errorCode,
-  zodError,
-  additionalMessage
-}: {
-  errorCode: ParseRequestErrors;
-  zodError: z.ZodError;
-  additionalMessage?: string;
-}) {
-  let message = ParseRequestErrorsMessage[errorCode];
-  if (additionalMessage) {
-    message = `${message} ${additionalMessage}`;
-  }
-
-  return {
-    code: errorCode,
-    message,
-    detail: zodError.errors
-  };
 }
