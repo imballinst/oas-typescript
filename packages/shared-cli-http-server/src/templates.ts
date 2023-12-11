@@ -47,7 +47,10 @@ export const {{capitalizeFirstLetter operationId "Parameters"}} = [
 `
 
 export const securityMiddlewareHelpersTs = `import { IncomingHttpHeaders } from 'http';
+import { z } from 'zod';
+
 import { SecuritySchemes } from './static/security-schemes.js';
+import { OasParameter } from './static/utils.js';
 import { SecurityMiddlewareError } from './static/types.js';
 
 export class MiddlewareHelpers {
@@ -56,6 +59,16 @@ export class MiddlewareHelpers {
     securityObject: SecuritySchemes
   ): Promise<void> {
     return Promise.resolve();
+  }
+
+  static async processZodErrorValidation({
+    zodError,
+    oasParameter
+  }: {
+    zodError: z.ZodError;
+    oasParameter: OasParameter;
+  }) {
+    return {};
   }
 }
 `

@@ -1,6 +1,22 @@
-import { SecuritySchemes } from './static/security-schemes.js';
-import { SecurityMiddlewareError } from './static/types.js';
 import { IncomingHttpHeaders } from 'http';
+import { z } from 'zod';
+
+import { SecuritySchemes } from './static/security-schemes.js';
+import { OasParameter } from './static/utils.js';
+import { SecurityMiddlewareError } from './static/types.js';
+
+enum ParseRequestErrors {
+  INVALID_PATH_PARAMETER = '10000',
+  INVALID_BODY = '10001',
+  INVALID_QUERY_PARAMETER = '10002',
+  INVALID_HTTP_HEADER = '10003'
+}
+const ParseRequestErrorsMessage: Record<ParseRequestErrors, string> = {
+  [ParseRequestErrors.INVALID_PATH_PARAMETER]: 'invalid path parameter',
+  [ParseRequestErrors.INVALID_BODY]: 'invalid body',
+  [ParseRequestErrors.INVALID_QUERY_PARAMETER]: 'invalid query parameter',
+  [ParseRequestErrors.INVALID_HTTP_HEADER]: 'invalid http header'
+};
 
 // @@@SNIPSTART middleware-helpers-express {"highlightedLines": "{6-26}"}
 export class MiddlewareHelpers {
@@ -31,6 +47,29 @@ export class MiddlewareHelpers {
     }
 
     return Promise.resolve();
+  }
+
+  static async processZodErrorValidation({
+    zodError,
+    oasParameter
+  }: {
+    zodError: z.ZodError;
+    oasParameter: OasParameter;
+  }) {
+    const errorCode =
+      oasParameter.type === 'Body'
+        ? ParseRequestErrors.INVALID_BODY
+        : oasParameter.type === 'Header'
+        ? ParseRequestErrors.INVALID_HTTP_HEADER
+        : oasParameter.type === 'Query'
+        ? ParseRequestErrors.INVALID_QUERY_PARAMETER
+        : ParseRequestErrors.INVALID_PATH_PARAMETER;
+
+    return {
+      code: errorCode,
+      message: ParseRequestErrorsMessage[errorCode],
+      detail: zodError.errors
+    };
   }
 }
 // @@@SNIPEND
