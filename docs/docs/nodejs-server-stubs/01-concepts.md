@@ -53,7 +53,6 @@ The security middleware is optional, because it's only required if there are end
 The default security middleware looks like this.
 
 <!--SNIPSTART middleware-helpers-vanilla-->
-
 ```ts
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
@@ -62,9 +61,18 @@ export class MiddlewareHelpers {
   ): Promise<void> {
     return Promise.resolve();
   }
+
+  static async processZodErrorValidation({
+    zodError,
+    oasParameter
+  }: {
+    zodError: z.ZodError;
+    oasParameter: OasParameter;
+  }) {
+    return {};
+  }
 }
 ```
-
 <!--SNIPEND-->
 
 The function receives `headers` and `securityObject`, the former comes from request whereas the latter comes from the OpenAPI specification. The function returns a resolved Promise (if validation is successful) and a rejected Promise (if validation fails). A modified security middleware helper looks like this:
@@ -128,6 +136,8 @@ export class MiddlewareHelpers {
 <!--SNIPEND-->
 
 If we look above, the added parts are related to validating the request. With the `securityObject` being type-safe, we can check if a request contains any available values defined in the top-level `components.securitySchemes` (or any field that's defined in your `--app-security-schemes-field`).
+
+On top of that, we also have this function `processZodErrorValidation`, which is related to the validation before the request information goes into the controller. In here, we can modify the response according to our needs. Unfortunately, for this function there is no proper type safe yet, so you will need to be careful when typing the function returns here since you will want to match it with the error response that you specified.
 
 ## Request validator
 
