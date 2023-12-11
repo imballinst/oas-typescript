@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.11.0
+
+### Minor Changes
+
+- 3c5d3c5: feat: allow customizing validation body in parseRequestInfo
+
 ## 0.10.2
 
 ### Patch Changes
