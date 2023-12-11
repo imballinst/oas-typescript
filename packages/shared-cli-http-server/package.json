@@ -1,6 +1,6 @@
 {
   "name": "@oas-typescript/shared-cli-http-server",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "gen:templates": "node --loader ts-node/esm scripts/fill-templates.ts"
