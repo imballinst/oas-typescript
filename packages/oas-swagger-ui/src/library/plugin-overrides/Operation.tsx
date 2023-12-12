@@ -325,7 +325,7 @@ function SecurityBadges({
   // [{ petstore_auth: [scopes/permissions] }]
   //
   // Iterate the first security array...
-  securityArray.valueSeq().forEach((v: any) => {
+  securityArray?.valueSeq().forEach((v: any) => {
     // Here, we want to extract he key value from each of the outer array element.
     v.entrySeq().forEach((v1: any) => {
       // Hence, ehre we can get [petstore_auth, [scopes/permissions]].

@@ -5,11 +5,12 @@
     <link rel="icon" type="image/svg+xml" href="./vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Swagger UI (Enhanced)</title>
-    <script type="module" crossorigin src="./assets/index-edf6fad2.js"></script>
-    <link rel="stylesheet" href="./assets/index-17f026eb.css" />
+    <script type="module" crossorigin src="./assets/index-d7225588.js"></script>
+    <link rel="stylesheet" href="./assets/index-17f026eb.css">
   </head>
   <body>
     <div id="root"></div>
+    
 
     <script>
       window.onload = () => {
@@ -28,12 +29,13 @@
           oasSwaggerUiConfig: {
             security: {
               badgesField: 'x-security',
-              badgesDefaultValue: [{ label: 'Authorization required' }],
+              badgesDefaultValue: [{ label: 'Authentication required' }],
               badgesProcessFn: (securityKey, security) => {
                 if (!security) return [];
 
                 const badges = [];
-                for (const val of security) {
+                for (const key in security) {
+                  const val = security[key];
                   badges.push({
                     label: AUTH_MAP_TO_STRING[securityKey],
                     value: val
