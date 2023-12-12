@@ -5,7 +5,7 @@ import { MiddlewareHelpers } from '../middleware-helpers';
 import { SecuritySchemes } from './security-schemes';
 import { SecurityMiddlewareError } from './types';
 
-interface OasParameter {
+export interface OasParameter {
   name: string;
   description?: string;
   type: 'Path' | 'Query' | 'Body' | 'Header';
@@ -27,19 +27,6 @@ type ExtractFilteredRecordFromArray<
         ExtractMatchingType<TArray, Type>['schema']
       >;
     };
-
-enum ParseRequestErrors {
-  INVALID_PATH_PARAMETER = '10000',
-  INVALID_BODY = '10001',
-  INVALID_QUERY_PARAMETER = '10002',
-  INVALID_HTTP_HEADER = '10003'
-}
-const ParseRequestErrorsMessage: Record<ParseRequestErrors, string> = {
-  [ParseRequestErrors.INVALID_PATH_PARAMETER]: 'invalid path parameter',
-  [ParseRequestErrors.INVALID_BODY]: 'invalid body',
-  [ParseRequestErrors.INVALID_QUERY_PARAMETER]: 'invalid query parameter',
-  [ParseRequestErrors.INVALID_HTTP_HEADER]: 'invalid http header'
-};
 
 type RemoveNeverKeys<T> = Pick<
   T,
@@ -70,6 +57,11 @@ export class KoaGeneratedUtils {
     const headerParams: Record<string, any> = {};
     let bodyParams: any | undefined = undefined;
 
+    const errors: Array<{
+      zodError: z.ZodError;
+      oasParameter: OasParameter;
+    }> = [];
+
     // Validate path parameters.
     for (const oasParameter of oasParameters) {
       if (oasParameter.type === 'Path') {
@@ -80,13 +72,8 @@ export class KoaGeneratedUtils {
 
         const result = oasParameter.schema.safeParse(param);
         if (!result.success) {
-          ctx.status = 400;
-          ctx.body = createErrorResponse({
-            errorCode: ParseRequestErrors.INVALID_PATH_PARAMETER,
-            zodError: result.error,
-            additionalMessage: oasParameter.name
-          });
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         pathParams[oasParameter.name] = ctx.params[oasParameter.name];
@@ -97,12 +84,8 @@ export class KoaGeneratedUtils {
         const body = ctx.request.body as any;
         const result = oasParameter.schema.safeParse(body);
         if (!result.success) {
-          ctx.status = 400;
-          ctx.body = createErrorResponse({
-            errorCode: ParseRequestErrors.INVALID_BODY,
-            zodError: result.error
-          });
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         bodyParams = body;
@@ -114,13 +97,8 @@ export class KoaGeneratedUtils {
           ctx.query[oasParameter.name]
         );
         if (!result.success) {
-          ctx.status = 400;
-          ctx.body = createErrorResponse({
-            errorCode: ParseRequestErrors.INVALID_QUERY_PARAMETER,
-            zodError: result.error,
-            additionalMessage: oasParameter.name
-          });
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         queryParams[oasParameter.name] = ctx.query[oasParameter.name];
@@ -132,18 +110,22 @@ export class KoaGeneratedUtils {
           ctx.headers[oasParameter.name]
         );
         if (!result.success) {
-          ctx.status = 400;
-          ctx.body = createErrorResponse({
-            errorCode: ParseRequestErrors.INVALID_HTTP_HEADER,
-            zodError: result.error,
-            additionalMessage: oasParameter.name
-          });
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         headerParams[oasParameter.name] = ctx.headers[oasParameter.name];
         continue;
       }
+    }
+
+    if (errors.length > 0) {
+      ctx.status = 400;
+      ctx.body = MiddlewareHelpers.processZodErrorValidation({
+        path: ctx.path,
+        errors
+      });
+      return;
     }
 
     return {
@@ -183,26 +165,4 @@ export class KoaGeneratedUtils {
       }
     };
   }
-}
-
-// Helper functions.
-function createErrorResponse({
-  errorCode,
-  zodError,
-  additionalMessage
-}: {
-  errorCode: ParseRequestErrors;
-  zodError: z.ZodError;
-  additionalMessage?: string;
-}) {
-  let message = ParseRequestErrorsMessage[errorCode];
-  if (additionalMessage) {
-    message = `${message} ${additionalMessage}`;
-  }
-
-  return {
-    code: errorCode,
-    message,
-    detail: zodError.errors
-  };
 }

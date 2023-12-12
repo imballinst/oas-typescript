@@ -1,5 +1,11 @@
 # @oas-typescript/shared-cli-http-server
 
+## 0.2.0
+
+### Minor Changes
+
+- 3c5d3c5: feat: allow customizing validation body in parseRequestInfo
+
 ## 0.1.2
 
 ### Patch Changes

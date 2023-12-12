@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -27,7 +27,7 @@
           oasSwaggerUiConfig: {
             security: {
               badgesField: 'x-security',
-              badgesDefaultValue: [{ label: 'Authorization required' }],
+              badgesDefaultValue: [{ label: 'Authentication required' }],
               badgesProcessFn: (securityKey, security) => {
                 if (!security) return [];
 

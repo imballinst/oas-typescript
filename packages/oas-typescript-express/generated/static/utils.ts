@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction, response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 
 import { MiddlewareHelpers } from '../middleware-helpers.js';
 import { SecuritySchemes } from './security-schemes.js';
-import { SecurityMiddlewareError } from './types.js';
+import { SecurityMiddlewareError, OasParameter } from './types.js';
 
-interface OasParameter {
+export interface OasParameter {
   name: string;
   description?: string;
   type: 'Path' | 'Query' | 'Body' | 'Header';
@@ -27,19 +27,6 @@ type ExtractFilteredRecordFromArray<
         ExtractMatchingType<TArray, Type>['schema']
       >;
     };
-
-enum ParseRequestErrors {
-  INVALID_PATH_PARAMETER = '10000',
-  INVALID_BODY = '10001',
-  INVALID_QUERY_PARAMETER = '10002',
-  INVALID_HTTP_HEADER = '10003'
-}
-const ParseRequestErrorsMessage: Record<ParseRequestErrors, string> = {
-  [ParseRequestErrors.INVALID_PATH_PARAMETER]: 'invalid path parameter',
-  [ParseRequestErrors.INVALID_BODY]: 'invalid body',
-  [ParseRequestErrors.INVALID_QUERY_PARAMETER]: 'invalid query parameter',
-  [ParseRequestErrors.INVALID_HTTP_HEADER]: 'invalid http header'
-};
 
 type RemoveNeverKeys<T> = Pick<
   T,
@@ -72,6 +59,11 @@ export class ExpressGeneratedUtils {
     const headerParams: Record<string, any> = {};
     let bodyParams: any | undefined = undefined;
 
+    const errors: Array<{
+      zodError: z.ZodError;
+      oasParameter: OasParameter;
+    }> = [];
+
     // Validate path parameters.
     for (const oasParameter of oasParameters) {
       if (oasParameter.type === 'Path') {
@@ -82,14 +74,8 @@ export class ExpressGeneratedUtils {
 
         const result = oasParameter.schema.safeParse(param);
         if (!result.success) {
-          response.status(400).send(
-            createErrorResponse({
-              errorCode: ParseRequestErrors.INVALID_PATH_PARAMETER,
-              zodError: result.error,
-              additionalMessage: oasParameter.name
-            })
-          );
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         pathParams[oasParameter.name] = request.params[oasParameter.name];
@@ -100,13 +86,8 @@ export class ExpressGeneratedUtils {
         const body = request.body;
         const result = oasParameter.schema.safeParse(body);
         if (!result.success) {
-          response.status(400).send(
-            createErrorResponse({
-              errorCode: ParseRequestErrors.INVALID_BODY,
-              zodError: result.error
-            })
-          );
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         bodyParams = body;
@@ -118,14 +99,8 @@ export class ExpressGeneratedUtils {
           request.query[oasParameter.name]
         );
         if (!result.success) {
-          response.status(400).send(
-            createErrorResponse({
-              errorCode: ParseRequestErrors.INVALID_QUERY_PARAMETER,
-              zodError: result.error,
-              additionalMessage: oasParameter.name
-            })
-          );
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         queryParams[oasParameter.name] = request.query[oasParameter.name];
@@ -137,19 +112,23 @@ export class ExpressGeneratedUtils {
           request.headers[oasParameter.name]
         );
         if (!result.success) {
-          response.status(400).send(
-            createErrorResponse({
-              errorCode: ParseRequestErrors.INVALID_HTTP_HEADER,
-              zodError: result.error,
-              additionalMessage: oasParameter.name
-            })
-          );
-          return;
+          errors.push({ zodError: result.error, oasParameter });
+          continue;
         }
 
         headerParams[oasParameter.name] = request.headers[oasParameter.name];
         continue;
       }
+    }
+
+    if (errors.length > 0) {
+      response.status(400).send(
+        MiddlewareHelpers.processZodErrorValidation({
+          path: request.path,
+          errors
+        })
+      );
+      return;
     }
 
     return {
@@ -186,26 +165,4 @@ export class ExpressGeneratedUtils {
       }
     };
   }
-}
-
-// Helper functions.
-function createErrorResponse({
-  errorCode,
-  zodError,
-  additionalMessage
-}: {
-  errorCode: ParseRequestErrors;
-  zodError: z.ZodError;
-  additionalMessage?: string;
-}) {
-  let message = ParseRequestErrorsMessage[errorCode];
-  if (additionalMessage) {
-    message = `${message} ${additionalMessage}`;
-  }
-
-  return {
-    code: errorCode,
-    message,
-    detail: zodError.errors
-  };
 }
