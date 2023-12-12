@@ -315,8 +315,7 @@ function SecurityBadges({
   if (!extensions.size) return null;
   if (!badgesField || !badgesProcessFn) return null;
 
-  const securityBadges: Array<{ label: string; value?: string }> =
-    badgesDefaultValue ? [...badgesDefaultValue] : [];
+  const securityBadges: Array<{ label: string; value?: string }> = [];
   const securityArray: any = badgesField.startsWith('x-')
     ? extensions.get(badgesField)
     : security;
@@ -325,18 +324,24 @@ function SecurityBadges({
   // [{ petstore_auth: [scopes/permissions] }]
   //
   // Iterate the first security array...
-  securityArray?.valueSeq().forEach((v: any) => {
-    // Here, we want to extract he key value from each of the outer array element.
-    v.entrySeq().forEach((v1: any) => {
-      // Hence, ehre we can get [petstore_auth, [scopes/permissions]].
-      const [securityKey, imSecurityValue] = v1;
+  if (securityArray) {
+    if (badgesDefaultValue) {
+      securityBadges.push(...badgesDefaultValue);
+    }
 
-      // Then, we iterate the array.
-      securityBadges.push(
-        ...badgesProcessFn(securityKey, imSecurityValue.toJS())
-      );
+    securityArray?.valueSeq().forEach((v: any) => {
+      // Here, we want to extract he key value from each of the outer array element.
+      v.entrySeq().forEach((v1: any) => {
+        // Hence, ehre we can get [petstore_auth, [scopes/permissions]].
+        const [securityKey, imSecurityValue] = v1;
+
+        // Then, we iterate the array.
+        securityBadges.push(
+          ...badgesProcessFn(securityKey, imSecurityValue.toJS())
+        );
+      });
     });
-  });
+  }
 
   return (
     <div className="description-badge-wrapper">
