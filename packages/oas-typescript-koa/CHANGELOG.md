@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.11.1
+
+### Patch Changes
+
+- 56f7ea6: chore: allow reading from both YAML and JSON; refactor for preparation on parsing multipart/form-data
+
 ## 0.11.0
 
 ### Minor Changes
