@@ -13,9 +13,9 @@
   },
   "scripts": {
     "gen": "yarn build:entry && yarn gen:build && yarn gen:build:cjs && yarn gen:build:vanilla",
-    "gen:build": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated",
-    "gen:build:vanilla": "rimraf generated-vanilla && node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated-vanilla",
-    "gen:build:cjs": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output ../test-oas-typescript-express-cjs/generated --module cjs",
+    "gen:build": "node --experimental-modules cli.js generate ../shared/src/openapi/api.yaml --output generated",
+    "gen:build:vanilla": "rimraf generated-vanilla && node --experimental-modules cli.js generate ../shared/src/openapi/api.yaml --output generated-vanilla",
+    "gen:build:cjs": "node --experimental-modules cli.js generate ../shared/src/openapi/api.yaml --output ../test-oas-typescript-express-cjs/generated --module cjs",
     "gen:templates:currentpackage": "node --loader ts-node/esm scripts/fill-templates.ts",
     "gen:templates": "yarn workspace @oas-typescript/shared-cli-http-server gen:templates && yarn gen:templates:currentpackage",
     "gen:all": "yarn gen:templates && yarn gen",
@@ -29,6 +29,7 @@
     "test:server:stop": "pm2 delete all"
   },
   "dependencies": {
+    "@readme/openapi-parser": "2.5.0",
     "meow": "12.0.1",
     "openapi-zod-client": "1.13.1",
     "prettier": "3.0.3",

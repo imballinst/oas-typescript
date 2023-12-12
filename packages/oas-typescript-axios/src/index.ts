@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { OpenAPIV3 } from 'openapi-types';
+import { parse as parseYAML } from 'yaml';
 import { tmpdir } from 'os';
 import { generateZodClientFromOpenAPI } from 'openapi-zod-client';
 import fs from 'fs/promises';
@@ -81,9 +82,11 @@ async function main() {
   ]);
 
   // Start the process.
-  const document: OpenAPIV3.Document = JSON.parse(
-    await fs.readFile(input, 'utf-8')
-  );
+  const fileContent = await fs.readFile(input, 'utf-8');
+  const document: OpenAPIV3.Document =
+    path.extname(input) === '.json'
+      ? JSON.parse(fileContent)
+      : parseYAML(fileContent);
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,

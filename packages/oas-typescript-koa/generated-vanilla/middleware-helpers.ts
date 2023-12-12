@@ -5,8 +5,6 @@ import { SecuritySchemes } from './static/security-schemes.js';
 import { OasParameter } from './static/utils.js';
 import { SecurityMiddlewareError } from './static/types.js';
 
-// @@@SNIPSTART middleware-helpers-vanilla
-// Base class of MiddlewareHelpers.
 export class MiddlewareHelpers {
   static async doAdditionalSecurityValidation(
     headers: IncomingHttpHeaders,
@@ -28,4 +26,3 @@ export class MiddlewareHelpers {
     return {};
   }
 }
-// @@@SNIPEND

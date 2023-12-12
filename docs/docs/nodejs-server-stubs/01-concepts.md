@@ -3,7 +3,7 @@
 
 # Usage
 
-In the previous section, you have learned how to generate the server stubs. The following is the file tree result if you are generating the server stubs of the [slightly adjusted Pet Store OpenAPI Specification 3.0](https://github.com/imballinst/oas-typescript/blob/main/packages/shared/src/openapi/api.json).
+In the previous section, you have learned how to generate the server stubs. The following is the file tree result if you are generating the server stubs of the [slightly adjusted Pet Store OpenAPI Specification 3.0](https://github.com/imballinst/oas-typescript/blob/main/packages/shared/src/openapi/api.yaml).
 
 ```
 generated
@@ -53,6 +53,7 @@ The security middleware is optional, because it's only required if there are end
 The default security middleware looks like this.
 
 <!--SNIPSTART middleware-helpers-vanilla-->
+
 ```ts
 // Base class of MiddlewareHelpers.
 export class MiddlewareHelpers {
@@ -77,6 +78,7 @@ export class MiddlewareHelpers {
   }
 }
 ```
+
 <!--SNIPEND-->
 
 The function receives `headers` and `securityObject`, the former comes from request whereas the latter comes from the OpenAPI specification. The function returns a resolved Promise (if validation is successful) and a rejected Promise (if validation fails). A modified security middleware helper looks like this:

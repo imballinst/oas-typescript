@@ -22,7 +22,10 @@ import {
   DeletePetResponse,
   UploadFileParameters,
   UploadFileErrors,
-  UploadFileResponse
+  UploadFileResponse,
+  UploadFileMultipartParameters,
+  UploadFileMultipartErrors,
+  UploadFileMultipartResponse
 } from '../client';
 import { ParsedRequestInfo } from '../utils';
 import { ControllerReturnType, ErrorStatuses } from '../types';
@@ -81,4 +84,11 @@ export type UploadFileControllerFunction = (
 ) => ControllerReturnType<{
   success: UploadFileResponse;
   error: UploadFileErrors;
+}>;
+
+export type UploadFileMultipartControllerFunction = (
+  params: ParsedRequestInfo<typeof UploadFileMultipartParameters>
+) => ControllerReturnType<{
+  success: UploadFileMultipartResponse;
+  error: UploadFileMultipartErrors;
 }>;

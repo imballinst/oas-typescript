@@ -8,6 +8,7 @@ import {
   UpdatePetWithFormSecurity,
   DeletePetSecurity,
   UploadFileSecurity,
+  UploadFileMultipartSecurity,
   GetInventorySecurity,
   AddPetParameters,
   UpdatePetParameters,
@@ -17,6 +18,7 @@ import {
   UpdatePetWithFormParameters,
   DeletePetParameters,
   UploadFileParameters,
+  UploadFileMultipartParameters,
   GetInventoryParameters,
   PlaceOrderParameters,
   GetOrderByIdParameters,
@@ -179,6 +181,24 @@ router.post(
     }
 
     const result = await PetController.uploadFile(parsedRequestInfo);
+    response.status(result.status).send(result.body);
+  }
+);
+
+router.post(
+  '/pet/:petId/uploadImageMultipart',
+  ExpressGeneratedUtils.createSecurityMiddleware(UploadFileMultipartSecurity),
+  async (request, response) => {
+    const parsedRequestInfo = ExpressGeneratedUtils.parseRequestInfo({
+      request,
+      response,
+      oasParameters: UploadFileMultipartParameters
+    });
+    if (!parsedRequestInfo) {
+      return;
+    }
+
+    const result = await PetController.uploadFileMultipart(parsedRequestInfo);
     response.status(result.status).send(result.body);
   }
 );

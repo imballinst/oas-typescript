@@ -22,11 +22,6 @@ export const Pet = z
   })
   .passthrough();
 export interface Pet extends z.infer<typeof Pet> {}
-export const ApiResponse = z
-  .object({ code: z.number().int(), type: z.string(), message: z.string() })
-  .partial()
-  .passthrough();
-export interface ApiResponse extends z.infer<typeof ApiResponse> {}
 export const Order = z
   .object({
     id: z.number().int(),
@@ -90,15 +85,18 @@ export type UpdatePetResponse = typeof UpdatePetResponse;
 export const UpdatePetErrors = {
   '400': {
     status: 400,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   },
   '404': {
     status: 404,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   },
   '405': {
     status: 405,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type UpdatePetErrors = typeof UpdatePetErrors;
@@ -146,7 +144,8 @@ export type AddPetResponse = typeof AddPetResponse;
 export const AddPetErrors = {
   '405': {
     status: 405,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type AddPetErrors = typeof AddPetErrors;
@@ -193,11 +192,13 @@ export type GetPetByIdResponse = typeof GetPetByIdResponse;
 export const GetPetByIdErrors = {
   '400': {
     status: 400,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   },
   '404': {
     status: 404,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type GetPetByIdErrors = typeof GetPetByIdErrors;
@@ -246,7 +247,8 @@ export type UpdatePetWithFormResponse = typeof UpdatePetWithFormResponse;
 export const UpdatePetWithFormErrors = {
   '405': {
     status: 405,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type UpdatePetWithFormErrors = typeof UpdatePetWithFormErrors;
@@ -290,7 +292,8 @@ export type DeletePetResponse = typeof DeletePetResponse;
 export const DeletePetErrors = {
   '400': {
     status: 400,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type DeletePetErrors = typeof DeletePetErrors;
@@ -331,13 +334,59 @@ export const UploadFileSecurity = {
 } as const;
 
 export const UploadFileResponse = {
-  schema: ApiResponse,
+  schema:
+    'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()',
   status: 200
 } as const;
 export type UploadFileResponse = typeof UploadFileResponse;
 
 export const UploadFileErrors = {} as const;
 export type UploadFileErrors = typeof UploadFileErrors;
+
+export const UploadFileMultipartParameters = [
+  {
+    name: 'body',
+    type: 'Body',
+    schema: z.object({ profileImage: z.any() }).partial().passthrough()
+  },
+  {
+    name: 'petId',
+    type: 'Path',
+    schema: z.number().int()
+  },
+  {
+    name: 'additionalMetadata',
+    type: 'Query',
+    schema: z.string().optional()
+  }
+] as const;
+export const UploadFileMultipartSecurity = {
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  }
+} as const;
+
+export const UploadFileMultipartResponse = {
+  schema:
+    'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()',
+  status: 200
+} as const;
+export type UploadFileMultipartResponse = typeof UploadFileMultipartResponse;
+
+export const UploadFileMultipartErrors = {} as const;
+export type UploadFileMultipartErrors = typeof UploadFileMultipartErrors;
 
 export const FindPetsByStatusParameters = [
   {
@@ -376,7 +425,8 @@ export type FindPetsByStatusResponse = typeof FindPetsByStatusResponse;
 export const FindPetsByStatusErrors = {
   '400': {
     status: 400,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type FindPetsByStatusErrors = typeof FindPetsByStatusErrors;
@@ -415,7 +465,8 @@ export type FindPetsByTagsResponse = typeof FindPetsByTagsResponse;
 export const FindPetsByTagsErrors = {
   '400': {
     status: 400,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type FindPetsByTagsErrors = typeof FindPetsByTagsErrors;
@@ -458,7 +509,8 @@ export type PlaceOrderResponse = typeof PlaceOrderResponse;
 export const PlaceOrderErrors = {
   '405': {
     status: 405,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type PlaceOrderErrors = typeof PlaceOrderErrors;
@@ -480,11 +532,13 @@ export type GetOrderByIdResponse = typeof GetOrderByIdResponse;
 export const GetOrderByIdErrors = {
   '400': {
     status: 400,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   },
   '404': {
     status: 404,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type GetOrderByIdErrors = typeof GetOrderByIdErrors;
@@ -506,11 +560,13 @@ export type DeleteOrderResponse = typeof DeleteOrderResponse;
 export const DeleteOrderErrors = {
   '400': {
     status: 400,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   },
   '404': {
     status: 404,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type DeleteOrderErrors = typeof DeleteOrderErrors;
@@ -550,11 +606,13 @@ export type GetUserByNameResponse = typeof GetUserByNameResponse;
 export const GetUserByNameErrors = {
   '400': {
     status: 400,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   },
   '404': {
     status: 404,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type GetUserByNameErrors = typeof GetUserByNameErrors;
@@ -599,11 +657,13 @@ export type DeleteUserResponse = typeof DeleteUserResponse;
 export const DeleteUserErrors = {
   '400': {
     status: 400,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   },
   '404': {
     status: 404,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type DeleteUserErrors = typeof DeleteUserErrors;
@@ -626,7 +686,8 @@ export type CreateUsersWithListInputResponse =
 export const CreateUsersWithListInputErrors = {
   default: {
     status: 'default',
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type CreateUsersWithListInputErrors =
@@ -646,7 +707,7 @@ export const LoginUserParameters = [
 ] as const;
 
 export const LoginUserResponse = {
-  schema: z.string(),
+  schema: 'z.object({ status: z.string() }).partial().passthrough()',
   status: 200,
   headers: {
     'X-Rate-Limit': {
@@ -662,7 +723,8 @@ export type LoginUserResponse = typeof LoginUserResponse;
 export const LoginUserErrors = {
   '400': {
     status: 400,
-    schema: ApiResponse
+    schema:
+      'z.object({ code: z.number().int(), type: z.string(), message: z.string() }).partial().passthrough()'
   }
 } as const;
 export type LoginUserErrors = typeof LoginUserErrors;
