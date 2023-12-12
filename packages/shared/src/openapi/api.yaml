@@ -68,23 +68,11 @@ paths:
               schema:
                 '$ref': '#/components/schemas/Pet'
         '400':
-          description: Invalid ID supplied
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
         '404':
-          description: Pet not found
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
         '405':
-          description: Validation exception
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
             - write:pets
@@ -119,11 +107,7 @@ paths:
               schema:
                 '$ref': '#/components/schemas/Pet'
         '405':
-          description: Invalid input
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
             - write:pets
@@ -164,11 +148,7 @@ paths:
                 items:
                   '$ref': '#/components/schemas/Pet'
         '400':
-          description: Invalid status value
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
             - write:pets
@@ -207,11 +187,7 @@ paths:
                 items:
                   '$ref': '#/components/schemas/Pet'
         '400':
-          description: Invalid tag value
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
             - write:pets
@@ -242,17 +218,9 @@ paths:
               schema:
                 '$ref': '#/components/schemas/Pet'
         '400':
-          description: Invalid ID supplied
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
         '404':
-          description: Pet not found
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
       security:
         - api_key: []
         - petstore_auth:
@@ -286,11 +254,7 @@ paths:
         '204':
           description: Successful operation
         '405':
-          description: Invalid input
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
             - write:pets
@@ -319,11 +283,7 @@ paths:
         '204':
           description: Successful operation
         '400':
-          description: Invalid pet value
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
             - write:pets
@@ -357,11 +317,7 @@ paths:
               format: binary
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
             - write:pets
@@ -411,11 +367,7 @@ paths:
               schema:
                 '$ref': '#/components/schemas/Order'
         '405':
-          description: Invalid input
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
   '/store/order/{orderId}':
     get:
       tags:
@@ -444,17 +396,9 @@ paths:
               schema:
                 '$ref': '#/components/schemas/Order'
         '400':
-          description: Invalid ID supplied
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
         '404':
-          description: Order not found
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
     delete:
       tags:
         - store
@@ -475,17 +419,9 @@ paths:
         '204':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
         '404':
-          description: Order not found
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
   '/user':
     post:
       tags:
@@ -540,11 +476,7 @@ paths:
               schema:
                 '$ref': '#/components/schemas/User'
         default:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
   '/user/login':
     get:
       tags:
@@ -587,11 +519,7 @@ paths:
               schema:
                 type: string
         '400':
-          description: Invalid username/password supplied
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
   '/user/logout':
     post:
       tags:
@@ -628,17 +556,9 @@ paths:
               schema:
                 '$ref': '#/components/schemas/User'
         '400':
-          description: Invalid username supplied
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
         '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
     put:
       tags:
         - user
@@ -688,17 +608,9 @@ paths:
         '204':
           description: Successful operation
         '400':
-          description: Invalid username supplied
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
         '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                '$ref': '#/components/schemas/ApiResponse'
+          $ref: '#/components/responses/ApiResponse'
 components:
   schemas:
     Order:
@@ -859,18 +771,6 @@ components:
             - sold
       xml:
         name: pet
-    ApiResponse:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        type:
-          type: string
-        message:
-          type: string
-      xml:
-        name: '##default'
   requestBodies:
     Pet:
       description: Pet object that needs to be added to the store
@@ -889,6 +789,23 @@ components:
             type: array
             items:
               '$ref': '#/components/schemas/User'
+  responses:
+    ApiResponse:
+      description: API response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              type:
+                type: string
+              message:
+                type: string
+            xml:
+              name: '##default'
   securitySchemes:
     petstore_auth:
       type: oauth2
