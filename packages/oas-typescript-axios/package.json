@@ -13,8 +13,8 @@
   },
   "scripts": {
     "gen": "yarn build:entry && yarn gen:build && yarn gen:build:headers",
-    "gen:build": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated",
-    "gen:build:headers": "node --experimental-modules cli.js generate ../shared/src/openapi/api.json --output generated-with-headers --with-headers",
+    "gen:build": "node --experimental-modules cli.js generate ../shared/src/openapi/api.yaml --output generated",
+    "gen:build:headers": "node --experimental-modules cli.js generate ../shared/src/openapi/api.yaml --output generated-with-headers --with-headers",
     "gen:templates": "node --loader ts-node/esm scripts/fill-templates.ts",
     "gen:all": "yarn gen:templates && yarn gen",
     "build": "yarn test:run && yarn gen:templates && yarn build:entry",
@@ -25,7 +25,8 @@
   "dependencies": {
     "meow": "12.0.1",
     "openapi-zod-client": "1.10.0",
-    "title-case": "3.0.3"
+    "title-case": "3.0.3",
+    "yaml": "2.3.4"
   },
   "peerDependencies": {
     "axios": ">=1.0.0"

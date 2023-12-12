@@ -2,8 +2,6 @@ import { z } from 'zod';
 import axios, { AxiosRequestConfig } from 'axios';
 import { getQueryParameterString } from './utils/query.js';
 
-import { ApiResponse } from './common';
-
 // Schemas.
 export const Category = z
   .object({ id: z.number().int(), name: z.string() })
@@ -72,6 +70,26 @@ const UploadFileParams = z.object({
   query: z.object({ additionalMetadata: z.string().optional() }),
   body: z.instanceof(File)
 });
+const UploadFileResponse = z
+  .object({ code: z.number().int(), type: z.string(), message: z.string() })
+  .partial()
+  .passthrough();
+interface UploadFileResponse extends z.infer<typeof UploadFileResponse> {}
+
+const UploadFileMultipartParams = z.object({
+  params: z.object({ petId: z.number().int() }),
+  query: z.object({ additionalMetadata: z.string().optional() }),
+  body: z
+    .object({ profileImage: z.instanceof(File) })
+    .partial()
+    .passthrough()
+});
+const UploadFileMultipartResponse = z
+  .object({ code: z.number().int(), type: z.string(), message: z.string() })
+  .partial()
+  .passthrough();
+interface UploadFileMultipartResponse
+  extends z.infer<typeof UploadFileMultipartResponse> {}
 
 export function PetApi({
   defaultAxiosRequestConfig
@@ -211,7 +229,7 @@ export function PetApi({
   async function uploadFile(
     fnParam: z.infer<typeof UploadFileParams>,
     axiosConfig?: AxiosRequestConfig
-  ): Promise<ApiResponse> {
+  ): Promise<UploadFileResponse> {
     let url = `/pet/${fnParam.params.petId}/uploadImage`;
     url += getQueryParameterString(fnParam.query);
 
@@ -225,7 +243,34 @@ export function PetApi({
       method: 'post'
     };
     const response = await axios(url, { ...config, data: fnParam.body });
-    return ApiResponse.parse(response.data);
+    return z
+      .object({ code: z.number().int(), type: z.string(), message: z.string() })
+      .partial()
+      .passthrough()
+      .parse(response.data);
+  }
+  async function uploadFileMultipart(
+    fnParam: z.infer<typeof UploadFileMultipartParams>,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<UploadFileMultipartResponse> {
+    let url = `/pet/${fnParam.params.petId}/uploadImageMultipart`;
+    url += getQueryParameterString(fnParam.query);
+
+    const config = {
+      ...defaultAxiosRequestConfig,
+      ...axiosConfig,
+      headers: {
+        ...defaultAxiosRequestConfig?.headers,
+        ...axiosConfig?.headers
+      },
+      method: 'post'
+    };
+    const response = await axios(url, { ...config, data: fnParam.body });
+    return z
+      .object({ code: z.number().int(), type: z.string(), message: z.string() })
+      .partial()
+      .passthrough()
+      .parse(response.data);
   }
 
   return {
@@ -236,6 +281,7 @@ export function PetApi({
     getPetById,
     updatePetWithForm,
     deletePet,
-    uploadFile
+    uploadFile,
+    uploadFileMultipart
   };
 }

@@ -2,8 +2,6 @@ import { z } from 'zod';
 import axios, { AxiosRequestConfig } from 'axios';
 import { getQueryParameterString } from './utils/query.js';
 
-import { ApiResponse } from './common';
-
 // Schemas.
 export const User = z
   .object({
@@ -30,7 +28,10 @@ const LoginUserParams = z.object({
     password: z.string().optional()
   })
 });
-const LoginUserResponse = z.string();
+const LoginUserResponse = z
+  .object({ status: z.string() })
+  .partial()
+  .passthrough();
 interface LoginUserResponse extends z.infer<typeof LoginUserResponse> {}
 
 const GetUserByNameParams = z.object({
@@ -104,7 +105,11 @@ export function UserApi({
       method: 'get'
     };
     const response = await axios(url, config);
-    return z.string().parse(response.data);
+    return z
+      .object({ status: z.string() })
+      .partial()
+      .passthrough()
+      .parse(response.data);
   }
   async function logoutUser(axiosConfig?: AxiosRequestConfig): Promise<void> {
     let url = `/user/logout`;

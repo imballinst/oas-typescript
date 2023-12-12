@@ -6,7 +6,8 @@ import {
   GetPetByIdControllerFunction,
   UpdatePetWithFormControllerFunction,
   DeletePetControllerFunction,
-  UploadFileControllerFunction
+  UploadFileControllerFunction,
+  UploadFileMultipartControllerFunction
 } from '../static/controller-types/PetControllerTypes.js';
 
 export class PetController {
@@ -53,6 +54,14 @@ export class PetController {
     };
   };
   static uploadFile: UploadFileControllerFunction = (params) => {
+    return {
+      body: undefined,
+      status: undefined
+    };
+  };
+  static uploadFileMultipart: UploadFileMultipartControllerFunction = (
+    params
+  ) => {
     return {
       body: undefined,
       status: undefined

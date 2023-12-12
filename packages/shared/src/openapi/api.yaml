@@ -1,43 +1,54 @@
----
 openapi: 3.0.2
 info:
   title: Swagger Petstore - OpenAPI 3.0
-  description: |-
-    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
-    Swagger at [http://swagger.io](http://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
-    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+  description: >-
+    This is a sample Pet Store Server based on the OpenAPI 3.0 specification. 
+    You can find out more about
+
+    Swagger at [http://swagger.io](http://swagger.io). In the third iteration of
+    the pet store, we've switched to the design first approach!
+
+    You can now help us improve the API whether it's by making changes to the
+    definition itself or to the code.
+
+    That way, with time, we can improve the API in general, and expose some of
+    the new features in OAS3.
+
 
     Some useful links:
-    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
-    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
-  termsOfService: http://swagger.io/terms/
+
+    - [The Pet Store
+    repository](https://github.com/swagger-api/swagger-petstore)
+
+    - [The source API definition for the Pet
+    Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  termsOfService: 'http://swagger.io/terms/'
   contact:
     email: apiteam@swagger.io
   license:
     name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
   version: 1.0.17
 externalDocs:
   description: Find out more about Swagger
-  url: http://swagger.io
+  url: 'http://swagger.io'
 servers:
-  - url: '/api/v3'
+  - url: /api/v3
 tags:
   - name: pet
     description: Everything about your Pets
     externalDocs:
       description: Find out more
-      url: http://swagger.io
+      url: 'http://swagger.io'
   - name: store
     description: Access to Petstore orders
     externalDocs:
       description: Find out more about our store
-      url: http://swagger.io
+      url: 'http://swagger.io'
   - name: user
     description: Operations about user
 paths:
-  '/pet':
+  /pet:
     put:
       tags:
         - pet
@@ -49,13 +60,13 @@ paths:
         content:
           application/json:
             schema:
-              '$ref': '#/components/schemas/Pet'
+              $ref: '#/components/schemas/Pet'
           application/xml:
             schema:
-              '$ref': '#/components/schemas/Pet'
+              $ref: '#/components/schemas/Pet'
           application/x-www-form-urlencoded:
             schema:
-              '$ref': '#/components/schemas/Pet'
+              $ref: '#/components/schemas/Pet'
         required: true
       responses:
         '200':
@@ -63,10 +74,10 @@ paths:
           content:
             application/xml:
               schema:
-                '$ref': '#/components/schemas/Pet'
+                $ref: '#/components/schemas/Pet'
             application/json:
               schema:
-                '$ref': '#/components/schemas/Pet'
+                $ref: '#/components/schemas/Pet'
         '400':
           $ref: '#/components/responses/ApiResponse'
         '404':
@@ -75,8 +86,8 @@ paths:
           $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
     post:
       tags:
         - pet
@@ -88,13 +99,13 @@ paths:
         content:
           application/json:
             schema:
-              '$ref': '#/components/schemas/Pet'
+              $ref: '#/components/schemas/Pet'
           application/xml:
             schema:
-              '$ref': '#/components/schemas/Pet'
+              $ref: '#/components/schemas/Pet'
           application/x-www-form-urlencoded:
             schema:
-              '$ref': '#/components/schemas/Pet'
+              $ref: '#/components/schemas/Pet'
         required: true
       responses:
         '200':
@@ -102,18 +113,18 @@ paths:
           content:
             application/xml:
               schema:
-                '$ref': '#/components/schemas/Pet'
+                $ref: '#/components/schemas/Pet'
             application/json:
               schema:
-                '$ref': '#/components/schemas/Pet'
+                $ref: '#/components/schemas/Pet'
         '405':
           $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
         - api_key: []
-  '/pet/findByStatus':
+  /pet/findByStatus:
     get:
       tags:
         - pet
@@ -141,26 +152,26 @@ paths:
               schema:
                 type: array
                 items:
-                  '$ref': '#/components/schemas/Pet'
+                  $ref: '#/components/schemas/Pet'
             application/json:
               schema:
                 type: array
                 items:
-                  '$ref': '#/components/schemas/Pet'
+                  $ref: '#/components/schemas/Pet'
         '400':
           $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
-  '/pet/findByTags':
+            - 'write:pets'
+            - 'read:pets'
+  /pet/findByTags:
     get:
       tags:
         - pet
       summary: Finds Pets by tags
-      description:
-        Multiple tags can be provided with comma separated strings. Use
-        tag1, tag2, tag3 for testing.
+      description: >-
+        Multiple tags can be provided with comma separated strings. Use tag1,
+        tag2, tag3 for testing.
       operationId: findPetsByTags
       parameters:
         - name: tags
@@ -180,18 +191,18 @@ paths:
               schema:
                 type: array
                 items:
-                  '$ref': '#/components/schemas/Pet'
+                  $ref: '#/components/schemas/Pet'
             application/json:
               schema:
                 type: array
                 items:
-                  '$ref': '#/components/schemas/Pet'
+                  $ref: '#/components/schemas/Pet'
         '400':
           $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
   '/pet/{petId}':
     get:
       tags:
@@ -213,10 +224,10 @@ paths:
           content:
             application/xml:
               schema:
-                '$ref': '#/components/schemas/Pet'
+                $ref: '#/components/schemas/Pet'
             application/json:
               schema:
-                '$ref': '#/components/schemas/Pet'
+                $ref: '#/components/schemas/Pet'
         '400':
           $ref: '#/components/responses/ApiResponse'
         '404':
@@ -224,8 +235,8 @@ paths:
       security:
         - api_key: []
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
     post:
       tags:
         - pet
@@ -257,8 +268,8 @@ paths:
           $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
     delete:
       tags:
         - pet
@@ -286,8 +297,8 @@ paths:
           $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
   '/pet/{petId}/uploadImage':
     post:
       tags:
@@ -315,14 +326,52 @@ paths:
             schema:
               type: string
               format: binary
+              x-field-name: profileImage
       responses:
         '200':
           $ref: '#/components/responses/ApiResponse'
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
-  '/store/inventory':
+            - 'write:pets'
+            - 'read:pets'
+  '/pet/{petId}/uploadImageMultipart':
+    post:
+      tags:
+        - pet
+      summary: uploads an image
+      description: ''
+      operationId: uploadFileMultipart
+      parameters:
+        - name: petId
+          in: path
+          description: ID of pet to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: additionalMetadata
+          in: query
+          description: Additional Metadata
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                profileImage:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          $ref: '#/components/responses/ApiResponse'
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+  /store/inventory:
     get:
       tags:
         - store
@@ -341,7 +390,7 @@ paths:
                   format: int32
       security:
         - api_key: []
-  '/store/order':
+  /store/order:
     post:
       tags:
         - store
@@ -352,20 +401,20 @@ paths:
         content:
           application/json:
             schema:
-              '$ref': '#/components/schemas/Order'
+              $ref: '#/components/schemas/Order'
           application/xml:
             schema:
-              '$ref': '#/components/schemas/Order'
+              $ref: '#/components/schemas/Order'
           application/x-www-form-urlencoded:
             schema:
-              '$ref': '#/components/schemas/Order'
+              $ref: '#/components/schemas/Order'
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                '$ref': '#/components/schemas/Order'
+                $ref: '#/components/schemas/Order'
         '405':
           $ref: '#/components/responses/ApiResponse'
   '/store/order/{orderId}':
@@ -373,9 +422,9 @@ paths:
       tags:
         - store
       summary: Find purchase order by ID
-      description:
-        For valid response try integer IDs with value <= 5 or > 10. Other
-        values will generate exceptions.
+      description: >-
+        For valid response try integer IDs with value <= 5 or > 10. Other values
+        will generate exceptions.
       operationId: getOrderById
       parameters:
         - name: orderId
@@ -391,10 +440,10 @@ paths:
           content:
             application/xml:
               schema:
-                '$ref': '#/components/schemas/Order'
+                $ref: '#/components/schemas/Order'
             application/json:
               schema:
-                '$ref': '#/components/schemas/Order'
+                $ref: '#/components/schemas/Order'
         '400':
           $ref: '#/components/responses/ApiResponse'
         '404':
@@ -403,9 +452,9 @@ paths:
       tags:
         - store
       summary: Delete purchase order by ID
-      description:
-        For valid response try integer IDs with value < 1000. Anything
-        above 1000 or nonintegers will generate API errors
+      description: >-
+        For valid response try integer IDs with value < 1000. Anything above
+        1000 or nonintegers will generate API errors
       operationId: deleteOrder
       parameters:
         - name: orderId
@@ -422,7 +471,7 @@ paths:
           $ref: '#/components/responses/ApiResponse'
         '404':
           $ref: '#/components/responses/ApiResponse'
-  '/user':
+  /user:
     post:
       tags:
         - user
@@ -434,24 +483,24 @@ paths:
         content:
           application/json:
             schema:
-              '$ref': '#/components/schemas/User'
+              $ref: '#/components/schemas/User'
           application/xml:
             schema:
-              '$ref': '#/components/schemas/User'
+              $ref: '#/components/schemas/User'
           application/x-www-form-urlencoded:
             schema:
-              '$ref': '#/components/schemas/User'
+              $ref: '#/components/schemas/User'
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                '$ref': '#/components/schemas/User'
+                $ref: '#/components/schemas/User'
             application/xml:
               schema:
-                '$ref': '#/components/schemas/User'
-  '/user/createWithList':
+                $ref: '#/components/schemas/User'
+  /user/createWithList:
     post:
       tags:
         - user
@@ -464,20 +513,20 @@ paths:
             schema:
               type: array
               items:
-                '$ref': '#/components/schemas/User'
+                $ref: '#/components/schemas/User'
       responses:
         '200':
           description: Successful operation
           content:
             application/xml:
               schema:
-                '$ref': '#/components/schemas/User'
+                $ref: '#/components/schemas/User'
             application/json:
               schema:
-                '$ref': '#/components/schemas/User'
+                $ref: '#/components/schemas/User'
         default:
           $ref: '#/components/responses/ApiResponse'
-  '/user/login':
+  /user/login:
     get:
       tags:
         - user
@@ -512,15 +561,16 @@ paths:
                 type: string
                 format: date-time
           content:
-            application/xml:
-              schema:
-                type: string
             application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
         '400':
           $ref: '#/components/responses/ApiResponse'
-  '/user/logout':
+  /user/logout:
     post:
       tags:
         - user
@@ -551,10 +601,10 @@ paths:
           content:
             application/xml:
               schema:
-                '$ref': '#/components/schemas/User'
+                $ref: '#/components/schemas/User'
             application/json:
               schema:
-                '$ref': '#/components/schemas/User'
+                $ref: '#/components/schemas/User'
         '400':
           $ref: '#/components/responses/ApiResponse'
         '404':
@@ -577,20 +627,20 @@ paths:
         content:
           application/json:
             schema:
-              '$ref': '#/components/schemas/User'
+              $ref: '#/components/schemas/User'
           application/xml:
             schema:
-              '$ref': '#/components/schemas/User'
+              $ref: '#/components/schemas/User'
           application/x-www-form-urlencoded:
             schema:
-              '$ref': '#/components/schemas/User'
+              $ref: '#/components/schemas/User'
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                '$ref': '#/components/schemas/User'
+                $ref: '#/components/schemas/User'
     delete:
       tags:
         - user
@@ -659,7 +709,7 @@ components:
             name: addresses
             wrapped: true
           items:
-            '$ref': '#/components/schemas/Address'
+            $ref: '#/components/schemas/Address'
       xml:
         name: customer
     Address:
@@ -747,7 +797,7 @@ components:
           type: string
           example: doggie
         category:
-          '$ref': '#/components/schemas/Category'
+          $ref: '#/components/schemas/Category'
         photoUrls:
           type: array
           xml:
@@ -761,7 +811,7 @@ components:
           xml:
             wrapped: true
           items:
-            '$ref': '#/components/schemas/Tag'
+            $ref: '#/components/schemas/Tag'
         status:
           type: string
           description: pet status in the store
@@ -771,27 +821,9 @@ components:
             - sold
       xml:
         name: pet
-  requestBodies:
-    Pet:
-      description: Pet object that needs to be added to the store
-      content:
-        application/json:
-          schema:
-            '$ref': '#/components/schemas/Pet'
-        application/xml:
-          schema:
-            '$ref': '#/components/schemas/Pet'
-    UserArray:
-      description: List of user object
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              '$ref': '#/components/schemas/User'
   responses:
     ApiResponse:
-      description: API response
+      description: Common API response
       content:
         application/json:
           schema:
@@ -806,15 +838,33 @@ components:
                 type: string
             xml:
               name: '##default'
+  requestBodies:
+    Pet:
+      description: Pet object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pet'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Pet'
+    UserArray:
+      description: List of user object
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
   securitySchemes:
     petstore_auth:
       type: oauth2
       flows:
         implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize'
           scopes:
-            write:pets: modify pets in your account
-            read:pets: read your pets
+            'write:pets': modify pets in your account
+            'read:pets': read your pets
     api_key:
       type: apiKey
       name: api_key
