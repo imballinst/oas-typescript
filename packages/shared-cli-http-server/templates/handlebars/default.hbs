@@ -32,7 +32,7 @@ export const {{capitalizeFirstLetter operationId "Parameters"}} = [
     {{#if type}}
     type: '{{type}}',
     {{/if}}
-    schema: {{{schema}}}
+    schema: {{{renderSchema schema}}}
   },
   {{/each}}
   {{/if}}

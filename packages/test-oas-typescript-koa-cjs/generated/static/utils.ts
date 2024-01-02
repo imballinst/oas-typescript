@@ -9,6 +9,7 @@ export interface OasParameter {
   name: string;
   description?: string;
   type: 'Path' | 'Query' | 'Body' | 'Header';
+  isFormData?: boolean;
   schema: z.ZodTypeAny;
 }
 

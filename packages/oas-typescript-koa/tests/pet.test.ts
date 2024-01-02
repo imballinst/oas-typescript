@@ -98,6 +98,36 @@ describe('pet', () => {
         }
       });
 
+      test.only('upload pet image', async () => {
+        let response: any;
+        let error: unknown;
+
+        try {
+          const form = new FormData();
+          form.append('profileImage', new Blob(['some content']));
+
+          response = await axios(`${origin}/pet/0/uploadImage`, {
+            method: 'post',
+            data: form,
+            headers: {
+              api_key: 'helloworld'
+            }
+          });
+        } catch (err) {
+          error = err;
+        }
+
+        expect(error instanceof AxiosError).toBe(true);
+        expect(response).toBeUndefined();
+
+        if (error instanceof AxiosError) {
+          console.info(error.response);
+
+          expect(error.response).toBeDefined();
+          expect(error.response?.status).toBe(405);
+        }
+      });
+
       test('delete pet', async () => {
         let response: any;
         let error: unknown;

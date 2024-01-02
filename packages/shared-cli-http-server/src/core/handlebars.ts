@@ -104,6 +104,9 @@ export function getHandlebarsInstance(securitySchemes: any) {
       ).replace(/\]/g, '] as string[]')} as const`;
     }
   );
+  handlebars.registerHelper('renderSchema', function (schema: any) {
+    return this.formData || schema;
+  });
 
   return handlebars;
 }

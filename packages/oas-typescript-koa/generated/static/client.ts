@@ -302,7 +302,8 @@ export const UploadFileParameters = [
   {
     name: 'body',
     type: 'Body',
-    schema: z.any()
+    schema: z.object({ profileImage: z.string() }),
+    isFormData: true
   },
   {
     name: 'petId',

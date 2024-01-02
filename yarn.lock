@@ -1586,6 +1586,7 @@ __metadata:
     "@swc/core": 1.3.66
     "@swc/helpers": 0.5.1
     "@types/koa": 2.13.10
+    "@types/koa__multer": 2.0.7
     "@types/koa__router": 12.0.3
     axios: 1.6.0
     esbuild: 0.18.11
@@ -2904,6 +2905,15 @@ __metadata:
     "@types/koa-compose": "*"
     "@types/node": "*"
   checksum: dd3b3cbe1bb2fc0b5edd44672a64816abdc7bc0281d2913389ef7926681dd602a53842e29d59853926cf2c74ffa1fc0ebc44e83be9c172c5cead417866b3ecac
+  languageName: node
+  linkType: hard
+
+"@types/koa__multer@npm:2.0.7":
+  version: 2.0.7
+  resolution: "@types/koa__multer@npm:2.0.7"
+  dependencies:
+    "@types/koa": "*"
+  checksum: 044fa237e085e59966825866fef836277dd151f639597c31512300eaeb6348d232457db77916081d427690af5212bb6c941635aacad96aaddb9e8d3e67b48fba
   languageName: node
   linkType: hard
 
