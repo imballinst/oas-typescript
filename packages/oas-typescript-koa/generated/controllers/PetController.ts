@@ -74,7 +74,6 @@ export class PetController {
     };
   };
   static uploadFile: UploadFileControllerFunction = (params) => {
-    console.info(params);
     return {
       body: {},
       status: 200

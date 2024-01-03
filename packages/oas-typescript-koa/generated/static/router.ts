@@ -186,6 +186,7 @@ router.post(
     }
 
     const result = await PetController.uploadFile(parsedRequestInfo);
+    console.info('result', result);
     ctx.body = result.body;
     ctx.status = result.status;
   }

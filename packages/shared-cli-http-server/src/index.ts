@@ -241,8 +241,27 @@ export async function generateRestServerStubs({
                 const requestBodySchema = schema as OpenAPIV3.SchemaObject;
                 matchingParameter.formData = `z.object({ "${
                   (requestBodySchema as any)['x-field-name']
-                }": z.${requestBodySchema.type}() }), isFormData: true`;
+                }": z.${requestBodySchema.type}() }), formDataMode: 'single'`;
               }
+
+              continue;
+            }
+
+            if (mimeType === 'multipart/form-data') {
+              const schema = maybeRequestBodyObject.content[mimeType].schema;
+              if (!schema) continue;
+
+              const maybeReferenceObject = schema as OpenAPIV3.ReferenceObject;
+              if (maybeReferenceObject.$ref) continue;
+
+              const matchingParameter = newDefinition.parameters.find(
+                (parameter: any) => parameter.name === 'body'
+              );
+              if (matchingParameter) {
+                matchingParameter.formData = `${matchingParameter.schema}, formDataMode: 'multiple'`;
+              }
+
+              continue;
             }
           }
         }

@@ -9,7 +9,7 @@ export interface OasParameter {
   name: string;
   description?: string;
   type: 'Path' | 'Query' | 'Body' | 'Header';
-  isFormData?: boolean;
+  formDataMode?: 'single' | 'multiple';
   schema: z.ZodTypeAny;
 }
 
@@ -82,7 +82,16 @@ export class KoaGeneratedUtils {
       }
 
       if (oasParameter.type === 'Body') {
-        const body = ctx.request.body as any;
+        let body: any;
+
+        if (oasParameter.formDataMode === 'single') {
+          body = ctx.request.file;
+        } else if (oasParameter.formDataMode === 'multiple') {
+          body = ctx.request.files;
+        } else {
+          body = ctx.request.body;
+        }
+
         const result = oasParameter.schema.safeParse(body);
         if (!result.success) {
           errors.push({ zodError: result.error, oasParameter });

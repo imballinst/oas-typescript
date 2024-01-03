@@ -98,7 +98,7 @@ describe('pet', () => {
         }
       });
 
-      test.only('upload pet image', async () => {
+      test('upload pet image', async () => {
         let response: any;
         let error: unknown;
 
@@ -117,15 +117,8 @@ describe('pet', () => {
           error = err;
         }
 
-        expect(error instanceof AxiosError).toBe(true);
-        expect(response).toBeUndefined();
-
-        if (error instanceof AxiosError) {
-          console.info(error.response);
-
-          expect(error.response).toBeDefined();
-          expect(error.response?.status).toBe(405);
-        }
+        expect(error instanceof AxiosError).toBe(false);
+        expect(response).toBeDefined();
       });
 
       test('delete pet', async () => {

@@ -66,7 +66,6 @@ export function getHandlebarsInstance(securitySchemes: any) {
 
     // Render the errors string.
     const errorsVariableName = `${capitalizeFirstCharacter(operationId)}Errors`;
-
     declarations.push(
       `export const ${errorsVariableName} = ${stringifyControllerReturnTypeGenericType(
         errorResponses
