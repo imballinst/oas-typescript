@@ -40,5 +40,5 @@ export function stringifyControllerReturnTypeGenericType(obj: object) {
 
       return `"status": ${value}`;
     })
-    .replace(/"schema": "([\w\d\[\]\(\).']+)"/g, '"schema": $1');
+    .replace(/"schema": "([\w\s:.({}),]+)"/g, '"schema": $1');
 }

@@ -186,6 +186,30 @@ router.post(
     }
 
     const result = await PetController.uploadFile(parsedRequestInfo);
+    console.info('result', result);
+    ctx.body = result.body;
+    ctx.status = result.status;
+  }
+);
+
+router.post(
+  '/pet/:petId/uploadImageMultipart',
+  KoaGeneratedUtils.createSecurityMiddleware(UploadFileMultipartSecurity),
+  upload.fields([
+    {
+      name: 'profileImage'
+    }
+  ]),
+  async (ctx) => {
+    const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
+      ctx,
+      oasParameters: UploadFileMultipartParameters
+    });
+    if (!parsedRequestInfo) {
+      return;
+    }
+
+    const result = await PetController.uploadFileMultipart(parsedRequestInfo);
     ctx.body = result.body;
     ctx.status = result.status;
   }

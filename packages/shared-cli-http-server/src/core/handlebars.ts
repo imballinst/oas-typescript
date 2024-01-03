@@ -66,7 +66,6 @@ export function getHandlebarsInstance(securitySchemes: any) {
 
     // Render the errors string.
     const errorsVariableName = `${capitalizeFirstCharacter(operationId)}Errors`;
-
     declarations.push(
       `export const ${errorsVariableName} = ${stringifyControllerReturnTypeGenericType(
         errorResponses
@@ -104,6 +103,9 @@ export function getHandlebarsInstance(securitySchemes: any) {
       ).replace(/\]/g, '] as string[]')} as const`;
     }
   );
+  handlebars.registerHelper('renderSchema', function (schema: any) {
+    return this.formData || schema;
+  });
 
   return handlebars;
 }

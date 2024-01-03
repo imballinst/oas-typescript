@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 import { tmpdir } from 'os';
-import { generateZodClientFromOpenAPI } from 'openapi-zod-client';
+import {
+  EndpointDefinitionWithRefs,
+  generateZodClientFromOpenAPI
+} from 'openapi-zod-client';
 import fs from 'fs/promises';
 import path from 'path';
 import { createRequire } from 'node:module';
@@ -218,6 +221,50 @@ export async function generateRestServerStubs({
 
         newDefinition.operationId = operation.operationId;
         newDefinition.security = operation.security;
+
+        const maybeRequestBodyObject = operation.requestBody as
+          | OpenAPIV3.RequestBodyObject
+          | undefined;
+        if (maybeRequestBodyObject) {
+          for (const mimeType in maybeRequestBodyObject.content) {
+            if (mimeType === 'application/octet-stream') {
+              const schema = maybeRequestBodyObject.content[mimeType].schema;
+              if (!schema) continue;
+
+              const maybeReferenceObject = schema as OpenAPIV3.ReferenceObject;
+              if (maybeReferenceObject.$ref) continue;
+
+              const matchingParameter = newDefinition.parameters.find(
+                (parameter: any) => parameter.name === 'body'
+              );
+              if (matchingParameter) {
+                const requestBodySchema = schema as OpenAPIV3.SchemaObject;
+                matchingParameter.formData = `z.object({ "${
+                  (requestBodySchema as any)['x-field-name']
+                }": z.${requestBodySchema.type}() }), formDataMode: 'single'`;
+              }
+
+              continue;
+            }
+
+            if (mimeType === 'multipart/form-data') {
+              const schema = maybeRequestBodyObject.content[mimeType].schema;
+              if (!schema) continue;
+
+              const maybeReferenceObject = schema as OpenAPIV3.ReferenceObject;
+              if (maybeReferenceObject.$ref) continue;
+
+              const matchingParameter = newDefinition.parameters.find(
+                (parameter: any) => parameter.name === 'body'
+              );
+              if (matchingParameter) {
+                matchingParameter.formData = `${matchingParameter.schema}, formDataMode: 'multiple'`;
+              }
+
+              continue;
+            }
+          }
+        }
 
         for (const statusCode in operation.responses) {
           const response = operation.responses[statusCode];
