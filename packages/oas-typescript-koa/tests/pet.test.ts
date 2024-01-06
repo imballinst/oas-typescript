@@ -121,6 +121,30 @@ describe('pet', () => {
         expect(response).toBeDefined();
       });
 
+      test('upload pet multipart', async () => {
+        let response: any;
+        let error: unknown;
+
+        try {
+          const form = new FormData();
+          form.append('profileImage', new Blob(['some content']));
+          form.append('name', 'Oyen');
+
+          response = await axios(`${origin}/pet/0/updatePetMultipart`, {
+            method: 'post',
+            data: form,
+            headers: {
+              api_key: 'helloworld'
+            }
+          });
+        } catch (err) {
+          error = err;
+        }
+        console.error(error);
+        expect(error instanceof AxiosError).toBe(false);
+        expect(response).toBeDefined();
+      });
+
       test('delete pet', async () => {
         let response: any;
         let error: unknown;

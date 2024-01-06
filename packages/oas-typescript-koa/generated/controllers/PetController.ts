@@ -75,7 +75,7 @@ export class PetController {
   };
   static uploadFile: UploadFileControllerFunction = (params) => {
     return {
-      body: {},
+      body: undefined,
       status: 200
     };
   };
@@ -83,16 +83,8 @@ export class PetController {
     params
   ) => {
     return {
-      body: undefined,
-      status: undefined
-    };
-  };
-  static uploadFileMultipart: UploadFileMultipartControllerFunction = (
-    params
-  ) => {
-    return {
-      body: undefined,
-      status: undefined
+      body: {},
+      status: 200
     };
   };
 }

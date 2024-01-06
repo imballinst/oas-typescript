@@ -53,6 +53,8 @@ export class KoaGeneratedUtils {
     ctx: Koa.Context;
     oasParameters: OasParametersType;
   }): ParsedRequestInfo<OasParametersType> | undefined {
+    try {
+    } catch (err) {}
     const pathParams: Record<string, any> = {};
     const queryParams: Record<string, any> = {};
     const headerParams: Record<string, any> = {};
@@ -89,7 +91,15 @@ export class KoaGeneratedUtils {
             [ctx.request.file.fieldname]: String(ctx.request.file.buffer)
           };
         } else if (oasParameter.formDataMode === 'multiple') {
-          body = ctx.request.files;
+          body = ctx.request.body;
+
+          const files = ctx.request.files;
+
+          if (!Array.isArray(files)) {
+            for (const key in files) {
+              body[key] = files[key].map((item) => String(item.buffer));
+            }
+          }
         } else {
           body = ctx.request.body;
         }

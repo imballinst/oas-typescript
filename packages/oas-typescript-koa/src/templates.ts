@@ -85,7 +85,9 @@ export class KoaGeneratedUtils {
         let body: any;
 
         if (oasParameter.formDataMode === 'single') {
-          body = ctx.request.file;
+          body = {
+            [ctx.request.file.fieldname]: String(ctx.request.file.buffer)
+          };
         } else if (oasParameter.formDataMode === 'multiple') {
           body = ctx.request.files;
         } else {
