@@ -22,6 +22,12 @@ export const Pet = z
   })
   .passthrough();
 export interface Pet extends z.infer<typeof Pet> {}
+export const uploadFileMultipart_Body = z
+  .object({ name: z.string(), profileImage: z.any() })
+  .partial()
+  .passthrough();
+export interface uploadFileMultipart_Body
+  extends z.infer<typeof uploadFileMultipart_Body> {}
 export const Order = z
   .object({
     id: z.number().int(),
@@ -314,60 +320,12 @@ export const DeletePetErrors = {
 } as const;
 export type DeletePetErrors = typeof DeletePetErrors;
 
-export const UploadFileParameters = [
-  {
-    name: 'body',
-    type: 'Body',
-    schema: z.object({ profileImage: z.string() }),
-    formDataMode: 'single'
-  },
-  {
-    name: 'petId',
-    type: 'Path',
-    schema: z.number().int()
-  },
-  {
-    name: 'additionalMetadata',
-    type: 'Query',
-    schema: z.string().optional()
-  }
-] as const;
-export const UploadFileSecurity = {
-  petstore_auth: {
-    meta: {
-      type: 'oauth2',
-      flows: {
-        implicit: {
-          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
-          scopes: {
-            'write:pets': 'modify pets in your account',
-            'read:pets': 'read your pets'
-          }
-        }
-      }
-    },
-    value: ['write:pets', 'read:pets'] as string[]
-  }
-} as const;
-
-export const UploadFileResponse = {
-  schema: z
-    .object({ code: z.number().int(), type: z.string(), message: z.string() })
-    .partial()
-    .passthrough(),
-  status: 200
-} as const;
-export type UploadFileResponse = typeof UploadFileResponse;
-
-export const UploadFileErrors = {} as const;
-export type UploadFileErrors = typeof UploadFileErrors;
-
 export const UploadFileMultipartParameters = [
   {
     name: 'body',
     type: 'Body',
-    schema: z.object({ profileImage: z.any() }).partial().passthrough(),
-    formDataMode: 'multiple'
+    schema: uploadFileMultipart_Body,
+    isFormData: true
   },
   {
     name: 'petId',
@@ -409,6 +367,51 @@ export type UploadFileMultipartResponse = typeof UploadFileMultipartResponse;
 
 export const UploadFileMultipartErrors = {} as const;
 export type UploadFileMultipartErrors = typeof UploadFileMultipartErrors;
+
+export const UploadFileParameters = [
+  {
+    name: 'body',
+    type: 'Body',
+    schema: z.object({ profileImage: z.string() }),
+    isFormData: true
+  },
+  {
+    name: 'petId',
+    type: 'Path',
+    schema: z.number().int()
+  },
+  {
+    name: 'additionalMetadata',
+    type: 'Query',
+    schema: z.string().optional()
+  }
+] as const;
+export const UploadFileSecurity = {
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  }
+} as const;
+
+export const UploadFileResponse = {
+  schema: z.void(),
+  status: 200
+} as const;
+export type UploadFileResponse = typeof UploadFileResponse;
+
+export const UploadFileErrors = {} as const;
+export type UploadFileErrors = typeof UploadFileErrors;
 
 export const FindPetsByStatusParameters = [
   {

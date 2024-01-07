@@ -9,7 +9,7 @@ export interface OasParameter {
   name: string;
   description?: string;
   type: 'Path' | 'Query' | 'Body' | 'Header';
-  formDataMode?: 'single' | 'multiple';
+  isFormData?: boolean;
   schema: z.ZodTypeAny;
 }
 
@@ -53,6 +53,8 @@ export class KoaGeneratedUtils {
     ctx: Koa.Context;
     oasParameters: OasParametersType;
   }): ParsedRequestInfo<OasParametersType> | undefined {
+    try {
+    } catch (err) {}
     const pathParams: Record<string, any> = {};
     const queryParams: Record<string, any> = {};
     const headerParams: Record<string, any> = {};
@@ -84,10 +86,36 @@ export class KoaGeneratedUtils {
       if (oasParameter.type === 'Body') {
         let body: any;
 
-        if (oasParameter.formDataMode === 'single') {
-          body = ctx.request.file;
-        } else if (oasParameter.formDataMode === 'multiple') {
-          body = ctx.request.files;
+        // TODO: properly handle multer.single, multer.array, and multer.fields.
+        if (oasParameter.isFormData) {
+          if (ctx.request.file) {
+            // Single file --> multer: single.
+            body = {
+              [ctx.request.file.fieldname]:
+                ctx.request.file.buffer.toString('base64')
+            };
+          } else {
+            // Multiple files --> multer: array or fields.
+            body = ctx.request.body;
+
+            const files = ctx.request.files;
+
+            if (!Array.isArray(files)) {
+              // Multer: fields.
+              for (const key in files) {
+                body[key] = files[key].map((item) =>
+                  item.buffer.toString('base64')
+                );
+              }
+            } else if (files.length > 0) {
+              // Multer: array.
+              body = {
+                [files[0].fieldname]: files.map((item) =>
+                  item.buffer.toString('base64')
+                )
+              };
+            }
+          }
         } else {
           body = ctx.request.body;
         }

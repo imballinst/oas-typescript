@@ -1,6 +1,9 @@
 import { test, describe, expect } from 'vitest';
 import axios, { AxiosError } from 'axios';
 
+import { readFile } from 'fs/promises';
+import path from 'path';
+
 describe('pet', () => {
   const currentDate = new Date().valueOf();
   const petName = `torgal-${currentDate}`;
@@ -104,7 +107,10 @@ describe('pet', () => {
 
         try {
           const form = new FormData();
-          form.append('profileImage', new Blob(['some content']));
+          form.append(
+            'profileImage',
+            await imageToBlob('./resources/docusaurus-social-card.jpg')
+          );
 
           response = await axios(`${origin}/pet/0/uploadImage`, {
             method: 'post',
@@ -117,6 +123,30 @@ describe('pet', () => {
           error = err;
         }
 
+        expect(error instanceof AxiosError).toBe(false);
+        expect(response).toBeDefined();
+      });
+
+      test('upload pet multipart', async () => {
+        let response: any;
+        let error: unknown;
+
+        try {
+          const form = new FormData();
+          form.append('profileImage', new Blob(['some content']));
+          form.append('name', 'Oyen');
+
+          response = await axios(`${origin}/pet/0/updatePetMultipart`, {
+            method: 'post',
+            data: form,
+            headers: {
+              api_key: 'helloworld'
+            }
+          });
+        } catch (err) {
+          error = err;
+        }
+        console.error(error);
         expect(error instanceof AxiosError).toBe(false);
         expect(response).toBeDefined();
       });
@@ -142,3 +172,16 @@ describe('pet', () => {
     });
   }
 });
+
+// Helper functions.
+async function imageToBlob(filePath: string) {
+  // Read the image file as a Buffer
+  const imageBuffer = await readFile(
+    path.join(process.cwd(), 'tests', filePath)
+  );
+
+  // Create a Blob-like object from the Buffer
+  const blob = new Blob([imageBuffer], { type: 'image/jpg' }); // You may need to specify the correct MIME type for your image
+
+  return blob;
+}

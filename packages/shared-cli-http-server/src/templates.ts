@@ -103,16 +103,20 @@ export type ResponseHeaders<
   THeadersSchemaType = string | number | z.ZodSchema
 > = Record<string, { schema: THeadersSchemaType; nullable?: boolean }>;
 
+type MaybePromise<T> = T | Promise<T>;
+
 type BuildResponseObject<TObject extends { headers?: ResponseHeaders }> =
-  TObject['headers'] extends object
-    ? Omit<TObject, 'headers'> & {
-        headers: {
-          [K in keyof TObject['headers']]: TObject['headers'][K]['schema'] extends z.ZodSchema
-            ? z.infer<TObject['headers'][K]['schema']>
-            : TObject['headers'][K]['schema'];
-        };
-      }
-    : Omit<TObject, 'headers'>;
+  MaybePromise<
+    TObject['headers'] extends object
+      ? Omit<TObject, 'headers'> & {
+          headers: {
+            [K in keyof TObject['headers']]: TObject['headers'][K]['schema'] extends z.ZodSchema
+              ? z.infer<TObject['headers'][K]['schema']>
+              : TObject['headers'][K]['schema'];
+          };
+        }
+      : Omit<TObject, 'headers'>
+  >;
 
 export interface ErrorResponse<
   TSchemaType = string,

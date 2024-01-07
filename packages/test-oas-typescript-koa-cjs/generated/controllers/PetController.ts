@@ -1,4 +1,4 @@
-import { Pet } from '../static/client';
+import { Pet } from '../static/client.js';
 import {
   AddPetControllerFunction,
   UpdatePetControllerFunction,
@@ -9,7 +9,7 @@ import {
   DeletePetControllerFunction,
   UploadFileControllerFunction,
   UploadFileMultipartControllerFunction
-} from '../static/controller-types/PetControllerTypes';
+} from '../static/controller-types/PetControllerTypes.js';
 
 const db: Pet[] = [];
 
@@ -23,7 +23,7 @@ export class PetController {
       };
     }
 
-    db.push(params.body);
+    db.push({ id: db.length + 1, ...params.body });
 
     return {
       body: params.body,
@@ -75,7 +75,7 @@ export class PetController {
   };
   static uploadFile: UploadFileControllerFunction = (params) => {
     return {
-      body: {},
+      body: undefined,
       status: 200
     };
   };
@@ -83,16 +83,8 @@ export class PetController {
     params
   ) => {
     return {
-      body: undefined,
-      status: undefined
-    };
-  };
-  static uploadFileMultipart: UploadFileMultipartControllerFunction = (
-    params
-  ) => {
-    return {
-      body: undefined,
-      status: undefined
+      body: {},
+      status: 200
     };
   };
 }

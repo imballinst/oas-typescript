@@ -329,16 +329,16 @@ paths:
               x-field-name: profileImage
       responses:
         '200':
-          $ref: '#/components/responses/ApiResponse'
+          $ref: '#/components/schemas/Pet'
       security:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
-  '/pet/{petId}/uploadImageMultipart':
+  '/pet/{petId}/updatePetMultipart':
     post:
       tags:
         - pet
-      summary: uploads an image
+      summary: update pet with multipart form data
       description: ''
       operationId: uploadFileMultipart
       parameters:
@@ -361,6 +361,9 @@ paths:
             schema:
               type: object
               properties:
+                name:
+                  type: string
+                  example: Oyen
                 profileImage:
                   type: string
                   format: binary

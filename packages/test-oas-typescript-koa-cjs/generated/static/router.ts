@@ -192,9 +192,12 @@ router.post(
 );
 
 router.post(
-  '/pet/:petId/uploadImageMultipart',
+  '/pet/:petId/updatePetMultipart',
   KoaGeneratedUtils.createSecurityMiddleware(UploadFileMultipartSecurity),
   upload.fields([
+    {
+      name: 'name'
+    },
     {
       name: 'profileImage'
     }
