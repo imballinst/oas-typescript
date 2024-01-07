@@ -1,5 +1,15 @@
 # @oas-typescript/shared-cli-http-server
 
+## 0.3.0
+
+### Minor Changes
+
+- 4a31928: feat: implement multer for file uploads and stuff
+
+### Patch Changes
+
+- 19c6f72: chore: allow reading from both YAML and JSON; refactor for preparation on parsing multipart/form-data
+
 ## 0.2.1
 
 ### Patch Changes

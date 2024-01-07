@@ -1,5 +1,11 @@
 # @oas-typescript/axios
 
+## 0.1.8
+
+### Patch Changes
+
+- 19c6f72: chore: allow reading from both YAML and JSON; refactor for preparation on parsing multipart/form-data
+
 ## 0.1.7
 
 ### Patch Changes
