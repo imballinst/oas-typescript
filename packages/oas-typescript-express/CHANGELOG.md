@@ -1,5 +1,11 @@
 # @oas-typescript/express
 
+## 0.2.2
+
+### Patch Changes
+
+- 19c6f72: chore: allow reading from both YAML and JSON; refactor for preparation on parsing multipart/form-data
+
 ## 0.2.1
 
 ### Patch Changes
