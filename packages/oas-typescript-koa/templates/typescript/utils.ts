@@ -9,7 +9,7 @@ export interface OasParameter {
   name: string;
   description?: string;
   type: 'Path' | 'Query' | 'Body' | 'Header';
-  formDataMode?: 'single' | 'multiple';
+  isFormData?: boolean;
   schema: z.ZodTypeAny;
 }
 
@@ -87,18 +87,28 @@ export class KoaGeneratedUtils {
         let body: any;
 
         // TODO: properly handle multer.single, multer.array, and multer.fields.
-        if (oasParameter.formDataMode === 'single') {
-          body = {
-            [ctx.request.file.fieldname]: String(ctx.request.file.buffer)
-          };
-        } else if (oasParameter.formDataMode === 'multiple') {
-          body = ctx.request.body;
+        if (oasParameter.isFormData) {
+          if (ctx.request.file) {
+            // Single file --> multer: single.
+            body = {
+              [ctx.request.file.fieldname]: String(ctx.request.file.buffer)
+            };
+          } else {
+            // Multiple files --> multer: array or fields.
+            body = ctx.request.body;
 
-          const files = ctx.request.files;
+            const files = ctx.request.files;
 
-          if (!Array.isArray(files)) {
-            for (const key in files) {
-              body[key] = files[key].map((item) => String(item.buffer));
+            if (!Array.isArray(files)) {
+              // Multer: fields.
+              for (const key in files) {
+                body[key] = files[key].map((item) => String(item.buffer));
+              }
+            } else if (files.length > 0) {
+              // Multer: array.
+              body = {
+                [files[0].fieldname]: files.map((item) => String(item.buffer))
+              };
             }
           }
         } else {

@@ -325,7 +325,7 @@ export const UploadFileMultipartParameters = [
     name: 'body',
     type: 'Body',
     schema: uploadFileMultipart_Body,
-    formDataMode: 'multiple'
+    isFormData: true
   },
   {
     name: 'petId',
@@ -373,7 +373,7 @@ export const UploadFileParameters = [
     name: 'body',
     type: 'Body',
     schema: z.object({ profileImage: z.string() }),
-    formDataMode: 'single'
+    isFormData: true
   },
   {
     name: 'petId',
