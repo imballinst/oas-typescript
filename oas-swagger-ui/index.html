@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swagger UI (Enhanced)</title>
+    <script type="module" crossorigin src="./assets/index-8e6f6615.js"></script>
+    <link rel="stylesheet" href="./assets/index-17f026eb.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    
+
+    <script>
+      window.onload = () => {
+        const AUTH_MAP_TO_STRING = {
+          petstore_auth: 'Required pet store scope: '
+        };
+
+        const { pathname, origin } = window.location;
+        const url = new URL('./api.json', origin + pathname).href;
+
+        renderSwaggerUi({
+          swaggerConfig: {
+            url,
+            deepLinking: true
+          },
+          oasSwaggerUiConfig: {
+            security: {
+              badgesField: 'x-security',
+              badgesDefaultValue: [{ label: 'Authentication required' }],
+              badgesProcessFn: (securityKey, security) => {
+                if (!security) return [];
+
+                const badges = [];
+                for (const key in security) {
+                  const val = security[key];
+                  badges.push({
+                    label: AUTH_MAP_TO_STRING[securityKey],
+                    value: val
+                  });
+                }
+
+                return badges;
+              }
+            }
+          }
+        });
+      };
+    </script>
+  </body>
+</html>
