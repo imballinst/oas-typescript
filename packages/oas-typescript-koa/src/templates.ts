@@ -91,7 +91,8 @@ export class KoaGeneratedUtils {
           if (ctx.request.file) {
             // Single file --> multer: single.
             body = {
-              [ctx.request.file.fieldname]: String(ctx.request.file.buffer)
+              [ctx.request.file.fieldname]:
+                ctx.request.file.buffer.toString('base64')
             };
           } else {
             // Multiple files --> multer: array or fields.
@@ -102,12 +103,16 @@ export class KoaGeneratedUtils {
             if (!Array.isArray(files)) {
               // Multer: fields.
               for (const key in files) {
-                body[key] = files[key].map((item) => String(item.buffer));
+                body[key] = files[key].map((item) =>
+                  item.buffer.toString('base64')
+                );
               }
             } else if (files.length > 0) {
               // Multer: array.
               body = {
-                [files[0].fieldname]: files.map((item) => String(item.buffer))
+                [files[0].fieldname]: files.map((item) =>
+                  item.buffer.toString('base64')
+                )
               };
             }
           }

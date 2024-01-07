@@ -1,3 +1,4 @@
+import { mkdir, writeFile } from 'fs/promises';
 import { Pet } from '../static/client.js';
 import {
   AddPetControllerFunction,
@@ -10,6 +11,7 @@ import {
   UploadFileControllerFunction,
   UploadFileMultipartControllerFunction
 } from '../static/controller-types/PetControllerTypes.js';
+import path from 'path';
 
 const db: Pet[] = [];
 
@@ -73,7 +75,13 @@ export class PetController {
       status: 204
     };
   };
-  static uploadFile: UploadFileControllerFunction = (params) => {
+  static uploadFile: UploadFileControllerFunction = async (params) => {
+    await mkdir(path.join(process.cwd(), 'tests/output'), { recursive: true });
+    await writeFile(
+      path.join(process.cwd(), 'tests/output/image.jpg'),
+      Buffer.from(params.body.profileImage, 'base64'),
+      'binary'
+    );
     return {
       body: undefined,
       status: 200
