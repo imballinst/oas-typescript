@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.12.1
+
+### Patch Changes
+
+- 91eaf7b: chore: bump dependency of openapi-zod-client
+
 ## 0.12.0
 
 ### Minor Changes

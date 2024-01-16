@@ -1,5 +1,11 @@
 # @oas-typescript/express
 
+## 0.2.3
+
+### Patch Changes
+
+- 91eaf7b: chore: bump dependency of openapi-zod-client
+
 ## 0.2.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @oas-typescript/shared-cli-http-server
 
+## 0.3.1
+
+### Patch Changes
+
+- 91eaf7b: chore: bump dependency of openapi-zod-client
+
 ## 0.3.0
 
 ### Minor Changes
