@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import axios, { AxiosRequestConfig } from 'axios';
-import { getQueryParameterString } from './utils/query.js';
+import { getFinalUrlAndRequestConfig } from './utils/request.js';
 
 // Schemas.
 export const User = z
@@ -54,56 +54,44 @@ export function UserApi({
 }) {
   async function createUser(
     fnParam: z.infer<typeof CreateUserParams>,
-    axiosConfig?: AxiosRequestConfig
+    axiosRequestConfig?: AxiosRequestConfig
   ): Promise<User> {
-    let url = `/user`;
+    const { url, config } = getFinalUrlAndRequestConfig({
+      url: `/user`,
+      method: 'post',
+      defaultAxiosRequestConfig,
+      axiosRequestConfig
+    });
 
-    const config = {
-      ...defaultAxiosRequestConfig,
-      ...axiosConfig,
-      headers: {
-        ...defaultAxiosRequestConfig?.headers,
-        ...axiosConfig?.headers
-      },
-      method: 'post'
-    };
     const response = await axios(url, { ...config, data: fnParam.body });
     return User.parse(response.data);
   }
   async function createUsersWithListInput(
     fnParam: z.infer<typeof CreateUsersWithListInputParams>,
-    axiosConfig?: AxiosRequestConfig
+    axiosRequestConfig?: AxiosRequestConfig
   ): Promise<User> {
-    let url = `/user/createWithList`;
+    const { url, config } = getFinalUrlAndRequestConfig({
+      url: `/user/createWithList`,
+      method: 'post',
+      defaultAxiosRequestConfig,
+      axiosRequestConfig
+    });
 
-    const config = {
-      ...defaultAxiosRequestConfig,
-      ...axiosConfig,
-      headers: {
-        ...defaultAxiosRequestConfig?.headers,
-        ...axiosConfig?.headers
-      },
-      method: 'post'
-    };
     const response = await axios(url, { ...config, data: fnParam.body });
     return User.parse(response.data);
   }
   async function loginUser(
     fnParam: z.infer<typeof LoginUserParams>,
-    axiosConfig?: AxiosRequestConfig
+    axiosRequestConfig?: AxiosRequestConfig
   ): Promise<LoginUserResponse> {
-    let url = `/user/login`;
-    url += getQueryParameterString(fnParam.query);
+    const { url, config } = getFinalUrlAndRequestConfig({
+      url: `/user/login`,
+      method: 'get',
+      defaultAxiosRequestConfig,
+      axiosRequestConfig,
+      queryParameters: fnParam.query
+    });
 
-    const config = {
-      ...defaultAxiosRequestConfig,
-      ...axiosConfig,
-      headers: {
-        ...defaultAxiosRequestConfig?.headers,
-        ...axiosConfig?.headers
-      },
-      method: 'get'
-    };
     const response = await axios(url, config);
     return z
       .object({ status: z.string() })
@@ -111,72 +99,58 @@ export function UserApi({
       .passthrough()
       .parse(response.data);
   }
-  async function logoutUser(axiosConfig?: AxiosRequestConfig): Promise<void> {
-    let url = `/user/logout`;
+  async function logoutUser(
+    axiosRequestConfig?: AxiosRequestConfig
+  ): Promise<void> {
+    const { url, config } = getFinalUrlAndRequestConfig({
+      url: `/user/logout`,
+      method: 'post',
+      defaultAxiosRequestConfig,
+      axiosRequestConfig
+    });
 
-    const config = {
-      ...defaultAxiosRequestConfig,
-      ...axiosConfig,
-      headers: {
-        ...defaultAxiosRequestConfig?.headers,
-        ...axiosConfig?.headers
-      },
-      method: 'post'
-    };
     const response = await axios(url, config);
     return z.void().parse(response.data);
   }
   async function getUserByName(
     fnParam: z.infer<typeof GetUserByNameParams>,
-    axiosConfig?: AxiosRequestConfig
+    axiosRequestConfig?: AxiosRequestConfig
   ): Promise<User> {
-    let url = `/user/${fnParam.params.username}`;
+    const { url, config } = getFinalUrlAndRequestConfig({
+      url: `/user/${fnParam.params.username}`,
+      method: 'get',
+      defaultAxiosRequestConfig,
+      axiosRequestConfig
+    });
 
-    const config = {
-      ...defaultAxiosRequestConfig,
-      ...axiosConfig,
-      headers: {
-        ...defaultAxiosRequestConfig?.headers,
-        ...axiosConfig?.headers
-      },
-      method: 'get'
-    };
     const response = await axios(url, config);
     return User.parse(response.data);
   }
   async function updateUser(
     fnParam: z.infer<typeof UpdateUserParams>,
-    axiosConfig?: AxiosRequestConfig
+    axiosRequestConfig?: AxiosRequestConfig
   ): Promise<User> {
-    let url = `/user/${fnParam.params.username}`;
+    const { url, config } = getFinalUrlAndRequestConfig({
+      url: `/user/${fnParam.params.username}`,
+      method: 'put',
+      defaultAxiosRequestConfig,
+      axiosRequestConfig
+    });
 
-    const config = {
-      ...defaultAxiosRequestConfig,
-      ...axiosConfig,
-      headers: {
-        ...defaultAxiosRequestConfig?.headers,
-        ...axiosConfig?.headers
-      },
-      method: 'put'
-    };
     const response = await axios(url, { ...config, data: fnParam.body });
     return User.parse(response.data);
   }
   async function deleteUser(
     fnParam: z.infer<typeof DeleteUserParams>,
-    axiosConfig?: AxiosRequestConfig
+    axiosRequestConfig?: AxiosRequestConfig
   ): Promise<void> {
-    let url = `/user/${fnParam.params.username}`;
+    const { url, config } = getFinalUrlAndRequestConfig({
+      url: `/user/${fnParam.params.username}`,
+      method: 'delete',
+      defaultAxiosRequestConfig,
+      axiosRequestConfig
+    });
 
-    const config = {
-      ...defaultAxiosRequestConfig,
-      ...axiosConfig,
-      headers: {
-        ...defaultAxiosRequestConfig?.headers,
-        ...axiosConfig?.headers
-      },
-      method: 'delete'
-    };
     const response = await axios(url, config);
     return z.void().parse(response.data);
   }

@@ -8,7 +8,7 @@
 
 import { z } from 'zod';
 {{{getAxiosImports}}}
-{{{getQueryParameterHelperImport}}}
+{{{getRequestUtilsImport}}}
 
 {{#if imports}}
 {{#each imports}}
@@ -44,9 +44,8 @@ export function {{options.apiClientName}}({
 }) {
   {{#each endpoints}}
   async function {{operationId}}({{{getFunctionParameter operationId}}}): {{{getFunctionReturnType operationId}}} {
-    let url = {{{getFunctionContent operationId}}}
-    {{{adjustUrlWithParams operationId}}}
-
+    {{{getFunctionContent operationId}}}
+    
     {{{getFunctionReturns operationId}}}
   }
   {{/each}}
