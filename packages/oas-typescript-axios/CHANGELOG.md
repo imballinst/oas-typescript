@@ -1,5 +1,11 @@
 # @oas-typescript/axios
 
+## 0.1.9
+
+### Patch Changes
+
+- 91eaf7b: refactor(oas-typescript-axios): refactor the result so that there are less noise on each file tag
+
 ## 0.1.8
 
 ### Patch Changes
