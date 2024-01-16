@@ -17,15 +17,7 @@ export function getHandlebarsInstance({
     new Map();
 
   // Register helpers.
-  handlebarsInstance.registerHelper(
-    'capitalizeFirstLetter',
-    function (context: any) {
-      return capitalizeFirstCharacter(context);
-    }
-  );
-  handlebarsInstance.registerHelper('stringify', function (context: any) {
-    return JSON.stringify(context);
-  });
+  // TODO: maybe we don't need this. Maybe we can use endpointDefinitionRefiner?
   handlebarsInstance.registerHelper(
     'processFunctionParameter',
     function (parameters: any, options: any) {
@@ -69,7 +61,7 @@ export function getHandlebarsInstance({
     'getFunctionParameter',
     function (operationId: any) {
       const paramsName = operationParamsCache[operationId].paramsName;
-      const params: string[] = ['axiosConfig?: AxiosRequestConfig'];
+      const params: string[] = ['axiosRequestConfig?: AxiosRequestConfig'];
       if (paramsName) {
         params.unshift(`${FN_PARAM_NAME}: z.infer<typeof ${paramsName}>`);
       }
@@ -80,8 +72,29 @@ export function getHandlebarsInstance({
   handlebarsInstance.registerHelper(
     'getFunctionContent',
     function (operationId: any) {
-      const { urlDefinition } = operationParamsCache[operationId];
-      return urlDefinition;
+      const { urlDefinition, method, queryParams, hasHeaders } =
+        operationParamsCache[operationId];
+
+      const arrayOfFields: string[] = [
+        `url: ${urlDefinition}`,
+        `method: "${method}"`,
+        'defaultAxiosRequestConfig',
+        'axiosRequestConfig'
+      ];
+
+      if (queryParams) {
+        arrayOfFields.push(`queryParameters: ${queryParams}`);
+      }
+
+      if (hasHeaders) {
+        arrayOfFields.push(`headers: fnParam.headers`);
+      }
+
+      return `
+const { url, config } = getFinalUrlAndRequestConfig({
+  ${arrayOfFields.join(',\n\t')}
+})
+      `.trim();
     }
   );
   handlebarsInstance.registerHelper(
@@ -102,15 +115,8 @@ export function getHandlebarsInstance({
   handlebarsInstance.registerHelper(
     'getFunctionReturns',
     function (operationId: string) {
-      const { bodySchemaName, hasHeaders, responseInfo, method } =
+      const { bodySchemaName, responseInfo } =
         operationParamsCache[operationId];
-      let configHeaders =
-        '...defaultAxiosRequestConfig?.headers, ...axiosConfig?.headers';
-      if (hasHeaders) {
-        configHeaders += `, ...${FN_PARAM_NAME}.headers`;
-      }
-
-      const renderedConfig = `const config = { ...defaultAxiosRequestConfig, ...axiosConfig, headers: { ${configHeaders} }, method: '${method}' }`;
       let restArgs: string = '';
 
       if (bodySchemaName) {
@@ -119,8 +125,7 @@ export function getHandlebarsInstance({
         restArgs = `, config`;
       }
 
-      let renderedAxiosCall = renderedConfig;
-      renderedAxiosCall += `\nconst response = await axios(url${restArgs})`;
+      let renderedAxiosCall = `\nconst response = await axios(url${restArgs})`;
 
       if (isWithHeaders) {
         renderedAxiosCall += `\nresponse.data = ${responseInfo.schema}.parse(response.data)`;
@@ -140,31 +145,14 @@ export function getHandlebarsInstance({
 
     return `import axios, { ${namedImports.join(', ')} } from 'axios';`;
   });
-  handlebarsInstance.registerHelper(
-    'getQueryParameterHelperImport',
-    function () {
-      const val = apiClientNameToQueryParameterExistence.get(
-        this.options.apiClientName
-      );
-      return val
-        ? `import { getQueryParameterString } from "./utils/query.js"`
-        : '';
-    }
-  );
-  handlebarsInstance.registerHelper(
-    'adjustUrlWithParams',
-    function (operationId: any) {
-      const { queryParams } = operationParamsCache[operationId];
-      return queryParams;
-    }
-  );
-  handlebarsInstance.registerHelper(
-    'processAxiosConfig',
-    function (operationId: string) {
-      const { queryParams } = operationParamsCache[operationId];
-      return queryParams;
-    }
-  );
+  handlebarsInstance.registerHelper('getRequestUtilsImport', function () {
+    const val = apiClientNameToQueryParameterExistence.get(
+      this.options.apiClientName
+    );
+    return val
+      ? `import { getFinalUrlAndRequestConfig } from "./utils/request.js"`
+      : '';
+  });
 
   return handlebarsInstance;
 }
@@ -263,7 +251,7 @@ function constructFunctionParameterFromString({
       }
     }
 
-    result.queryParams += `url += getQueryParameterString(${FN_PARAM_NAME}.query)`;
+    result.queryParams = `${FN_PARAM_NAME}.query`;
     apiClientNameToQueryParameterExistence.set(apiClientName, true);
   }
 

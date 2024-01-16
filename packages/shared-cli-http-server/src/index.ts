@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 import { tmpdir } from 'os';
-import {
-  EndpointDefinitionWithRefs,
-  generateZodClientFromOpenAPI
-} from 'openapi-zod-client';
+import { generateZodClientFromOpenAPI } from 'openapi-zod-client';
 import fs from 'fs/promises';
 import path from 'path';
 import { createRequire } from 'node:module';

@@ -4,8 +4,8 @@ import path from 'path';
 const TEMPLATES_DIR = path.join(process.cwd(), 'templates');
 
 async function main() {
-  const [defaultHandlebars, defaultQueryUtils] = await Promise.all(
-    ['handlebars/default.hbs', 'typescript/utils/query.ts'].map((p) =>
+  const [defaultHandlebars, defaultRequestUtils] = await Promise.all(
+    ['handlebars/default.hbs', 'typescript/utils/request.ts'].map((p) =>
       fs.readFile(path.join(TEMPLATES_DIR, p), 'utf-8')
     )
   );
@@ -13,7 +13,7 @@ async function main() {
   const templatesContent = `
 export const defaultHandlebars = \`${escapeCharacters(defaultHandlebars)}\`
 
-export const defaultQueryUtils = \`${escapeCharacters(defaultQueryUtils)}\`
+export const defaultRequestUtils = \`${escapeCharacters(defaultRequestUtils)}\`
   `.trimStart();
 
   await fs.writeFile(

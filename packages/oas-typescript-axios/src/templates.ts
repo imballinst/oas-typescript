@@ -8,7 +8,7 @@ export const defaultHandlebars = `{{!--
 
 import { z } from 'zod';
 {{{getAxiosImports}}}
-{{{getQueryParameterHelperImport}}}
+{{{getRequestUtilsImport}}}
 
 {{#if imports}}
 {{#each imports}}
@@ -44,9 +44,8 @@ export function {{options.apiClientName}}({
 }) {
   {{#each endpoints}}
   async function {{operationId}}({{{getFunctionParameter operationId}}}): {{{getFunctionReturnType operationId}}} {
-    let url = {{{getFunctionContent operationId}}}
-    {{{adjustUrlWithParams operationId}}}
-
+    {{{getFunctionContent operationId}}}
+    
     {{{getFunctionReturns operationId}}}
   }
   {{/each}}
@@ -59,10 +58,18 @@ export function {{options.apiClientName}}({
 }
 `
 
-export const defaultQueryUtils = `export function getQueryParameterString(
+export const defaultRequestUtils = `import { AxiosRequestConfig } from 'axios';
+
+export function getQueryParameterString(
   query: Record<string, string | string[] | number | undefined>
 ) {
   const searchParams = new URLSearchParams();
+  const keys = Object.keys(query);
+
+  if (keys.length === 0) {
+    return '';
+  }
+
   for (const name in query) {
     const value = query[name];
     if (!value) continue;
@@ -77,6 +84,41 @@ export const defaultQueryUtils = `export function getQueryParameterString(
   }
 
   return \`?\${searchParams.toString()}\`;
+}
+
+export function getFinalUrlAndRequestConfig({
+  url,
+  queryParameters,
+  headers,
+  method,
+  defaultAxiosRequestConfig,
+  axiosRequestConfig
+}: {
+  url: string;
+  queryParameters?: Record<string, string | string[]>;
+  headers?: Record<string, string>;
+  method: string;
+  defaultAxiosRequestConfig?: AxiosRequestConfig;
+  axiosRequestConfig?: AxiosRequestConfig;
+}) {
+  const config = {
+    ...defaultAxiosRequestConfig,
+    ...axiosRequestConfig,
+    headers: {
+      ...defaultAxiosRequestConfig?.headers,
+      ...axiosRequestConfig?.headers,
+      ...headers
+    },
+    method
+  };
+
+  let finalUrl = url;
+  finalUrl += getQueryParameterString(queryParameters || {});
+
+  return {
+    url: finalUrl,
+    config
+  };
 }
 `
   

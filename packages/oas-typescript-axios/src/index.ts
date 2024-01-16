@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { OpenAPIV3 } from 'openapi-types';
-import { parse as parseYAML } from 'yaml';
+import OpenAPIParser from '@readme/openapi-parser';
 import { tmpdir } from 'os';
 import { generateZodClientFromOpenAPI } from 'openapi-zod-client';
 import fs from 'fs/promises';
@@ -9,7 +9,7 @@ import { createRequire } from 'node:module';
 import { execSync } from 'child_process';
 import { createCli, generateHelpText } from '@oas-typescript/shared-cli';
 
-import { defaultHandlebars, defaultQueryUtils } from './templates.js';
+import { defaultHandlebars, defaultRequestUtils } from './templates.js';
 import { getHandlebarsInstance } from './helpers/handlebars.js';
 
 import commandsRecord from './constants/help-text.json';
@@ -65,7 +65,7 @@ async function main() {
   const tmpFolder = path.join(tmpdir(), '@oast');
   const handlebarsFilePath = path.join(tmpFolder, 'axios/default.hbs');
 
-  const queryUtilsFilePath = path.join(generatedUtilsFolder, 'query.ts');
+  const requestUtilsFilePath = path.join(generatedUtilsFolder, 'request.ts');
 
   // Create the files in these folders.
   await fs.rm(rootOutputFolder, { force: true, recursive: true });
@@ -78,15 +78,16 @@ async function main() {
 
   await Promise.all([
     fs.writeFile(handlebarsFilePath, defaultHandlebars, 'utf-8'),
-    fs.writeFile(queryUtilsFilePath, defaultQueryUtils, 'utf-8')
+    fs.writeFile(requestUtilsFilePath, defaultRequestUtils, 'utf-8')
   ]);
 
   // Start the process.
-  const fileContent = await fs.readFile(input, 'utf-8');
-  const document: OpenAPIV3.Document =
-    path.extname(input) === '.json'
-      ? JSON.parse(fileContent)
-      : parseYAML(fileContent);
+  const document = (await OpenAPIParser.bundle(input)) as OpenAPIV3.Document;
+  await fs.writeFile(
+    'document.json',
+    JSON.stringify(document, null, 2),
+    'utf-8'
+  );
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
