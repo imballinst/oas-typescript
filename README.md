@@ -4,9 +4,18 @@ This repository contains a collection of OpenAPI to TypeScript generators. This 
 
 ## Motivation
 
-The motivation of this project was, I was trying to generate a server stubs for TypeScript using OpenAPI Specification. I found out the solution within `openapi-zod-client`, however it uses `zodios` which I am not quite familiar with, and I also want to take advantage of `security` fields and all other annotations.
+The motivation of this project was, I was trying to generate a server stubs for TypeScript (with Zod for validation) using OpenAPI Specification. I found out the solution within `openapi-zod-client`, however it uses `zodios` which I am not quite familiar with, and I also want to take advantage of `security` fields and all other annotations.
 
 And hence, this project was born.
+
+## Available packages
+
+| Package name                 | Description                                                                                                |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `@oas-typescript/swagger-ui` | Enhanced wrapper to `swagger-ui-react`. Supports vanilla HTML deliverables and React via package managers. |
+| `@oas-typescript/axios`      | Axios and zod generator from OpenAPI specification.                                                        |
+| `@oas-typescript/koa`        | Koa routers and zod generator from OpenAPI specification.                                                  |
+| `@oas-typescript/express`    | Express routers and zod generator from OpenAPI specification.                                              |
 
 ## Examples
 
@@ -25,12 +34,9 @@ yarn start
 ### Testing
 
 ```bash
+# Run this in each package inside `packages`.
 yarn test
 ```
-
-## Other available packages
-
-1. [oas-swagger-ui](https://imballinst.github.io/oas-typescript/oas-swagger-ui/), an enhanced Swagger UI to show richer experience.
 
 ## License
 
