@@ -53,12 +53,10 @@ export class KoaGeneratedUtils {
     ctx: Koa.Context;
     oasParameters: OasParametersType;
   }): ParsedRequestInfo<OasParametersType> | undefined {
-    try {
-    } catch (err) {}
     const pathParams: Record<string, any> = {};
     const queryParams: Record<string, any> = {};
     const headerParams: Record<string, any> = {};
-    let bodyParams: any | undefined = undefined;
+    let bodyParams: any | undefined;
 
     const errors: Array<{
       zodError: z.ZodError;
@@ -193,7 +191,7 @@ export class KoaGeneratedUtils {
         }
 
         if (err instanceof Error) {
-          ctx.body = { message: err.stack || err.message };
+          ctx.body = { message: err.stack ?? err.message };
           ctx.status = 500;
           return;
         }
