@@ -1,5 +1,11 @@
 # @oas-typescript/koa
 
+## 0.12.2
+
+### Patch Changes
+
+- 0314b28: fix: fix utils in oas-typescript-koa emitting unnecessary stuff
+
 ## 0.12.1
 
 ### Patch Changes
