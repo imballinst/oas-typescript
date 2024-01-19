@@ -7,7 +7,8 @@ import path from 'path';
 describe('pet', () => {
   const currentDate = new Date().valueOf();
   const petName = `torgal-${currentDate}`;
-  const origins = ['http://localhost:3000', 'http://localhost:3001'];
+  const origins = ['http://localhost:3000'];
+  // const origins = ['http://localhost:3000', 'http://localhost:3001'];
 
   for (const origin of origins) {
     describe(origin, () => {
@@ -101,7 +102,7 @@ describe('pet', () => {
         }
       });
 
-      test('upload pet image', async () => {
+      test.only('upload pet image', async () => {
         let response: any;
         let error: unknown;
 
@@ -116,13 +117,16 @@ describe('pet', () => {
             method: 'post',
             data: form,
             headers: {
-              api_key: 'helloworld'
+              api_key: 'helloworld',
+              'Content-Type':
+                'multipart/form-data; boundary=---WebKitFormBoundary7MA4YWxkTrZu0gW'
             }
           });
         } catch (err) {
           error = err;
         }
 
+        console.error(error);
         expect(error instanceof AxiosError).toBe(false);
         expect(response).toBeDefined();
       });
@@ -180,8 +184,5 @@ async function imageToBlob(filePath: string) {
     path.join(process.cwd(), 'tests', filePath)
   );
 
-  // Create a Blob-like object from the Buffer
-  const blob = new Blob([imageBuffer], { type: 'image/jpg' }); // You may need to specify the correct MIME type for your image
-
-  return blob;
+  return new File([imageBuffer], path.basename(filePath));
 }

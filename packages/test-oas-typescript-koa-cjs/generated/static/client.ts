@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { FormidableFile } from './types.js';
 
 // Schemas.
 export const Category = z
@@ -23,7 +24,7 @@ export const Pet = z
   .passthrough();
 export interface Pet extends z.infer<typeof Pet> {}
 export const uploadFileMultipart_Body = z
-  .object({ name: z.string(), profileImage: z.any() })
+  .object({ name: z.string(), profileImage: FormidableFile })
   .partial()
   .passthrough();
 export interface uploadFileMultipart_Body
@@ -324,8 +325,7 @@ export const UploadFileMultipartParameters = [
   {
     name: 'body',
     type: 'Body',
-    schema: uploadFileMultipart_Body,
-    isFormData: true
+    schema: uploadFileMultipart_Body
   },
   {
     name: 'petId',
@@ -372,8 +372,7 @@ export const UploadFileParameters = [
   {
     name: 'body',
     type: 'Body',
-    schema: z.object({ profileImage: z.string() }),
-    isFormData: true
+    schema: z.object({ profileImage: FormidableFile }).passthrough()
   },
   {
     name: 'petId',

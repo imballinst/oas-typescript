@@ -1,7 +1,7 @@
 import Router from '@koa/router';
-import bodyParser from '@koa/bodyparser';
-import multer from '@koa/multer';
+import { koaBody } from 'koa-body';
 
+import { KoaMiddlewareHelpers } from '../middleware-options.js';
 import {
   AddPetSecurity,
   UpdatePetSecurity,
@@ -36,8 +36,6 @@ import {
 } from './client.js';
 import { KoaGeneratedUtils } from './utils.js';
 
-const upload = multer();
-
 import { PetController } from '../controllers/PetController.js';
 import { StoreController } from '../controllers/StoreController.js';
 import { UserController } from '../controllers/UserController.js';
@@ -47,7 +45,7 @@ const router = new Router();
 router.post(
   '/pet',
   KoaGeneratedUtils.createSecurityMiddleware(AddPetSecurity),
-  bodyParser(),
+  koaBody(),
   async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
@@ -66,7 +64,7 @@ router.post(
 router.put(
   '/pet',
   KoaGeneratedUtils.createSecurityMiddleware(UpdatePetSecurity),
-  bodyParser(),
+  koaBody(),
   async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
@@ -175,8 +173,9 @@ router.delete(
 router.post(
   '/pet/:petId/uploadImage',
   KoaGeneratedUtils.createSecurityMiddleware(UploadFileSecurity),
-  upload.single('profileImage'),
+  koaBody({ multipart: true, onError: (err) => console.error(err) }),
   async (ctx) => {
+    console.info(ctx.request.body, ctx.request.files);
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
       oasParameters: UploadFileParameters
@@ -194,14 +193,9 @@ router.post(
 router.post(
   '/pet/:petId/updatePetMultipart',
   KoaGeneratedUtils.createSecurityMiddleware(UploadFileMultipartSecurity),
-  upload.fields([
-    {
-      name: 'name'
-    },
-    {
-      name: 'profileImage'
-    }
-  ]),
+  koaBody(
+    KoaMiddlewareHelpers.createKoaBodyMiddlewareOptions({ multipart: true })
+  ),
   async (ctx) => {
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
@@ -235,7 +229,7 @@ router.get(
   }
 );
 
-router.post('/store/order', bodyParser(), async (ctx) => {
+router.post('/store/order', koaBody(), async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: PlaceOrderParameters
@@ -277,7 +271,7 @@ router.delete('/store/order/:orderId', async (ctx) => {
   ctx.status = result.status;
 });
 
-router.post('/user', bodyParser(), async (ctx) => {
+router.post('/user', koaBody(), async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: CreateUserParameters
@@ -291,7 +285,7 @@ router.post('/user', bodyParser(), async (ctx) => {
   ctx.status = result.status;
 });
 
-router.post('/user/createWithList', bodyParser(), async (ctx) => {
+router.post('/user/createWithList', koaBody(), async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: CreateUsersWithListInputParameters
@@ -348,7 +342,7 @@ router.get('/user/:username', async (ctx) => {
   ctx.status = result.status;
 });
 
-router.put('/user/:username', bodyParser(), async (ctx) => {
+router.put('/user/:username', koaBody(), async (ctx) => {
   const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
     ctx,
     oasParameters: UpdateUserParameters

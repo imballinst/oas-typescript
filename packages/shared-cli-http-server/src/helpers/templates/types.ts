@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export interface OperationInfo {
   /**
    * Contains the operation ID, which is required.

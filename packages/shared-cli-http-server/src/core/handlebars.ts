@@ -3,13 +3,22 @@ import { capitalizeFirstCharacter } from '../helpers/change-case';
 import { stringifyControllerReturnTypeGenericType } from '../helpers/templates/controller-types';
 import { PrebuildResponseSchema } from './core-types';
 
-export function getHandlebarsInstance(securitySchemes: any) {
+export function getHandlebarsInstance(
+  securitySchemes: any,
+  isRequireFileUploads: boolean
+) {
   const handlebars = getHandlebars();
 
   handlebars.registerHelper('capitalizeFirstLetter', function (...args: any[]) {
     // Last argument is an object.
     const [firstWord, ...rest] = args.slice(0, -1);
     return capitalizeFirstCharacter(firstWord) + rest.join('');
+  });
+  handlebars.registerHelper('renderFormidableImport', function () {
+    // Last argument is an object.
+    return isRequireFileUploads
+      ? "import { FormidableFile } from './types.js'\n"
+      : '';
   });
   handlebars.registerHelper('interfaceFromZod', function (...args: any[]) {
     // Last argument is an object.

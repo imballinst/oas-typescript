@@ -322,11 +322,13 @@ paths:
             type: string
       requestBody:
         content:
-          application/octet-stream:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
-              x-field-name: profileImage
+              type: object
+              properties:
+                profileImage:
+                  type: string
+                  format: binary
       responses:
         '200':
           $ref: '#/components/schemas/Pet'
