@@ -1,6 +1,6 @@
 {
   "name": "@oas-typescript/koa",
-  "version": "0.12.2",
+  "version": "0.13.0",
   "type": "module",
   "repository": {
     "type": "git",

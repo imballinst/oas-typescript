@@ -1,5 +1,11 @@
 # @oas-typescript/shared
 
+## 0.4.0
+
+### Minor Changes
+
+- e07d9c9: feat: allow multipart with koa-body instead of with multer
+
 ## 0.3.0
 
 ### Minor Changes
