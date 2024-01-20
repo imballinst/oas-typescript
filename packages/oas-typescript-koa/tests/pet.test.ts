@@ -1,14 +1,13 @@
 import { test, describe, expect } from 'vitest';
 import axios, { AxiosError } from 'axios';
-
-import { readFile } from 'fs/promises';
+import { FormData } from 'formdata-node';
+import { fileFromPath } from 'formdata-node/file-from-path';
 import path from 'path';
 
 describe('pet', () => {
   const currentDate = new Date().valueOf();
   const petName = `torgal-${currentDate}`;
-  const origins = ['http://localhost:3000'];
-  // const origins = ['http://localhost:3000', 'http://localhost:3001'];
+  const origins = ['http://localhost:3000', 'http://localhost:3001'];
 
   for (const origin of origins) {
     describe(origin, () => {
@@ -102,31 +101,26 @@ describe('pet', () => {
         }
       });
 
-      test.only('upload pet image', async () => {
+      test('upload pet image', async () => {
         let response: any;
         let error: unknown;
 
         try {
           const form = new FormData();
-          form.append(
+          form.set(
             'profileImage',
-            await imageToBlob('./resources/docusaurus-social-card.jpg')
+            await imageToFile('./resources/docusaurus-social-card.jpg')
           );
 
-          response = await axios(`${origin}/pet/0/uploadImage`, {
-            method: 'post',
-            data: form,
+          response = await axios.post(`${origin}/pet/0/uploadImage`, form, {
             headers: {
-              api_key: 'helloworld',
-              'Content-Type':
-                'multipart/form-data; boundary=---WebKitFormBoundary7MA4YWxkTrZu0gW'
+              api_key: 'helloworld'
             }
           });
         } catch (err) {
           error = err;
         }
 
-        console.error(error);
         expect(error instanceof AxiosError).toBe(false);
         expect(response).toBeDefined();
       });
@@ -137,8 +131,8 @@ describe('pet', () => {
 
         try {
           const form = new FormData();
-          form.append('profileImage', new Blob(['some content']));
-          form.append('name', 'Oyen');
+          form.set('profileImage', new Blob(['some content']));
+          form.set('name', 'Oyen');
 
           response = await axios(`${origin}/pet/0/updatePetMultipart`, {
             method: 'post',
@@ -150,7 +144,7 @@ describe('pet', () => {
         } catch (err) {
           error = err;
         }
-        console.error(error);
+
         expect(error instanceof AxiosError).toBe(false);
         expect(response).toBeDefined();
       });
@@ -178,11 +172,7 @@ describe('pet', () => {
 });
 
 // Helper functions.
-async function imageToBlob(filePath: string) {
+async function imageToFile(filePath: string) {
   // Read the image file as a Buffer
-  const imageBuffer = await readFile(
-    path.join(process.cwd(), 'tests', filePath)
-  );
-
-  return new File([imageBuffer], path.basename(filePath));
+  return fileFromPath(path.join(process.cwd(), 'tests', filePath));
 }

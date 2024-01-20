@@ -173,9 +173,10 @@ router.delete(
 router.post(
   '/pet/:petId/uploadImage',
   KoaGeneratedUtils.createSecurityMiddleware(UploadFileSecurity),
-  koaBody({ multipart: true, onError: (err) => console.error(err) }),
+  koaBody(
+    KoaMiddlewareHelpers.createKoaBodyMiddlewareOptions({ multipart: true })
+  ),
   async (ctx) => {
-    console.info(ctx.request.body, ctx.request.files);
     const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
       ctx,
       oasParameters: UploadFileParameters

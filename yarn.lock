@@ -1598,6 +1598,7 @@ __metadata:
     axios: 1.6.0
     esbuild: 0.18.11
     esbuild-node-externals: 1.8.0
+    formdata-node: 6.0.3
     happy-dom: 13.2.0
     koa: 2.14.2
     koa-body: 6.0.1
@@ -5685,6 +5686,13 @@ __metadata:
   version: 0.2.2
   resolution: "format@npm:0.2.2"
   checksum: 646a60e1336250d802509cf24fb801e43bd4a70a07510c816fa133aa42cdbc9c21e66e9cc0801bb183c5b031c9d68be62e7fbb6877756e52357850f92aa28799
+  languageName: node
+  linkType: hard
+
+"formdata-node@npm:6.0.3":
+  version: 6.0.3
+  resolution: "formdata-node@npm:6.0.3"
+  checksum: 0c404dad51aac1e570bef1c20b702da9f4facac9db889398d333ca92a7ae4ab8c005ad249e2df184870fe388aedfe28fc81e8a0aabda7295a19316c1fbaf7407
   languageName: node
   linkType: hard
 

@@ -82,7 +82,8 @@ export class PetController {
       path.join(
         process.cwd(),
         'tests/output',
-        path.basename(params.body.profileImage.filepath)
+        params.body.profileImage.originalFilename ??
+          path.basename(params.body.profileImage.filepath)
       )
     );
     return {

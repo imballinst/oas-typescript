@@ -1,23 +1,27 @@
+// @ts-check
 import axios from 'axios';
-import image from './test-image.jpg';
+import path from 'path';
+import { FormData } from 'formdata-node';
+import { fileFromPath } from 'formdata-node/file-from-path';
 
-// TODO: use https://www.npmjs.com/package/form-data.
-async function main() {
-  try {
-    const formData = new FormData();
-    formData.set('profileImage', image);
+let response;
+let error;
 
-    const response = await axios('/pet/123/uploadImage', {
-      method: 'post',
-      data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    console.info(response);
-  } catch (err) {
-    console.error(err);
-  }
+try {
+  const form = new FormData();
+  form.set(
+    'profileImage',
+    await fileFromPath(path.join(process.cwd(), 'scripts', 'test-image.jpg'))
+  );
+
+  response = await axios.post(`http://localhost:3000/pet/0/uploadImage`, form, {
+    headers: {
+      api_key: 'helloworld'
+    }
+  });
+} catch (err) {
+  error = err;
 }
 
-main();
+console.info(response);
+console.info(error);
