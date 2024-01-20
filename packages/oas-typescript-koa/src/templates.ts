@@ -9,7 +9,6 @@ export interface OasParameter {
   name: string;
   description?: string;
   type: 'Path' | 'Query' | 'Body' | 'Header';
-  isFormData?: boolean;
   schema: z.ZodTypeAny;
 }
 
@@ -53,12 +52,10 @@ export class KoaGeneratedUtils {
     ctx: Koa.Context;
     oasParameters: OasParametersType;
   }): ParsedRequestInfo<OasParametersType> | undefined {
-    try {
-    } catch (err) {}
     const pathParams: Record<string, any> = {};
     const queryParams: Record<string, any> = {};
     const headerParams: Record<string, any> = {};
-    let bodyParams: any | undefined = undefined;
+    let bodyParams: any | undefined;
 
     const errors: Array<{
       zodError: z.ZodError;
@@ -86,35 +83,13 @@ export class KoaGeneratedUtils {
       if (oasParameter.type === 'Body') {
         let body: any;
 
-        // TODO: properly handle multer.single, multer.array, and multer.fields.
-        if (oasParameter.isFormData) {
-          if (ctx.request.file) {
-            // Single file --> multer: single.
-            body = {
-              [ctx.request.file.fieldname]:
-                ctx.request.file.buffer.toString('base64')
-            };
-          } else {
-            // Multiple files --> multer: array or fields.
-            body = ctx.request.body;
+        if (ctx.request.files) {
+          const formidableFiles = ctx.request.files;
+          body = ctx.request.body;
 
-            const files = ctx.request.files;
-
-            if (!Array.isArray(files)) {
-              // Multer: fields.
-              for (const key in files) {
-                body[key] = files[key].map((item) =>
-                  item.buffer.toString('base64')
-                );
-              }
-            } else if (files.length > 0) {
-              // Multer: array.
-              body = {
-                [files[0].fieldname]: files.map((item) =>
-                  item.buffer.toString('base64')
-                )
-              };
-            }
+          for (const key in formidableFiles) {
+            const formidableFile = formidableFiles[key];
+            body[key] = formidableFile;
           }
         } else {
           body = ctx.request.body;
@@ -193,7 +168,7 @@ export class KoaGeneratedUtils {
         }
 
         if (err instanceof Error) {
-          ctx.body = { message: err.stack || err.message };
+          ctx.body = { message: err.stack ?? err.message };
           ctx.status = 500;
           return;
         }
@@ -203,6 +178,17 @@ export class KoaGeneratedUtils {
       }
     };
   }
+}
+`
+
+export const middlewareOptionsTs = `import { KoaBodyMiddlewareOptions } from 'koa-body';
+
+export class KoaMiddlewareHelpers {
+  static createKoaBodyMiddlewareOptions = (
+    defaultOpts?: Partial<KoaBodyMiddlewareOptions>
+  ): Partial<KoaBodyMiddlewareOptions> | undefined => {
+    return defaultOpts;
+  };
 }
 `
   

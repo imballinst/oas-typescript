@@ -4,14 +4,16 @@ import path from 'path';
 const TEMPLATES_DIR = path.join(process.cwd(), 'templates');
 
 async function main() {
-  const [utilsTs] = await Promise.all(
-    ['typescript/utils.ts'].map((p) =>
+  const [utilsTs, middlewareOptionsTs] = await Promise.all(
+    ['typescript/utils.ts', 'typescript/middleware-options.ts'].map((p) =>
       fs.readFile(path.join(TEMPLATES_DIR, p), 'utf-8')
     )
   );
 
   const templatesContent = `
 export const utilsTs = \`${escapeCharacters(utilsTs)}\`
+
+export const middlewareOptionsTs = \`${escapeCharacters(middlewareOptionsTs)}\`
   `.trimStart();
 
   await fs.writeFile(

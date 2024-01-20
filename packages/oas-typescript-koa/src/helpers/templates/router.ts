@@ -15,16 +15,19 @@ export function generateTemplateRouter({
 }) {
   return `
 import Router from '@koa/router'
-import bodyParser from '@koa/bodyparser';
-${isRequireFileUploads ? `import multer from '@koa/multer'` : ''}\n
+import { koaBody } from 'koa-body';
+
+${
+  isRequireFileUploads
+    ? "import { KoaMiddlewareHelpers } from '../middleware-options.js'"
+    : ''
+}
 import { 
   ${allServerSecurityImports
     .concat(Object.values(parametersImportsPerController).flat())
     .join(',\n  ')}
   } from './client.js'
 import { KoaGeneratedUtils } from './utils.js'
-
-${isRequireFileUploads ? `const upload = multer()` : ''}
   
 ${Object.keys(controllerToOperationsRecord)
   .map((c) => `import { ${c} } from '../controllers/${c}.js'`)

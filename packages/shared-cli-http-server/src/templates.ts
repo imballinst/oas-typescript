@@ -1,4 +1,5 @@
 export const defaultHandlebars = `import { z } from 'zod';
+{{{renderFormidableImport}}}
 
 {{#if imports}}
 {{#each imports}}
@@ -46,7 +47,7 @@ export const {{capitalizeFirstLetter operationId "Parameters"}} = [
 {{/each}}
 `
 
-export const securityMiddlewareHelpersTs = `import { IncomingHttpHeaders } from 'http';
+export const middlewareHelpersTs = `import { IncomingHttpHeaders } from 'http';
 import { z } from 'zod';
 
 import { SecuritySchemes } from './static/security-schemes.js';
@@ -244,5 +245,22 @@ export type DefaultHttpErrors =
   | 508
   | 510
   | 511;
+
+export const FormidableFile = z.object({
+  size: z.number(),
+  filepath: z.string(),
+  originalFilename: z.string().nullable(),
+  newFilename: z.string(),
+  mimetype: z.string().nullable(),
+  mtime: z.date().nullish(),
+  hashAlgorithm: z.union([
+    z.literal(false),
+    z.literal('sha1'),
+    z.literal('md5'),
+    z.literal('sha256')
+  ]),
+  hash: z.string().nullable()
+});
+export interface FormidableFile extends z.infer<typeof FormidableFile> {}
 `
   

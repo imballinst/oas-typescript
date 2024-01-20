@@ -1,7 +1,7 @@
 import { test, describe, expect } from 'vitest';
 import axios, { AxiosError } from 'axios';
-
-import { readFile } from 'fs/promises';
+import { FormData } from 'formdata-node';
+import { fileFromPath } from 'formdata-node/file-from-path';
 import path from 'path';
 
 describe('pet', () => {
@@ -107,14 +107,12 @@ describe('pet', () => {
 
         try {
           const form = new FormData();
-          form.append(
+          form.set(
             'profileImage',
-            await imageToBlob('./resources/docusaurus-social-card.jpg')
+            await imageToFile('./resources/docusaurus-social-card.jpg')
           );
 
-          response = await axios(`${origin}/pet/0/uploadImage`, {
-            method: 'post',
-            data: form,
+          response = await axios.post(`${origin}/pet/0/uploadImage`, form, {
             headers: {
               api_key: 'helloworld'
             }
@@ -133,8 +131,8 @@ describe('pet', () => {
 
         try {
           const form = new FormData();
-          form.append('profileImage', new Blob(['some content']));
-          form.append('name', 'Oyen');
+          form.set('profileImage', new Blob(['some content']));
+          form.set('name', 'Oyen');
 
           response = await axios(`${origin}/pet/0/updatePetMultipart`, {
             method: 'post',
@@ -146,7 +144,7 @@ describe('pet', () => {
         } catch (err) {
           error = err;
         }
-        console.error(error);
+
         expect(error instanceof AxiosError).toBe(false);
         expect(response).toBeDefined();
       });
@@ -174,14 +172,7 @@ describe('pet', () => {
 });
 
 // Helper functions.
-async function imageToBlob(filePath: string) {
+async function imageToFile(filePath: string) {
   // Read the image file as a Buffer
-  const imageBuffer = await readFile(
-    path.join(process.cwd(), 'tests', filePath)
-  );
-
-  // Create a Blob-like object from the Buffer
-  const blob = new Blob([imageBuffer], { type: 'image/jpg' }); // You may need to specify the correct MIME type for your image
-
-  return blob;
+  return fileFromPath(path.join(process.cwd(), 'tests', filePath));
 }

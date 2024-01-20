@@ -16,7 +16,7 @@ import {
 
 import {
   defaultHandlebars,
-  securityMiddlewareHelpersTs,
+  middlewareHelpersTs,
   typesTs
 } from './templates.js';
 import { generateTemplateController } from './helpers/templates/controller.js';
@@ -45,7 +45,7 @@ export type { GenerateRouteMiddlewareType };
 export async function generateRestServerStubs({
   usageText,
   commandsRecord,
-  templates: { routeMiddlewareHelpersTs },
+  templates: { routeMiddlewareHelpersTs, middlewareOptionsTs },
   templateFunctions: {
     router: generateRouter,
     routerMiddlewares: generateRouterMiddlewares,
@@ -56,6 +56,7 @@ export async function generateRestServerStubs({
   commandsRecord: Record<string, HelpTextEntry>;
   templates: {
     routeMiddlewareHelpersTs: string;
+    middlewareOptionsTs: string;
   };
   templateFunctions: {
     router: (param: {
@@ -153,6 +154,7 @@ export async function generateRestServerStubs({
       updateImportBasedOnModule(routeMiddlewareHelpersTs, cliTargetModule),
       'utf-8'
     ),
+
     fs.writeFile(
       path.join(lockedGeneratedFilesFolder, 'types.ts'),
       updateImportBasedOnModule(typesTs, cliTargetModule),
@@ -161,10 +163,18 @@ export async function generateRestServerStubs({
     createOrDuplicateFile({
       filePath: path.join(rootOutputFolder, 'middleware-helpers.ts'),
       fileContent: updateImportBasedOnModule(
-        securityMiddlewareHelpersTs,
+        middlewareHelpersTs,
         cliTargetModule
       ),
       previousChecksum: previousChecksum['middleware-helpers.ts']
+    }),
+    createOrDuplicateFile({
+      filePath: path.join(rootOutputFolder, 'middleware-options.ts'),
+      fileContent: updateImportBasedOnModule(
+        middlewareOptionsTs,
+        cliTargetModule
+      ),
+      previousChecksum: previousChecksum['middleware-options.ts']
     })
   ]);
 
@@ -194,7 +204,10 @@ export async function generateRestServerStubs({
   const securitySchemes =
     (document.components as any)?.[cliAppSecuritySchemesField] || {};
 
-  const handlebars = getHandlebarsInstance(securitySchemes);
+  const handlebars = getHandlebarsInstance(
+    securitySchemes,
+    isRequireFileUploads
+  );
 
   await generateZodClientFromOpenAPI({
     openApiDoc: document as any,
@@ -224,26 +237,6 @@ export async function generateRestServerStubs({
           | undefined;
         if (maybeRequestBodyObject) {
           for (const mimeType in maybeRequestBodyObject.content) {
-            if (mimeType === 'application/octet-stream') {
-              const schema = maybeRequestBodyObject.content[mimeType].schema;
-              if (!schema) continue;
-
-              const maybeReferenceObject = schema as OpenAPIV3.ReferenceObject;
-              if (maybeReferenceObject.$ref) continue;
-
-              const matchingParameter = newDefinition.parameters.find(
-                (parameter: any) => parameter.name === 'body'
-              );
-              if (matchingParameter) {
-                const requestBodySchema = schema as OpenAPIV3.SchemaObject;
-                matchingParameter.formData = `z.object({ "${
-                  (requestBodySchema as any)['x-field-name']
-                }": z.${requestBodySchema.type}() }), isFormData: true`;
-              }
-
-              continue;
-            }
-
             if (mimeType === 'multipart/form-data') {
               const schema = maybeRequestBodyObject.content[mimeType].schema;
               if (!schema) continue;
@@ -255,7 +248,10 @@ export async function generateRestServerStubs({
                 (parameter: any) => parameter.name === 'body'
               );
               if (matchingParameter) {
-                matchingParameter.formData = `${matchingParameter.schema}, isFormData: true`;
+                matchingParameter.formData = `${matchingParameter.schema.replace(
+                  '.partial()',
+                  ''
+                )}`;
               }
 
               continue;
@@ -328,7 +324,7 @@ export async function generateRestServerStubs({
   if (distClientContent.includes('z.instanceof(File)')) {
     distClientContent = distClientContent.replace(
       /z\.instanceof\(File\)/g,
-      'z.any()'
+      'FormidableFile'
     );
   }
 

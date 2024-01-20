@@ -15,7 +15,6 @@ const MIME_TYPE_ORDER = [
 
 interface RequestBodyInfo {
   type: string;
-  content: OpenAPIV3.MediaTypeObject;
 }
 
 export type GenerateRouteMiddlewareType = (param: {
@@ -129,8 +128,7 @@ export function parsePaths({
         isRequireFileUploads =
           isRequireFileUploads || UPLOAD_MIME_TYPES.includes(requestBodyType);
         requestBodyInfo = {
-          type: requestBodyType,
-          content: requestBodyContent[requestBodyType]
+          type: requestBodyType
         };
       }
 

@@ -4,8 +4,8 @@ module.exports = {
       name: 'oas-typescript-koa-test-server',
       script: 'generated/server.ts',
       watch: ['generated'],
-      interpreter: 'node',
-      interpreter_args: '--loader ts-node/esm',
+      interpreter: 'yarn',
+      interpreter_args: 'tsx',
       cwd: process.cwd(),
       watch_delay: 1000,
       ignore_watch: ['node_modules']
@@ -15,7 +15,7 @@ module.exports = {
       script: '../test-oas-typescript-koa-cjs/generated/server.ts',
       watch: ['../test-oas-typescript-koa-cjs/generated'],
       interpreter: 'yarn',
-      interpreter_args: 'ts-node',
+      interpreter_args: 'tsx',
       env_development: {
         PORT: 3001
       },

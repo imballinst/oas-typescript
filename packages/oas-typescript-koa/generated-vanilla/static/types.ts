@@ -166,3 +166,20 @@ export type DefaultHttpErrors =
   | 508
   | 510
   | 511;
+
+export const FormidableFile = z.object({
+  size: z.number(),
+  filepath: z.string(),
+  originalFilename: z.string().nullable(),
+  newFilename: z.string(),
+  mimetype: z.string().nullable(),
+  mtime: z.date().nullish(),
+  hashAlgorithm: z.union([
+    z.literal(false),
+    z.literal('sha1'),
+    z.literal('md5'),
+    z.literal('sha256')
+  ]),
+  hash: z.string().nullable()
+});
+export interface FormidableFile extends z.infer<typeof FormidableFile> {}
