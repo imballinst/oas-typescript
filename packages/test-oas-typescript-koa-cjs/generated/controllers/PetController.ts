@@ -9,7 +9,8 @@ import {
   UpdatePetWithFormControllerFunction,
   DeletePetControllerFunction,
   UploadFileControllerFunction,
-  UploadFileMultipartControllerFunction
+  UploadFileMultipartControllerFunction,
+  UploadFileWithSmallerLimitControllerFunction
 } from '../static/controller-types/PetControllerTypes';
 import path from 'path';
 
@@ -99,4 +100,11 @@ export class PetController {
       status: 200
     };
   };
+  static uploadFileWithSmallerLimit: UploadFileWithSmallerLimitControllerFunction =
+    (params) => {
+      return {
+        body: undefined,
+        status: 200
+      };
+    };
 }

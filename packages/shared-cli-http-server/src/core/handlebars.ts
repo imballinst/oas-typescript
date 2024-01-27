@@ -113,7 +113,11 @@ export function getHandlebarsInstance(
     }
   );
   handlebars.registerHelper('renderSchema', function (schema: any) {
-    return this.formData || schema;
+    return `${this.formData || schema}, formidableOptions: ${JSON.stringify(
+      this.formidableOptions,
+      null,
+      2
+    )}`;
   });
 
   return handlebars;

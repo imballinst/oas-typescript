@@ -1,8 +1,7 @@
 import { IncomingHttpHeaders } from 'http';
-import { z } from 'zod';
 
 import { SecuritySchemes } from './static/security-schemes.js';
-import { OasParameter } from './static/utils.js';
+import { ParametersError } from './static/utils.js';
 import { SecurityMiddlewareError } from './static/types.js';
 
 enum ParseRequestErrors {
@@ -49,14 +48,11 @@ export class MiddlewareHelpers {
     return Promise.resolve();
   }
 
-  static async processZodErrorValidation({
+  static processZodErrorValidation({
     errors
   }: {
     path: string;
-    errors: Array<{
-      zodError: z.ZodError;
-      oasParameter: OasParameter;
-    }>;
+    errors: Array<ParametersError>;
   }) {
     // Take only the first one.
     const error = errors[0];
@@ -73,7 +69,7 @@ export class MiddlewareHelpers {
     return {
       code: errorCode,
       message: ParseRequestErrorsMessage[errorCode],
-      detail: error.zodError.errors
+      detail: error.type === 'zod' ? error.value.errors : error.value
     };
   }
 }

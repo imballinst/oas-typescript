@@ -8,7 +8,9 @@ export class KoaMiddlewareHelpers {
     return {
       ...defaultOpts,
       formidable: {
-        uploadDir: path.join(process.cwd(), 'tests/uploads')
+        ...defaultOpts?.formidable,
+        uploadDir: path.join(process.cwd(), 'tests/uploads'),
+        keepExtensions: true
       }
     };
   };

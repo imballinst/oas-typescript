@@ -23,6 +23,9 @@ import {
   UploadFileParameters,
   UploadFileErrors,
   UploadFileResponse,
+  UploadFileWithSmallerLimitParameters,
+  UploadFileWithSmallerLimitErrors,
+  UploadFileWithSmallerLimitResponse,
   UploadFileMultipartParameters,
   UploadFileMultipartErrors,
   UploadFileMultipartResponse
@@ -84,6 +87,13 @@ export type UploadFileControllerFunction = (
 ) => ControllerReturnType<{
   success: UploadFileResponse;
   error: UploadFileErrors;
+}>;
+
+export type UploadFileWithSmallerLimitControllerFunction = (
+  params: ParsedRequestInfo<typeof UploadFileWithSmallerLimitParameters>
+) => ControllerReturnType<{
+  success: UploadFileWithSmallerLimitResponse;
+  error: UploadFileWithSmallerLimitErrors;
 }>;
 
 export type UploadFileMultipartControllerFunction = (

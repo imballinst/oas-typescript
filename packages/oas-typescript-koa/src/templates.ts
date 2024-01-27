@@ -3,14 +3,34 @@ import { z } from 'zod';
 
 import { MiddlewareHelpers } from '../middleware-helpers.js';
 import { SecuritySchemes } from './security-schemes.js';
-import { SecurityMiddlewareError } from './types.js';
+import { MultipartError, SecurityMiddlewareError } from './types.js';
 
 export interface OasParameter {
   name: string;
   description?: string;
   type: 'Path' | 'Query' | 'Body' | 'Header';
   schema: z.ZodTypeAny;
+  formidableOptions?: Record<
+    string,
+    {
+      maxFiles?: number;
+      maxFileSize?: number;
+    }
+  >;
 }
+
+export type ParametersError =
+  | {
+      type: 'multipart';
+      value: MultipartError[];
+      oasParameter: OasParameter;
+      formidableFiles: NonNullable<Koa.Request['files']>;
+    }
+  | {
+      type: 'zod';
+      value: z.ZodError;
+      oasParameter: OasParameter;
+    };
 
 type ExtractMatchingType<
   TArray extends readonly OasParameter[],
@@ -57,10 +77,7 @@ export class KoaGeneratedUtils {
     const headerParams: Record<string, any> = {};
     let bodyParams: any | undefined;
 
-    const errors: Array<{
-      zodError: z.ZodError;
-      oasParameter: OasParameter;
-    }> = [];
+    const errors: Array<ParametersError> = [];
 
     // Validate path parameters.
     for (const oasParameter of oasParameters) {
@@ -72,7 +89,7 @@ export class KoaGeneratedUtils {
 
         const result = oasParameter.schema.safeParse(param);
         if (!result.success) {
-          errors.push({ zodError: result.error, oasParameter });
+          errors.push({ type: 'zod', value: result.error, oasParameter });
           continue;
         }
 
@@ -85,11 +102,60 @@ export class KoaGeneratedUtils {
 
         if (ctx.request.files) {
           const formidableFiles = ctx.request.files;
+          const formidableOptions = oasParameter.formidableOptions;
+          const formidableErrors: MultipartError[] = [];
           body = ctx.request.body;
 
           for (const key in formidableFiles) {
             const formidableFile = formidableFiles[key];
             body[key] = formidableFile;
+
+            const { maxFileSize, maxFiles } = formidableOptions?.[key] ?? {};
+            if (maxFiles) {
+              if (
+                Array.isArray(formidableFile) &&
+                formidableFile.length > maxFiles
+              ) {
+                formidableErrors.push(
+                  new MultipartError({
+                    field: key,
+                    type: 'MAX_FILES_EXCEEDED'
+                  })
+                );
+              }
+            }
+
+            if (maxFileSize) {
+              let isValid: boolean;
+
+              if (Array.isArray(formidableFile)) {
+                isValid = formidableFile.every(
+                  (file) => convertBytesToMegabytes(file.size) <= maxFileSize
+                );
+              } else {
+                isValid =
+                  convertBytesToMegabytes(formidableFile.size) <= maxFileSize;
+              }
+
+              if (!isValid) {
+                formidableErrors.push(
+                  new MultipartError({
+                    field: key,
+                    type: 'MAX_SIZE_EXCEEDED'
+                  })
+                );
+              }
+            }
+          }
+
+          if (formidableErrors.length > 0) {
+            errors.push({
+              type: 'multipart',
+              oasParameter,
+              value: formidableErrors,
+              formidableFiles
+            });
+            continue;
           }
         } else {
           body = ctx.request.body;
@@ -97,7 +163,7 @@ export class KoaGeneratedUtils {
 
         const result = oasParameter.schema.safeParse(body);
         if (!result.success) {
-          errors.push({ zodError: result.error, oasParameter });
+          errors.push({ type: 'zod', value: result.error, oasParameter });
           continue;
         }
 
@@ -110,7 +176,7 @@ export class KoaGeneratedUtils {
           ctx.query[oasParameter.name]
         );
         if (!result.success) {
-          errors.push({ zodError: result.error, oasParameter });
+          errors.push({ type: 'zod', value: result.error, oasParameter });
           continue;
         }
 
@@ -123,7 +189,7 @@ export class KoaGeneratedUtils {
           ctx.headers[oasParameter.name]
         );
         if (!result.success) {
-          errors.push({ zodError: result.error, oasParameter });
+          errors.push({ type: 'zod', value: result.error, oasParameter });
           continue;
         }
 
@@ -178,6 +244,11 @@ export class KoaGeneratedUtils {
       }
     };
   }
+}
+
+// Helper functions.
+function convertBytesToMegabytes(bytes: number) {
+  return bytes / (1024 * 1024);
 }
 `
 

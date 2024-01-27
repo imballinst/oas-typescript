@@ -23,6 +23,15 @@ export const Pet = z
   })
   .passthrough();
 export interface Pet extends z.infer<typeof Pet> {}
+export const uploadFileWithSmallerLimit_Body = z
+  .object({
+    profileImage: FormidableFile,
+    profileImageArray: z.array(FormidableFile)
+  })
+  .partial()
+  .passthrough();
+export interface uploadFileWithSmallerLimit_Body
+  extends z.infer<typeof uploadFileWithSmallerLimit_Body> {}
 export const uploadFileMultipart_Body = z
   .object({ name: z.string(), profileImage: FormidableFile })
   .partial()
@@ -62,7 +71,8 @@ export const UpdatePetParameters = [
     name: 'body',
     description: `Update an existent pet in the store`,
     type: 'Body',
-    schema: Pet
+    schema: Pet,
+    formidableOptions: undefined
   }
 ] as const;
 export const UpdatePetSecurity = {
@@ -119,7 +129,8 @@ export const AddPetParameters = [
     name: 'body',
     description: `Create a new pet in the store`,
     type: 'Body',
-    schema: Pet
+    schema: Pet,
+    formidableOptions: undefined
   }
 ] as const;
 export const AddPetSecurity = {
@@ -169,7 +180,8 @@ export const GetPetByIdParameters = [
   {
     name: 'petId',
     type: 'Path',
-    schema: z.number().int()
+    schema: z.number().int(),
+    formidableOptions: undefined
   }
 ] as const;
 export const GetPetByIdSecurity = {
@@ -226,17 +238,20 @@ export const UpdatePetWithFormParameters = [
   {
     name: 'petId',
     type: 'Path',
-    schema: z.number().int()
+    schema: z.number().int(),
+    formidableOptions: undefined
   },
   {
     name: 'name',
     type: 'Query',
-    schema: z.string().optional()
+    schema: z.string().optional(),
+    formidableOptions: undefined
   },
   {
     name: 'status',
     type: 'Query',
-    schema: z.string().optional()
+    schema: z.string().optional(),
+    formidableOptions: undefined
   }
 ] as const;
 export const UpdatePetWithFormSecurity = {
@@ -278,12 +293,14 @@ export const DeletePetParameters = [
   {
     name: 'api_key',
     type: 'Header',
-    schema: z.string().optional()
+    schema: z.string().optional(),
+    formidableOptions: undefined
   },
   {
     name: 'petId',
     type: 'Path',
-    schema: z.number().int()
+    schema: z.number().int(),
+    formidableOptions: undefined
   }
 ] as const;
 export const DeletePetSecurity = {
@@ -325,17 +342,20 @@ export const UploadFileMultipartParameters = [
   {
     name: 'body',
     type: 'Body',
-    schema: uploadFileMultipart_Body
+    schema: uploadFileMultipart_Body,
+    formidableOptions: {}
   },
   {
     name: 'petId',
     type: 'Path',
-    schema: z.number().int()
+    schema: z.number().int(),
+    formidableOptions: undefined
   },
   {
     name: 'additionalMetadata',
     type: 'Query',
-    schema: z.string().optional()
+    schema: z.string().optional(),
+    formidableOptions: undefined
   }
 ] as const;
 export const UploadFileMultipartSecurity = {
@@ -372,17 +392,20 @@ export const UploadFileParameters = [
   {
     name: 'body',
     type: 'Body',
-    schema: z.object({ profileImage: FormidableFile }).passthrough()
+    schema: z.object({ profileImage: FormidableFile }).passthrough(),
+    formidableOptions: {}
   },
   {
     name: 'petId',
     type: 'Path',
-    schema: z.number().int()
+    schema: z.number().int(),
+    formidableOptions: undefined
   },
   {
     name: 'additionalMetadata',
     type: 'Query',
-    schema: z.string().optional()
+    schema: z.string().optional(),
+    formidableOptions: undefined
   }
 ] as const;
 export const UploadFileSecurity = {
@@ -412,6 +435,62 @@ export type UploadFileResponse = typeof UploadFileResponse;
 export const UploadFileErrors = {} as const;
 export type UploadFileErrors = typeof UploadFileErrors;
 
+export const UploadFileWithSmallerLimitParameters = [
+  {
+    name: 'body',
+    type: 'Body',
+    schema: uploadFileWithSmallerLimit_Body,
+    formidableOptions: {
+      profileImage: {
+        maxFileSize: 0.01
+      },
+      profileImageArray: {
+        maxFiles: 1
+      }
+    }
+  },
+  {
+    name: 'petId',
+    type: 'Path',
+    schema: z.number().int(),
+    formidableOptions: undefined
+  },
+  {
+    name: 'additionalMetadata',
+    type: 'Query',
+    schema: z.string().optional(),
+    formidableOptions: undefined
+  }
+] as const;
+export const UploadFileWithSmallerLimitSecurity = {
+  petstore_auth: {
+    meta: {
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          authorizationUrl: 'https://petstore3.swagger.io/oauth/authorize',
+          scopes: {
+            'write:pets': 'modify pets in your account',
+            'read:pets': 'read your pets'
+          }
+        }
+      }
+    },
+    value: ['write:pets', 'read:pets'] as string[]
+  }
+} as const;
+
+export const UploadFileWithSmallerLimitResponse = {
+  schema: z.void(),
+  status: 200
+} as const;
+export type UploadFileWithSmallerLimitResponse =
+  typeof UploadFileWithSmallerLimitResponse;
+
+export const UploadFileWithSmallerLimitErrors = {} as const;
+export type UploadFileWithSmallerLimitErrors =
+  typeof UploadFileWithSmallerLimitErrors;
+
 export const FindPetsByStatusParameters = [
   {
     name: 'status',
@@ -419,7 +498,8 @@ export const FindPetsByStatusParameters = [
     schema: z
       .enum(['available', 'pending', 'sold'])
       .optional()
-      .default('available')
+      .default('available'),
+    formidableOptions: undefined
   }
 ] as const;
 export const FindPetsByStatusSecurity = {
@@ -461,7 +541,8 @@ export const FindPetsByTagsParameters = [
   {
     name: 'tags',
     type: 'Query',
-    schema: z.array(z.string()).optional()
+    schema: z.array(z.string()).optional(),
+    formidableOptions: undefined
   }
 ] as const;
 export const FindPetsByTagsSecurity = {
@@ -524,7 +605,8 @@ export const PlaceOrderParameters = [
   {
     name: 'body',
     type: 'Body',
-    schema: Order
+    schema: Order,
+    formidableOptions: undefined
   }
 ] as const;
 
@@ -549,7 +631,8 @@ export const GetOrderByIdParameters = [
   {
     name: 'orderId',
     type: 'Path',
-    schema: z.number().int()
+    schema: z.number().int(),
+    formidableOptions: undefined
   }
 ] as const;
 
@@ -581,7 +664,8 @@ export const DeleteOrderParameters = [
   {
     name: 'orderId',
     type: 'Path',
-    schema: z.number().int()
+    schema: z.number().int(),
+    formidableOptions: undefined
   }
 ] as const;
 
@@ -614,7 +698,8 @@ export const CreateUserParameters = [
     name: 'body',
     description: `Created user object`,
     type: 'Body',
-    schema: User
+    schema: User,
+    formidableOptions: undefined
   }
 ] as const;
 
@@ -631,7 +716,8 @@ export const GetUserByNameParameters = [
   {
     name: 'username',
     type: 'Path',
-    schema: z.string()
+    schema: z.string(),
+    formidableOptions: undefined
   }
 ] as const;
 
@@ -664,12 +750,14 @@ export const UpdateUserParameters = [
     name: 'body',
     description: `Update an existent user in the store`,
     type: 'Body',
-    schema: User
+    schema: User,
+    formidableOptions: undefined
   },
   {
     name: 'username',
     type: 'Path',
-    schema: z.string()
+    schema: z.string(),
+    formidableOptions: undefined
   }
 ] as const;
 
@@ -686,7 +774,8 @@ export const DeleteUserParameters = [
   {
     name: 'username',
     type: 'Path',
-    schema: z.string()
+    schema: z.string(),
+    formidableOptions: undefined
   }
 ] as const;
 
@@ -718,7 +807,8 @@ export const CreateUsersWithListInputParameters = [
   {
     name: 'body',
     type: 'Body',
-    schema: z.array(User)
+    schema: z.array(User),
+    formidableOptions: undefined
   }
 ] as const;
 
@@ -745,12 +835,14 @@ export const LoginUserParameters = [
   {
     name: 'username',
     type: 'Query',
-    schema: z.string().optional()
+    schema: z.string().optional(),
+    formidableOptions: undefined
   },
   {
     name: 'password',
     type: 'Query',
-    schema: z.string().optional()
+    schema: z.string().optional(),
+    formidableOptions: undefined
   }
 ] as const;
 

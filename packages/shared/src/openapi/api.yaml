@@ -336,6 +336,52 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
+  '/pet/{petId}/uploadImageWithSmallerLimit':
+    post:
+      tags:
+        - pet
+      summary: uploads an image with smaller limit
+      description: ''
+      operationId: uploadFileWithSmallerLimit
+      parameters:
+        - name: petId
+          in: path
+          description: ID of pet to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: additionalMetadata
+          in: query
+          description: Additional Metadata
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                profileImage:
+                  type: string
+                  format: binary
+                  x-formidable-options:
+                    maxFileSize: 0.01
+                profileImageArray:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  x-formidable-options:
+                    maxFiles: 1
+      responses:
+        '200':
+          $ref: '#/components/schemas/Pet'
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
   '/pet/{petId}/updatePetMultipart':
     post:
       tags:

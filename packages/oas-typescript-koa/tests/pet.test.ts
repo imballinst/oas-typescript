@@ -1,8 +1,21 @@
-import { test, describe, expect } from 'vitest';
+import { test, describe, expect, afterAll } from 'vitest';
 import axios, { AxiosError } from 'axios';
 import { FormData } from 'formdata-node';
 import { fileFromPath } from 'formdata-node/file-from-path';
 import path from 'path';
+import fs from 'fs/promises';
+
+afterAll(async () => {
+  const uploadDir = path.join(process.cwd(), 'tests/uploads');
+  const uploadedFiles = await fs.readdir(uploadDir, { withFileTypes: true });
+  const filesExceptGitIgnore = uploadedFiles.filter(
+    (file) => file.name !== '.gitignore'
+  );
+
+  await Promise.all(
+    filesExceptGitIgnore.map((file) => fs.rm(path.join(uploadDir, file.name)))
+  );
+});
 
 describe('pet', () => {
   const currentDate = new Date().valueOf();
@@ -125,6 +138,48 @@ describe('pet', () => {
         expect(response).toBeDefined();
       });
 
+      test('upload pet image with less limits', async () => {
+        let response: any;
+        let error: unknown;
+
+        try {
+          const form = new FormData();
+          const image = await imageToFile(
+            './resources/docusaurus-social-card.jpg'
+          );
+          form.set('profileImage', image);
+          form.append('profileImageArray', image);
+          form.append('profileImageArray', image);
+
+          response = await axios.post(
+            `${origin}/pet/0/uploadImageWithSmallerLimit`,
+            form,
+            {
+              headers: {
+                api_key: 'helloworld'
+              }
+            }
+          );
+        } catch (err) {
+          error = err;
+        }
+
+        assertAxiosError(error);
+
+        expect(error.response?.data.code).toBe('10001');
+        expect(error.response?.data.message).toBe('invalid body');
+        expect(error.response?.data.detail[0].content).toStrictEqual({
+          field: 'profileImage',
+          type: 'MAX_SIZE_EXCEEDED'
+        });
+        expect(error.response?.data.detail[1].content).toStrictEqual({
+          field: 'profileImageArray',
+          type: 'MAX_FILES_EXCEEDED'
+        });
+
+        expect(response).not.toBeDefined();
+      });
+
       test('upload pet multipart', async () => {
         let response: any;
         let error: unknown;
@@ -175,4 +230,10 @@ describe('pet', () => {
 async function imageToFile(filePath: string) {
   // Read the image file as a Buffer
   return fileFromPath(path.join(process.cwd(), 'tests', filePath));
+}
+
+function assertAxiosError(val: unknown): asserts val is AxiosError<any> {
+  if (!(val instanceof AxiosError)) {
+    throw new Error('not an axios error');
+  }
 }
