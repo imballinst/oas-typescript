@@ -10,6 +10,20 @@ export class SecurityMiddlewareError extends Error {
   }
 }
 
+export interface MultipartErrorContentType {
+  type: 'MAX_FILES_EXCEEDED' | 'MAX_SIZE_EXCEEDED';
+  field: string;
+}
+export class MultipartError extends Error {
+  content: MultipartErrorContentType;
+
+  constructor({ field, type }: MultipartErrorContentType) {
+    super();
+
+    this.content = { field, type };
+  }
+}
+
 export interface OasError {
   status: number;
   description: string;
