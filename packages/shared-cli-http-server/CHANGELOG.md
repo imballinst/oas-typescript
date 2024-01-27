@@ -1,5 +1,11 @@
 # @oas-typescript/shared-cli-http-server
 
+## 0.5.0
+
+### Minor Changes
+
+- bdb156b: feat: implement max file size and max files length
+
 ## 0.4.0
 
 ### Minor Changes
