@@ -11,6 +11,7 @@ import {
   UpdatePetWithFormSecurity,
   DeletePetSecurity,
   UploadFileSecurity,
+  UploadFileWithSmallerLimitSecurity,
   UploadFileMultipartSecurity,
   GetInventorySecurity,
   AddPetParameters,
@@ -21,6 +22,7 @@ import {
   UpdatePetWithFormParameters,
   DeletePetParameters,
   UploadFileParameters,
+  UploadFileWithSmallerLimitParameters,
   UploadFileMultipartParameters,
   GetInventoryParameters,
   PlaceOrderParameters,
@@ -186,6 +188,30 @@ router.post(
     }
 
     const result = await PetController.uploadFile(parsedRequestInfo);
+    ctx.body = result.body;
+    ctx.status = result.status;
+  }
+);
+
+router.post(
+  '/pet/:petId/uploadImageWithSmallerLimit',
+  KoaGeneratedUtils.createSecurityMiddleware(
+    UploadFileWithSmallerLimitSecurity
+  ),
+  koaBody(
+    KoaMiddlewareHelpers.createKoaBodyMiddlewareOptions({ multipart: true })
+  ),
+  async (ctx) => {
+    const parsedRequestInfo = KoaGeneratedUtils.parseRequestInfo({
+      ctx,
+      oasParameters: UploadFileWithSmallerLimitParameters
+    });
+    if (!parsedRequestInfo) {
+      return;
+    }
+
+    const result =
+      await PetController.uploadFileWithSmallerLimit(parsedRequestInfo);
     ctx.body = result.body;
     ctx.status = result.status;
   }

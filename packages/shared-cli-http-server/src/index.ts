@@ -248,6 +248,17 @@ export async function generateRestServerStubs({
                 (parameter: any) => parameter.name === 'body'
               );
               if (matchingParameter) {
+                const schemaObject = schema as OpenAPIV3.SchemaObject;
+                matchingParameter.formidableOptions = {};
+
+                if (schemaObject.properties) {
+                  for (const key in schemaObject.properties) {
+                    const value = schemaObject.properties[key] as any;
+                    matchingParameter.formidableOptions[key] =
+                      value['x-formidable-options'];
+                  }
+                }
+
                 matchingParameter.formData = `${matchingParameter.schema.replace(
                   '.partial()',
                   ''
